@@ -47,31 +47,26 @@
                 
                 $("#selectRegimen").on("change", function() {
                     var selected = $(this).val();
-                    var contabilidadSelected = $("#selectContabilidad option:selected").val();
+                    //var contabilidadSelected = $("#selectContabilidad option:selected").val();
                     
-                    if (selected == "RG" && contabilidadSelected == "simplificada") {
+                    if (selected == "RG") {
                         $("#tc1, #tc2").show(200); 
                         // seleccionar todos los libros de simplificada
                         $("#diarioSimplificado").prop("checked", true).on("click", function() {return false;});
                         $("#registroCompras").prop("checked", true).on("click", function() {return false;});
                         $("#registroVentas").prop("checked", true).on("click", function() {return false;});
                         
-                    } else if (selected == "RG" && contabilidadSelected == "completa") {
-                        $("#tc1, #tc2").show(200);
-                        // seleccionar los libros de completa
-                        
-                        
                     } else if (selected == "RER") {
                         $("#tc1, #tc2").hide();
                         // seleccionar solo Libro de compras y ventas
-                        $("#diarioSimplificado").prop("checked", false).on("click", function() {});
+                        $("#diarioSimplificado").prop("checked", false).off("click");
                         $("#registroCompras").prop("checked", true).on("click", function() {return false;});
                         $("#registroVentas").prop("checked", true).on("click", function() {return false;});
                         
                     } else if (selected == "NRUS") {
                         $("#tc1, #tc2").hide();
                         // seleccionar solo Libro de compras y ventas
-                        $("#diarioSimplificado").prop("checked", false).on("click", function() {});
+                        $("#diarioSimplificado").prop("checked", false).off("click");
                         $("#registroCompras").prop("checked", true).on("click", function() {return false;});
                         $("#registroVentas").prop("checked", true).on("click", function() {return false;});
                     }

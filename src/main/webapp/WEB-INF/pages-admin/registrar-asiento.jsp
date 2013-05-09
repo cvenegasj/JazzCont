@@ -63,6 +63,13 @@
                     tokenValue: "name"
                 });
                 
+                // variables para calcular totales
+                var totalCargo = 0.00;
+                var totalAbono = 0.00;                
+                // para agregar detalles
+                var indexCargo = 0; 
+                var indexAbono = 0;
+                
                 $("#btnCargo").click(function(event) {
                     event.preventDefault();
                     // verificar los campos
@@ -83,8 +90,8 @@
                         // todo ok, se agrega la siguiente fila 
                         var importeF = $.number(importe, 2);
                         var fila = "<tr>\n\
-                                    <td class='right'>" + '<s:label name="" value="'+ importeF + '" />' + "</td>\n\
-                                    <td>" + '<s:label name="" value="'+ cuenta + '" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + "</td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
@@ -93,10 +100,14 @@
                                     </tr>";
             
                         $(event.target).parents("tr").before(fila);
+                        // se calcula el total del cargo 
+                        totalCargo += parseFloat(importe);                        
+                        $("#totalCargo").text($.number(totalCargo, 2));
                         // se limpian los input text
                         $("#inputCuentaCargo").tokenInput("clear").focus();
                         $("#inputImporteCargo").val("");
                         
+                        indexCargo++;
                         
                     } else {
                         alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
@@ -129,8 +140,8 @@
                                     <td></td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
-                                    <td>" + '<s:label name="" value="'+ cuenta + '" />' + "</td>\n\
-                                    <td class=\"right\">" + '<s:label name="" value="'+ importeF + '" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                     <td></td>\n\
                                     </tr>";
             
@@ -141,10 +152,14 @@
                         // posiciona la letra a
                         $("#tbodyAbono tr:first-child").children("td:nth-child(4)").html("a");
                         
-                        
+                        // se calcula el total del Abono
+                        totalAbono += parseFloat(importe);
+                        $("#totalAbono").text($.number(totalAbono, 2));                        
                         // se limpian los input text                        
                         $("#inputCuentaAbono").tokenInput("clear").focus();
                         $("#inputImporteAbono").val("");
+                        
+                        indexAbono++;
                         
                     } else {
                         alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
@@ -217,12 +232,12 @@
                                 <table id="detallesAsiento">
                                     <thead>
                                         <tr>
-                                            <th style="width: 70px">Importe</th>
-                                            <th style="width: 190px">Cuentas que se cargan</th>
+                                            <th style="width: 70px" class="bottomBorder">Importe</th>
+                                            <th style="width: 190px" class="bottomBorder">Cuentas que se cargan</th>
                                             <th style="width: 40px"></th>
                                             <th style="width: 35px"></th>
-                                            <th style="width: 190px">Cuentas que se abonan</th>
-                                            <th style="width: 70px">Importe</th>
+                                            <th style="width: 190px" class="bottomBorder">Cuentas que se abonan</th>
+                                            <th style="width: 70px" class="bottomBorder">Importe</th>
                                             <th style="width: 40px"></th>
                                         </tr>
                                     </thead>
@@ -248,6 +263,17 @@
                                             <td><button id="btnAbono" class="button"><span class="label">OK</span></button></td>
                                         </tr>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th id="totalCargo" class="topBorder">0.00</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th id="totalAbono" class="topBorder">0.00</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </fieldset>  
                             

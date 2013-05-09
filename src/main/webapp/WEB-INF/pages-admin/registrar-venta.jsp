@@ -140,10 +140,10 @@
                     var importeF = $.number(importe, 2);
                     
                     var nuevaLinea = "<tr class=\"linea\">\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" />' + "</td>\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.nombre" value="'+ descripcion + '" readonly="true" />' + "</td>\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].precioUnitario" value="'+ pUnitarioF + '" readonly="true" />' + "</td>\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].subtotal" value="'+ importeF + '" readonly="true" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.nombre" value="'+ descripcion + '" readonly="inputLarge2 true" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].precioUnitario" value="'+ pUnitarioF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].subtotal" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                      <td></td>\n\
                                      </tr>";
                     
@@ -367,36 +367,36 @@
                                     </thead>
                                     <tbody>
                                         <tr id="inputLineDetallesComprobante">
-                                            <td class="paddingTopBig"><input id="cantidadInput" type="text" class="border1" /></td>
+                                            <td class="paddingTopBig"><input id="cantidadInput" type="text" class="inputLittle border1" /></td>
                                             <td>
                                                 <input style="float: left;" type="checkbox" name="" value="false" id="registrarNuevoProducto" tabindex="-1" />
                                                 <label style="float: left;" class="little3" for="registrarNuevoProducto">Registrar nuevo producto</label> 
                                                 <div id="descripcionProducto1">
-                                                    <input id="descripcionProductoInput" type="text" class="border1" />                                                    
+                                                    <input id="descripcionProductoInput" type="text" class="inputLarge2 border1" />                                                    
                                                 </div>
                                                 <div id="descripcionProducto2" class="hide">
-                                                    <input id="descripcionProductoInput2" type="text" class="border1" />
+                                                    <input id="descripcionProductoInput2" type="text" class="inputLarge2 border1" />
                                                 </div>                                                
                                             </td>
-                                            <td class="paddingTopBig"><input id="pUnitarioInput" type="text" class="border1" /></td>
-                                            <td class="paddingTopBig"><input id="importeInput" type="text" class="border1" readonly /></td>
+                                            <td class="paddingTopBig"><input id="pUnitarioInput" type="text" class="inputLittle border1" /></td>
+                                            <td class="paddingTopBig"><input id="importeInput" type="text" class="inputLittle border1" readonly /></td>
                                             <td class="paddingTopBig"><button id="btnOk" class="button"><span class="label">OK</span></button></td>
                                         </tr>                                        
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th colspan="3" class="right">Base</th>
-                                            <th><s:textfield id="base" name="detalleLRV.comprobanteVenta.base" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="base" name="detalleLRV.comprobanteVenta.base" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th>                                             
                                         </tr>
                                         <tr> 
                                             <th colspan="3" class="right">IGV</th>
-                                            <th><s:textfield id="igv" name="detalleLRV.comprobanteVenta.igv" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="igv" name="detalleLRV.comprobanteVenta.igv" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th> 
                                         </tr>
                                         <tr>                                                                                      
                                             <th colspan="3" class="right">Total</th>
-                                            <th><s:textfield id="total" name="detalleLRV.comprobanteVenta.importeTotal" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="total" name="detalleLRV.comprobanteVenta.importeTotal" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th>
                                         </tr>
                                     </tfoot>

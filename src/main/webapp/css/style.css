@@ -841,13 +841,9 @@ textarea {
 
 }
 
-#detallesAsiento td {    
+#detallesAsiento tbody td {    
     text-align: center;
     padding: 5px;
-}
-
-#detallesAsiento th {
-    border-bottom: 1px solid #ADC6C7;
 }
 
 .inputMedium {
@@ -866,6 +862,20 @@ textarea {
     height: 30px !important;
     width: 170px !important;  
     padding: 0 !important;
+}
+
+.inputLarge2 {
+    height: 25px !important;
+    width: 170px !important;  
+    padding: 0 !important;
+}
+
+.topBorder {
+    border-top: 1px solid #ADC6C7;
+}
+
+.bottomBorder {
+    border-bottom: 1px solid #ADC6C7;
 }
 
 .border1 {
@@ -1076,12 +1086,6 @@ textarea {
     border: 1px solid #ADC6C7;
     padding: 8px;
     text-align: center;
-}
-
-.detallesComprobanteTable input[type='text'] {
-    width: 80%;
-    height: 25px;
-    padding: 0px;
 }
 
 .detallesComprobanteTable thead {
