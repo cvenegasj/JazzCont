@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jazzcontadores?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">admin</property>
+    <!-- Enable Hibernate's automatic session context management -->
+    <property name="hibernate.current_session_context_class">thread</property>
+    <!-- Echo all executed SQL to stdout -->
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.format_sql">true</property>
+    <property name="hibernate.use_sql_comments">true</property>
+    <!-- Use the C3P0 connection pool provider -->
+    <property name="hibernate.c3p0.min_size">5</property>
+    <property name="hibernate.c3p0.max_size">20</property>
+    <property name="hibernate.c3p0.timeout">300</property>
+    <property name="hibernate.c3p0.max_statements">50</property>
+    <property name="hibernate.c3p0.idle_test_period">3000</property>
+    <!-- Mapeo relacional -->
+    <mapping class="com.jazzcontadores.model.entities.AsientoContable"/>
+    <mapping class="com.jazzcontadores.model.entities.ClasificacionCuenta"/>  
+    <mapping class="com.jazzcontadores.model.entities.CodigoAduana"/>  
+    <mapping class="com.jazzcontadores.model.entities.Comprador"/>
+    <mapping class="com.jazzcontadores.model.entities.ComprobanteCompra"/>
+    <mapping class="com.jazzcontadores.model.entities.ComprobanteVenta"/>
+    <mapping class="com.jazzcontadores.model.entities.Contacto"/>
+    <mapping class="com.jazzcontadores.model.entities.Contador"/>
+    <mapping class="com.jazzcontadores.model.entities.CuentaContable"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleAbono"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleCargo"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleComprobanteCompra"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleComprobanteVenta"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleLibroRegistroCompras"/>
+    <mapping class="com.jazzcontadores.model.entities.DetalleLibroRegistroVentas"/>
+    <mapping class="com.jazzcontadores.model.entities.ElementoPlanCuentas"/>
+    <mapping class="com.jazzcontadores.model.entities.EmpresaCliente"/>
+    <mapping class="com.jazzcontadores.model.entities.LibroDiarioSimplificado"/>
+    <mapping class="com.jazzcontadores.model.entities.LibroRegistroCompras"/>
+    <mapping class="com.jazzcontadores.model.entities.LibroRegistroVentas"/>
+    <mapping class="com.jazzcontadores.model.entities.ProductoCompras"/>
+    <mapping class="com.jazzcontadores.model.entities.ProductoVentas"/>
+    <mapping class="com.jazzcontadores.model.entities.Proveedor"/>
+    <mapping class="com.jazzcontadores.model.entities.RegistroCuentaContable"/>
+    <mapping class="com.jazzcontadores.model.entities.TipoComprobantePagoODocumento"/>
+    <mapping class="com.jazzcontadores.model.entities.TipoDocumentoIdentidad"/>
+  </session-factory>
+</hibernate-configuration>

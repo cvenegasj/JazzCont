@@ -1,0 +1,21 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<div id="barraSesion">
+    <div id="pageNavHolder" class="rfloat">
+        <ul id="pageNav">
+            <li id="usuarioSesion"><s:property value="#session.sesionUsuario.apellidos"/>, <s:property value="#session.sesionUsuario.nombres"/></li>
+            <li id="opcionesSesion">
+                <a id="opcionesSesionLink" href="#">
+                    <div id="opcionesSesionLabel"></div>
+                </a>
+            </li>        
+        </ul>
+    </div>
+
+
+    <!-- Menú que se despliega -->
+    <ul id="menuSesion">
+        <li><a href="#">Configuraciones de cuenta</a></li>
+        <li><s:a action="logout" namespace="/">Cerrar sesión</s:a></li>
+    </ul>
+</div>

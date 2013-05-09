@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="jazzcontadores"/>
+  <table-filter match-name="librodiariosimplificado"/>
+  <table-filter match-name="tipodocumentoidentidad"/>
+  <table-filter match-name="libroregistroventas"/>
+  <table-filter match-name="detallelibroregistrocompras"/>
+  <table-filter match-name="contador"/>
+  <table-filter match-name="proveedor"/>
+  <table-filter match-name="productoventas"/>
+  <table-filter match-name="asientocontable"/>
+  <table-filter match-name="tipocomprobantepagoodocumento"/>
+  <table-filter match-name="comprobanteventa"/>
+  <table-filter match-name="libroregistrocompras"/>
+  <table-filter match-name="comprador"/>
+  <table-filter match-name="contacto"/>
+  <table-filter match-name="detallecomprobantecompra"/>
+  <table-filter match-name="detallelibroregistroventas"/>
+  <table-filter match-name="cuentacontable"/>
+  <table-filter match-name="detalleabono"/>
+  <table-filter match-name="comprobantecompra"/>
+  <table-filter match-name="elementoplancuentas"/>
+  <table-filter match-name="registrocuentacontable"/>
+  <table-filter match-name="detallecomprobanteventa"/>
+  <table-filter match-name="empresacliente"/>
+  <table-filter match-name="productocompras"/>
+  <table-filter match-name="detallecargo"/>
+  <table-filter match-name="clasificacioncuenta"/>
+</hibernate-reverse-engineering>

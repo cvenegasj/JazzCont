@@ -1,0 +1,11 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<footer>
+    <div id="footer_content">
+        +51 (044) 282829
+        <img class="seperator" src="<s:url value="/img/seperator.jpg"/>" width="2" height="2">
+             <a href="mailto:info@jazzcontadores.com.pe">info@jazzcontadores.com.pe</a>                
+        <img class="seperator" src="<s:url value="/img/seperator.jpg"/>" width="2" height="2">                
+             © Jazz Contadores 2012
+    </div>
+</footer>

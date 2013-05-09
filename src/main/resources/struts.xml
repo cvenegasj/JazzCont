@@ -1,0 +1,233 @@
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.configuration.xml.reload" value="true" />   
+    
+            
+    <!-- paquete base -->
+    <package name="base-package" namespace="/" extends="struts-default">        
+        
+        <!-- Interceptor que controla la inyeccion de la sesion -->
+        <interceptors>
+            <interceptor name="authenticationInterceptor" class="com.jazzcontadores.util.AuthenticationInterceptor"/>
+            <interceptor-stack name="secureStack">
+                <interceptor-ref name="authenticationInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+        
+        <default-interceptor-ref name="secureStack"/>
+        
+        <global-results>
+            <result name="login">/acceso.jsp</result>
+            <result name="error">/error.jsp</result>
+        </global-results>
+        
+        <action name="login" class="com.jazzcontadores.controller.LoginAction">
+            <interceptor-ref name="defaultStack"/>
+            <result name="sesionAdmin" type="redirectAction">
+                <param name="actionName">main</param>
+                <param name="namespace">/app/admin</param>
+            </result>
+            <result name="sesionClienteRG">/WEB-INF/pages-cliente-rg/intro-cliente-rg.jsp</result>
+            <result name="sesionClienteNRUS">/WEB-INF/pages-cliente-nrus/intro-cliente-nrus.jsp</result>
+            <result name="sesionClienteRER">/WEB-INF/pages-cliente-rer/intro-cliente-rer.jsp</result>
+            <result name="input">/acceso.jsp</result>
+            <result name="failed">/acceso.jsp</result>
+        </action>
+        
+        <action name="logout" class="com.jazzcontadores.controller.LogoutAction">
+            <result name="success">/acceso.jsp</result>
+        </action>  
+        
+        <action name="acceso" class="com.jazzcontadores.controller.AccesoAction">            
+            <result name="login">/acceso.jsp</result>                            
+            <result name="sesionAdmin" type="redirectAction">
+                <param name="actionName">main</param>
+                <param name="namespace">/app/admin</param>
+            </result>
+            <result name="sesionClienteRG">/WEB-INF/pages-cliente-rg/intro-cliente-rg.jsp</result>
+            <result name="sesionClienteNRUS">/WEB-INF/pages-cliente-nrus/intro-cliente-nrus.jsp</result>
+            <result name="sesionClienteRER">/WEB-INF/pages-cliente-rer/intro-cliente-rer.jsp</result>
+        </action>            
+         
+    </package>
+        
+    <!-- parte estatica de la aplicacion sin restriccion de acceso -->
+    <package name="static" extends="struts-default">
+        <!-- acciones -->
+        <action name="estudio">
+            <result>/nuestroestudio.jsp</result>
+        </action>
+        <action name="contacto">
+            <result>/contacto.jsp</result>
+        </action> 
+        <action name="accesoDenegado">
+            <result>/denegado.jsp</result>
+        </action> 
+    </package>
+    
+    
+    <!-- paquete de acciones del administrador (contador con maximo privilegio) -->    
+    <package name="admin" namespace="/app/admin" extends="base-package,json-default">
+        <default-interceptor-ref name="secureStack"/>
+        
+        <action name="test">
+            <result>/success.jsp</result>
+        </action>
+        <action name="main" method="list" class="com.jazzcontadores.controller.admin.EmpresaClienteAction">
+            <result name="list">/WEB-INF/pages-admin/ver-clientes-todos.jsp</result>
+        </action>
+        
+        <action name="EmpresaClienteAction_*" method="{1}" class="com.jazzcontadores.controller.admin.EmpresaClienteAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-cliente.jsp</result>
+            <result name="save">/WEB-INF/pages-admin/registrar-cliente-ok.jsp</result> 
+            <result name="input">/WEB-INF/pages-admin/registrar-cliente.jsp</result>               
+            <result name="show">/WEB-INF/pages-admin/ver-cliente.jsp</result>
+            <result name="list">/WEB-INF/pages-admin/ver-clientes-todos.jsp</result>
+        </action>
+        
+        <!-- add para los registros, entrada de datos -->
+        <action name="AsientoAction_*" method="{1}" class="com.jazzcontadores.controller.admin.AsientoAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-asiento.jsp</result>
+            <result name="save"></result>
+        </action>
+        
+        <action name="DetalleLibroRegistroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.DetalleLibroRegistroComprasAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-compra.jsp</result>
+            <result name="save">/WEB-INF/pages-admin/registrar-compra-ok.jsp</result>
+            <result name="input">/WEB-INF/pages-admin/registrar-compra.jsp</result> 
+            <result name="libroCerrado">/WEB-INF/pages-admin/registrar-compra-libro-cerrado.jsp</result>                   
+        </action>
+        
+        <action name="DetalleLibroRegistroVentasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.DetalleLibroRegistroVentasAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-venta.jsp</result>
+            <result name="save">/WEB-INF/pages-admin/registrar-venta-ok.jsp</result>
+            <result name="input">/WEB-INF/pages-admin/registrar-venta.jsp</result> 
+            <result name="libroCerrado">/WEB-INF/pages-admin/registrar-venta-libro-cerrado.jsp</result>   
+        </action>
+        
+        <action name="ComprobanteCompraAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ComprobanteCompraAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-comprobante-compra.jsp</result>
+            <result name="save"></result>
+        </action>
+        
+        <action name="ComprobanteVentaAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ComprobanteVentaAction">
+            <result name="add">/WEB-INF/pages-admin/registrar-comprobante-venta.jsp</result>
+            <result name="save"></result>
+        </action>
+        
+        <action name="verLibros" class="com.jazzcontadores.controller.admin.LibrosAction">
+            <result>/WEB-INF/pages-admin/ver-libros-cliente.jsp</result>
+        </action>
+        
+        <action name="verComprobantes" class="com.jazzcontadores.controller.admin.ComprobantesAction">
+            <result>/WEB-INF/pages-admin/ver-comprobantes-cliente.jsp</result>
+        </action>
+        
+        <action name="LibroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroComprasAction">
+            <result name="show">/WEB-INF/pages-admin/ver-libro-compras.jsp</result>
+            
+        </action>
+        
+        <action name="LibroVentasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroVentasAction">
+            <result name="show">/WEB-INF/pages-admin/ver-libro-ventas.jsp</result>
+            
+        </action> 
+        
+        <action name="LibroDiarioSimplificadoAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroDiarioSimplificadoAction">
+            <result name="show">/WEB-INF/pages-admin/ver-libro-diario-simplificado.jsp</result>
+            
+        </action>
+        
+        <action name="ContenedorComprobantesCompraAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ContenedorComprobantesCompraAction">
+            <result name="show">/WEB-INF/pages-admin/ver-contenedor-comprobantes-compra.jsp</result>
+        </action>
+        
+        <action name="ContenedorComprobantesVentaAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ContenedorComprobantesVentaAction">
+            <result name="show">/WEB-INF/pages-admin/ver-contenedor-comprobantes-venta.jsp</result>
+        </action>            
+        
+        <action name="ResumenesAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ResumenesAction">            
+            <result name="list">/WEB-INF/pages-admin/ver-resumenes-por-cliente.jsp</result>
+            <result name="showTotales">/WEB-INF/pages-admin/ver-totales-por-cliente.jsp</result>
+            <result name="showTributos">/WEB-INF/pages-admin/ver-tributos-por-cliente.jsp</result>
+        </action>
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- Acciones Ajax -->
+        <action name="ClienteAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ClienteAjaxAction">
+            <result name="showDialogClientes" type="json">                 
+                <param name="includeProperties">
+                    salida
+                </param>             
+            </result>
+            <result name="edit" type="json">                 
+                <param name="includeProperties">
+                    mensaje, paramRetorno 
+                </param>             
+            </result>
+            <result name="list" type="json">
+                <param name="root">   
+                    listaClientesSrl            
+                </param>                
+            </result>
+            <result name="listProveedoresByCliente" type="json">
+                <param name="root">
+                    listaProveedoresSrl
+                </param>
+            </result>
+            <result name="listCompradoresByCliente" type="json">
+                <param name="root">
+                    listaCompradoresSrl
+                </param>
+            </result>
+            <result name="listProductosVentasByCliente" type="json">
+                <param name="root">
+                    listaProductosVentasSrl
+                </param>
+            </result>
+            <result name="listProductosComprasByCliente" type="json">
+                <param name="root">
+                    listaProductosComprasSrl
+                </param>
+            </result>
+                
+            <result name="error" type="json"> 
+                <param name="includeProperties">
+                    mensaje
+                </param>    
+            </result>
+        </action>
+    </package> 
+    
+    
+    <!-- paquete de acciones del cliente RG -->    
+    <package name="clienterg" namespace="/app/clienterg" extends="struts-default">
+        <action name="test">
+            <result>/success.jsp</result>
+        </action>
+    </package>
+    <!-- paquete de acciones del cliente nrus -->    
+    <package name="clientenrus" namespace="/app/clientenrus" extends="struts-default">
+        <action name="test">
+            <result>/success.jsp</result>
+        </action>
+    </package>
+    <!-- paquete de acciones del cliente rer -->    
+    <package name="clienterer" namespace="/app/clienterer" extends="struts-default">
+        <action name="test">
+            <result>/success.jsp</result>
+        </action>
+    </package>    
+</struts>

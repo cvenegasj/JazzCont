@@ -1,0 +1,23 @@
+<%@ page pageEncoding="UTF-8" %>
+<!-- código de los diálogos modales -->
+<div id="dialogSelectCustomer" title="Seleccione el cliente">
+    <input id="dTipoDialogo" type="hidden" value="" />
+    <div id="dSearchBar">
+        <div id="leftSB">
+            <select id="dCriterioBusqueda">
+                <option value="all">Búsqueda por nombre</option>                                
+                <option value="rg">Régimen General</option>
+                <option value="rer">Régimen Especial</option>
+                <option value="nrus">Régimen Simplificado</option>
+            </select>
+        </div>
+        <div id="rightSB">
+            <input type="text" name="search" id="dSearch" placeholder="buscar clientes" />
+        </div>
+        <div class="spacer"></div>
+    </div>
+    <!-- lista generada mediante ajax -->
+    <div id="dListaClientes">
+
+    </div>
+</div>
