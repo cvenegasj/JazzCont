@@ -93,7 +93,9 @@
         <!-- add para los registros, entrada de datos -->
         <action name="AsientoAction_*" method="{1}" class="com.jazzcontadores.controller.admin.AsientoAction">
             <result name="add">/WEB-INF/pages-admin/registrar-asiento.jsp</result>
-            <result name="save"></result>
+            <result name="save">/WEB-INF/pages-admin/registrar-asiento-ok.jsp</result>
+            <result name="input">/WEB-INF/pages-admin/registrar-asiento.jsp</result> 
+            <result name="libroCerrado">/WEB-INF/pages-admin/registrar-asiento-libro-cerrado.jsp</result>
         </action>
         
         <action name="DetalleLibroRegistroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.DetalleLibroRegistroComprasAction">

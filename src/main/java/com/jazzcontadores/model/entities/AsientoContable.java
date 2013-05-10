@@ -32,6 +32,7 @@ public class AsientoContable implements java.io.Serializable {
     private int numeroCorrelativo;
     private Date fecha;
     private String glosa;
+    private Date fechaHoraRegistro;
     private List<DetalleCargo> detallesCargo = new ArrayList<DetalleCargo>();
     private List<DetalleAbono> detallesAbono = new ArrayList<DetalleAbono>();
 
@@ -101,6 +102,16 @@ public class AsientoContable implements java.io.Serializable {
 
     public void setGlosa(String glosa) {
         this.glosa = glosa;
+    }
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "fechaHoraRegistro", nullable = false)
+    public Date getFechaHoraRegistro() {
+        return fechaHoraRegistro;
+    }
+
+    public void setFechaHoraRegistro(Date fechaHoraRegistro) {
+        this.fechaHoraRegistro = fechaHoraRegistro;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "asientoContable")

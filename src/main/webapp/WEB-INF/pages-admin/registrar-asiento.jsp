@@ -216,7 +216,7 @@
                             </div>
                         </div>
 
-                        <s:form action="" method="post" cssClass="inputForm">
+                        <s:form action="AsientoAction_save?ruc=%{empresaCliente.ruc}" method="post" cssClass="inputForm">
 
                             <fieldset id="rAsientoForm_comprobantePago">
                                 <legend class="little2">Datos de asiento</legend>

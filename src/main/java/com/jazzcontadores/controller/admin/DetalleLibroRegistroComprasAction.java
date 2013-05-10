@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -77,10 +78,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         LibroRegistroComprasDAO libroComprasDAO = factory.getLibroRegistroComprasDAO();
-        ComprobanteCompraDAO cCompraDAO = factory.getComprobanteCompraDAO();
-        TipoComprobantePagoODocumentoDAO tipoComprobanteDAO = factory.getTipoComprobantePagoODocumentoDAO();
         ProveedorDAO proveedorDAO = factory.getProveedorDAO();
-        TipoDocumentoIdentidadDAO tipoDocDAO = factory.getTipoDocumentoIdentidadDAO();
 
         // buscar si existe un Libro Reg. Compras con el periodo adecuado, si no existe creamos uno nuevo
         // ********* modificar algoritmo cuando la fecha frontera sea mayor que 1 ***********        
@@ -89,14 +87,13 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         // para los periodos de los libros, el día es 1 siempre
         cPeriodo.set(Calendar.DAY_OF_MONTH, 1);
 
-        Calendar cFechaFin = (Calendar) cPeriodo.clone();
-        cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
-
         LibroRegistroCompras libroExistente = libroComprasDAO.findByPeriodo(this.getEmpresaCliente().getRuc(), cPeriodo.getTime());
 
         try {
             if (libroExistente == null) {
-                System.out.println("No existe libro :(");
+                Calendar cFechaFin = (Calendar) cPeriodo.clone();
+                cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
+
                 LibroRegistroCompras libroRCNuevo = new LibroRegistroCompras();
                 libroRCNuevo.setPeriodo(cPeriodo.getTime());
                 libroRCNuevo.setFechaInicio(cPeriodo.getTime());
@@ -127,7 +124,8 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 //this.getDetalleLRC().setImporteTotal(this.getDetalleLRC().getComprobanteCompra().getImporteTotal());                
                 this.getDetalleLRC().setLibroRegistroCompras(libroRCNuevo); // no se puede obviar
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
-                for (DetalleComprobanteCompra d : this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra()) {
+                for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
+                    DetalleComprobanteCompra d = it.next();
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
                 }
 
@@ -184,7 +182,6 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
-
         EmpresaCliente e = factory.getEmpresaClienteDAO().findByRuc(ruc);
         this.setEmpresaCliente(e);
 

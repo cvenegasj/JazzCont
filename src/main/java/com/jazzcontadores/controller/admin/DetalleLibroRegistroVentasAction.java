@@ -81,13 +81,13 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         // para los periodos de los libros, el día es 1 siempre
         cPeriodo.set(Calendar.DAY_OF_MONTH, 1);
 
-        Calendar cFechaFin = (Calendar) cPeriodo.clone();
-        cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
-
         LibroRegistroVentas libroExistente = libroVentasDAO.findByPeriodo(this.getEmpresaCliente().getRuc(), cPeriodo.getTime());
 
         try {
             if (libroExistente == null) {
+                Calendar cFechaFin = (Calendar) cPeriodo.clone();
+                cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
+
                 LibroRegistroVentas libroRVNuevo = new LibroRegistroVentas();
                 libroRVNuevo.setPeriodo(cPeriodo.getTime());
                 libroRVNuevo.setFechaInicio(cPeriodo.getTime());
@@ -115,7 +115,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                     DetalleComprobanteVenta d = it.next();
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
                 }
-                
+
                 libroRVNuevo.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
 
             } else if (!libroExistente.isEstaCerrado()) {
@@ -127,7 +127,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                 } else {
                     this.getDetalleLRV().getComprobanteVenta().setComprador(comprador);
                 }
-                
+
                 this.getDetalleLRV().setLibroRegistroVentas(libroExistente); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
