@@ -31,7 +31,7 @@
         <!-- Token input -->
         <link type="text/css" href="<s:url value="/css/token-input.css"/>" rel="stylesheet" />
         <script type="text/javascript" src="<s:url value="/js/jquery.tokeninput.js"/>"></script>
-        
+
         <!-- JQuery number plugin -->
         <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
 
@@ -56,11 +56,13 @@
                 
                 $("#fechaAsiento").datepicker({dateFormat: 'dd/mm/yy'}); 
                 
-                $(".jazzToken").tokenInput([{id: 3, name: "test"}, {id: 5, name: "test2"}, {id: 7, name: "test3"}, {id: 9, name: "test4"}], {
+                $("#inputCuentaCargo, #inputCuentaAbono").tokenInput("UtilityAjaxAction_listCuentasContables", {
+                    queryParam: "term",
                     searchDelay: 0,                   
                     tokenLimit: 1,
                     hintText: "Ingrese el nombre de la cuenta",
-                    tokenValue: "name"
+                    propertyToSearch: "nombreResumido",
+                    tokenValue: "nombreResumido"
                 });
                 
                 // variables para calcular totales
@@ -86,12 +88,18 @@
                         return;
                     }
                     
-                    if (/^\d+(\.\d{1,2})?$/.test(importe)) {
-                        // todo ok, se agrega la siguiente fila 
-                        var importeF = $.number(importe, 2);
-                        var fila = "<tr>\n\
-                                    <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
-                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + "</td>\n\
+                    if (!/^\d+(\.\d{1,2})?$/.test(importe)) {
+                        alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
+                        return;
+                    }
+                    // todo ok, se agrega la siguiente fila 
+                    var importeF = $.number(importe, 2);
+                    var numeroCuenta = cuenta.split(/\s+/).shift();
+                                       
+                    var fila = "<tr>\n\
+                                    <td>" + '<s:textfield name="asiento.detallesCargo[' + indexCargo + '].importe" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + 
+                                            '<s:textfield name="asiento.detallesCargo[' + indexCargo + '].registroCuentaContable.cuentaContable.numero" value="'+ numeroCuenta + '" readonly="true" cssClass="hide inputLarge2" />' + "</td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
@@ -99,20 +107,16 @@
                                     <td></td>\n\
                                     </tr>";
             
-                        $(event.target).parents("tr").before(fila);
-                        // se calcula el total del cargo 
-                        totalCargo += parseFloat(importe);                        
-                        $("#totalCargo").text($.number(totalCargo, 2));
-                        // se limpian los input text
-                        $("#inputCuentaCargo").tokenInput("clear").focus();
-                        $("#inputImporteCargo").val("");
+                    $(event.target).parents("tr").before(fila);
+                    // se calcula el total del cargo 
+                    totalCargo += parseFloat(importe);                        
+                    $("#totalCargo").text($.number(totalCargo, 2));
+                    // se limpian los input text
+                    $("#inputCuentaCargo").tokenInput("clear").focus();
+                    $("#inputImporteCargo").val("");
                         
-                        indexCargo++;
-                        
-                    } else {
-                        alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
-                    }
-                    
+                    indexCargo++;
+                       
                 })
                 
                 $("#btnAbono").click(function(event) {
@@ -131,40 +135,41 @@
                         return;
                     }
                     
-                    if (/^\d+(\.\d{1,2})?$/.test(importe)) {
-                        // todo ok, se agrega la siguiente fila 
-                        var importeF = $.number(importe, 2);
+                    if (!/^\d+(\.\d{1,2})?$/.test(importe)) {
+                        alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
+                        return;
+                    }
+                    // todo ok, se agrega la siguiente fila 
+                    var importeF = $.number(importe, 2);
+                    var numeroCuenta = cuenta.split(/\s+/).shift();
                                                 
-                        var fila = "<tr>\n\
+                    var fila = "<tr>\n\
                                     <td></td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
                                     <td></td>\n\
-                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + "</td>\n\
-                                    <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="" value="'+ cuenta + '" readonly="true" cssClass="inputLarge2" />' + 
+                                            '<s:textfield name="asiento.detallesAbono[' + indexAbono + '].registroCuentaContable.cuentaContable.numero" value="'+ numeroCuenta + '" readonly="true" cssClass="hide inputLarge2" />' + "</td>\n\
+                                    <td>" + '<s:textfield name="asiento.detallesAbono[' + indexAbono + '].importe" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                     <td></td>\n\
                                     </tr>";
             
-                        $(event.target).parents("tr").before(fila);
+                    $(event.target).parents("tr").before(fila);
                         
-                        // borra la letra a
-                        $(event.target).parents("tr").children("td:nth-child(4)").html("");
-                        // posiciona la letra a
-                        $("#tbodyAbono tr:first-child").children("td:nth-child(4)").html("a");
+                    // borra la letra a
+                    $(event.target).parents("tr").children("td:nth-child(4)").html("");
+                    // posiciona la letra a
+                    $("#tbodyAbono tr:first-child").children("td:nth-child(4)").html("a");
                         
-                        // se calcula el total del Abono
-                        totalAbono += parseFloat(importe);
-                        $("#totalAbono").text($.number(totalAbono, 2));                        
-                        // se limpian los input text                        
-                        $("#inputCuentaAbono").tokenInput("clear").focus();
-                        $("#inputImporteAbono").val("");
+                    // se calcula el total del Abono
+                    totalAbono += parseFloat(importe);
+                    $("#totalAbono").text($.number(totalAbono, 2));                        
+                    // se limpian los input text                        
+                    $("#inputCuentaAbono").tokenInput("clear").focus();
+                    $("#inputImporteAbono").val("");
                         
-                        indexAbono++;
-                        
-                    } else {
-                        alert("El formato del importe es incorrecto, solo debe contener números y 2 dígitos decimales");
-                    }
-                    
+                    indexAbono++;
+                                    
                 })
             });     
         </script>
@@ -200,9 +205,9 @@
                 <%@ include file="/WEB-INF/jspf/lateral_izq_admin.jspf" %>
 
                 <div id="contentArea">
-                    
+
                     <%@ include file="/WEB-INF/jspf/header_cliente_sesion_admin.jspf" %>
-                    
+
                     <div id="headerContentArea">
                         <h1 class="medium">Registrar nuevo asiento</h1>
                     </div>                    
@@ -222,9 +227,9 @@
                                 <legend class="little2">Datos de asiento</legend>
                                 <dl>
                                     <dt>Fecha</dt>
-                                    <dd><s:textfield name="" id="fechaAsiento" placeholder="" /></dd>
+                                    <dd><s:textfield name="asiento.fecha" id="fechaAsiento" placeholder="" /></dd>
                                     <dt>Glosa o descripción de la operación</dt>
-                                    <dd><s:textfield name="" id="glosaAsiento" placeholder="" /></dd>
+                                    <dd><s:textfield name="asiento.glosa" id="glosaAsiento" placeholder="" /></dd>
                                 </dl>
                             </fieldset>
                             <fieldset>
@@ -244,7 +249,7 @@
                                     <tbody id="tbodyCargo">
                                         <tr>
                                             <td><input type="text" id="inputImporteCargo" class="inputLittle border1" /></td>
-                                            <td><input type="text" id="inputCuentaCargo" class="jazzToken" /></td>
+                                            <td><input type="text" id="inputCuentaCargo" /></td>
                                             <td><button id="btnCargo" class="button"><span class="label">OK</span></button></td>
                                             <td></td>
                                             <td></td>
@@ -258,7 +263,7 @@
                                             <td></td>
                                             <td></td>
                                             <td>a</td>
-                                            <td><input type="text" id="inputCuentaAbono" class="jazzToken" /></td>
+                                            <td><input type="text" id="inputCuentaAbono" /></td>
                                             <td><input type="text" id="inputImporteAbono" class="inputLittle border1" /></td>
                                             <td><button id="btnAbono" class="button"><span class="label">OK</span></button></td>
                                         </tr>
@@ -276,7 +281,7 @@
                                     </tfoot>
                                 </table>
                             </fieldset>  
-                            
+
                             <div class="footer_form2">
                                 <s:submit type="submit" cssClass="oneClick" value="Registrar" />
                             </div>

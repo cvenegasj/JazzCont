@@ -6,6 +6,7 @@ package com.jazzcontadores.model.daoimpl;
 
 import com.jazzcontadores.model.dao.CuentaContableDAO;
 import com.jazzcontadores.model.entities.CuentaContable;
+import java.util.List;
 
 /**
  *
@@ -13,4 +14,17 @@ import com.jazzcontadores.model.entities.CuentaContable;
  */
 public class CuentaContableDAOImpl extends GenericDAOImpl<CuentaContable, String>
         implements CuentaContableDAO {
+
+    @Override
+    public List<CuentaContable> findByTerm(String term) {
+        List<CuentaContable> listaCuentas;
+
+        listaCuentas = (List<CuentaContable>) getSession().createQuery("from CuentaContable c "
+                + "where c.numero like :term "
+                + "or c.denominacion like :term "
+                + "order by c.numero")
+                .setString("term", "%" + term + "%").list();
+
+        return listaCuentas;
+    }
 }

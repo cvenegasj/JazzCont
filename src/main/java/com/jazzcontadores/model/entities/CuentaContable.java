@@ -25,24 +25,24 @@ public class CuentaContable implements java.io.Serializable {
     private String numero;
     private CuentaContable cuentaContablePadre;
     private String denominacion;
-    private byte idClasificacionCuenta;
+    private ClasificacionCuenta clasificacionCuenta;
     private Set<CuentaContable> cuentasContablesHijas = new HashSet<CuentaContable>();
     private List<RegistroCuentaContable> registrosCuentaContable = new ArrayList<RegistroCuentaContable>();
 
     public CuentaContable() {
     }
 
-    public CuentaContable(String numero, String denominacion, byte idClasificacionCuenta) {
+    public CuentaContable(String numero, String denominacion, ClasificacionCuenta clasificacionCuenta) {
         this.numero = numero;
         this.denominacion = denominacion;
-        this.idClasificacionCuenta = idClasificacionCuenta;
+        this.clasificacionCuenta = clasificacionCuenta;
     }
 
-    public CuentaContable(String numero, CuentaContable cuentacontable, String denominacion, byte idClasificacionCuenta, Set<CuentaContable> cuentacontables, List<RegistroCuentaContable> registrocuentacontables) {
+    public CuentaContable(String numero, CuentaContable cuentacontable, String denominacion, ClasificacionCuenta clasificacionCuenta, Set<CuentaContable> cuentacontables, List<RegistroCuentaContable> registrocuentacontables) {
         this.numero = numero;
         this.cuentaContablePadre = cuentacontable;
         this.denominacion = denominacion;
-        this.idClasificacionCuenta = idClasificacionCuenta;
+        this.clasificacionCuenta = clasificacionCuenta;
         this.cuentasContablesHijas = cuentacontables;
         this.registrosCuentaContable = registrocuentacontables;
     }
@@ -76,13 +76,14 @@ public class CuentaContable implements java.io.Serializable {
         this.denominacion = denominacion;
     }
 
-    @Column(name = "idClasificacionCuenta", nullable = false)
-    public byte getIdClasificacionCuenta() {
-        return this.idClasificacionCuenta;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idClasificacionCuenta", nullable = false)    
+    public ClasificacionCuenta getClasificacionCuenta() {
+        return this.clasificacionCuenta;
     }
 
-    public void setIdClasificacionCuenta(byte idClasificacionCuenta) {
-        this.idClasificacionCuenta = idClasificacionCuenta;
+    public void setClasificacionCuenta(ClasificacionCuenta clasificacionCuenta) {
+        this.clasificacionCuenta = clasificacionCuenta;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cuentaContablePadre")

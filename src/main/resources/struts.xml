@@ -164,9 +164,6 @@
         
         
         
-        
-        
-        
         <!-- Acciones Ajax -->
         <action name="ClienteAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ClienteAjaxAction">
             <result name="showDialogClientes" type="json">                 
@@ -209,6 +206,14 @@
                 <param name="includeProperties">
                     mensaje
                 </param>    
+            </result>
+        </action>
+        
+        <action name="UtilityAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.UtilityAjaxAction">
+            <result name="listCuentasContables" type="json"> 
+                <param name="root">
+                    listaCuentasSrl                    
+                </param>
             </result>
         </action>
     </package> 

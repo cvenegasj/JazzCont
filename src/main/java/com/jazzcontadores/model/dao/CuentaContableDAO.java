@@ -5,10 +5,13 @@
 package com.jazzcontadores.model.dao;
 
 import com.jazzcontadores.model.entities.CuentaContable;
+import java.util.List;
 
 /**
  *
  * @author Venegas
  */
 public interface CuentaContableDAO extends GenericDAO<CuentaContable, String> {
+
+    List<CuentaContable> findByTerm(String term);
 }

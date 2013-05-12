@@ -71,7 +71,7 @@ public class AsientoAction extends ActionSupport {
                 libroDSNuevo.setEstaCerrado(false);
                 libroDSNuevo.setEmpresaCliente(this.getEmpresaCliente());
                 
-                libroDiarioSimpDAO.makePersistent(libroDSNuevo);
+                //libroDiarioSimpDAO.makePersistent(libroDSNuevo);
                 
                 this.getAsiento().setLibroDiarioSimplificado(libroDSNuevo);
                 this.getAsiento().setFechaHoraRegistro(new Date());
