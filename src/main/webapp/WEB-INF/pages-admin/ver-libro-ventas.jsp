@@ -20,13 +20,19 @@
 
         <!-- Botones estilo Google+ -->
         <link type="text/css" href="<s:url value="/css/css3-buttons.css"/>" rel="stylesheet" />
-        
+        <!-- Ext JS css -->
+        <link type="text/css" href="<s:url value="/extjs-4.2.0/resources/css/ext-all-neptune.css"/>" rel="stylesheet" />
+
         <link type="text/css" href="<s:url value="/css/custom-theme/jquery-ui-1.9.1.custom.min.css"/>" rel="stylesheet" />	
         <script type="text/javascript" src="<s:url value="/js/jquery-1.7.2.min.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/jquery-ui-1.9.1.custom.min.js"/>"></script> 
 
         <script type="text/javascript" src="<s:url value="/js/jquery.placeholder.min.js"/>"></script> 
         <script type="text/javascript" src="<s:url value="/js/scripts.js"/>"></script>
+
+        <!-- Ext JS js -->
+        <script type="text/javascript" src="<s:url value="/extjs-4.2.0/ext-all.js"/>"></script>        
+        <script type="text/javascript" src="<s:url value="/js/reg-ventas-ext.js"/>"></script>
 
         <script type="text/javascript"> 
             $(function() {
@@ -322,10 +328,8 @@
                                 </tr>
                             </tbody>
                         </table> 
-
                     </div>
-
-
+                    <div id="libroVentasExt"></div>  
                 </div>
                 <div class="spacer"></div>
 

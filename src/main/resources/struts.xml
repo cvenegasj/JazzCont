@@ -209,6 +209,14 @@
             </result>
         </action>
         
+        <action name="LibrosAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibrosAjaxAction">
+            <result name="listCuentasContables" type="json"> 
+                <param name="root">
+                    listaCuentasSrl                    
+                </param>
+            </result>
+        </action>
+        
         <action name="UtilityAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.UtilityAjaxAction">
             <result name="listCuentasContables" type="json"> 
                 <param name="root">

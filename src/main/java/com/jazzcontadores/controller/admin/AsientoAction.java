@@ -7,11 +7,15 @@ package com.jazzcontadores.controller.admin;
 import com.jazzcontadores.model.dao.EmpresaClienteDAO;
 import com.jazzcontadores.model.dao.LibroDiarioSimplificadoDAO;
 import com.jazzcontadores.model.entities.AsientoContable;
+import com.jazzcontadores.model.entities.DetalleAbono;
+import com.jazzcontadores.model.entities.DetalleCargo;
 import com.jazzcontadores.model.entities.EmpresaCliente;
 import com.jazzcontadores.model.entities.LibroDiarioSimplificado;
 import com.jazzcontadores.util.DAOFactory;
 import com.jazzcontadores.util.HibernateUtil;
 import com.opensymphony.xwork2.ActionSupport;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -106,7 +110,30 @@ public class AsientoAction extends ActionSupport {
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-
+        BigDecimal totalCargo = new BigDecimal("0.00");
+        BigDecimal totalAbono = new BigDecimal("0.00");
+        totalCargo.setScale(2, RoundingMode.HALF_EVEN);
+        totalAbono.setScale(2, RoundingMode.HALF_EVEN);
+        
+        if (this.getAsiento().getDetallesAbono().isEmpty()) {
+            addActionError("Debe especificar las cuentas que se abonan.");
+        }
+        
+        if (this.getAsiento().getDetallesCargo().isEmpty()) {
+            addActionError("Debe especificar las cuentas que se cargan.");
+        }
+        
+        for (DetalleCargo detalleCargo : this.getAsiento().getDetallesCargo()) {
+            totalCargo = totalCargo.add(detalleCargo.getImporte());
+        }
+        
+        for (DetalleAbono detalleAbono : this.getAsiento().getDetallesAbono()) {
+            totalAbono = totalAbono.add(detalleAbono.getImporte());
+        }
+        
+        if (totalCargo.compareTo(totalAbono) != 0) {
+            addActionError("El total de cargos no coincide con el total de abonos.");
+        }
 
     }
 

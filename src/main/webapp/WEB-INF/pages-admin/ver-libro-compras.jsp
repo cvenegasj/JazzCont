@@ -20,13 +20,28 @@
 
         <!-- Botones estilo Google+ -->
         <link type="text/css" href="<s:url value="/css/css3-buttons.css"/>" rel="stylesheet" />
-
+        <!-- Ext JS css -->
+        <link type="text/css" href="<s:url value="/extjs-4.1.1/resources/css/ext-neptune-scoped.css"/>" rel="stylesheet" />
+        
         <link type="text/css" href="<s:url value="/css/custom-theme/jquery-ui-1.9.1.custom.min.css"/>" rel="stylesheet" />	
         <script type="text/javascript" src="<s:url value="/js/jquery-1.7.2.min.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/jquery-ui-1.9.1.custom.min.js"/>"></script> 
 
         <script type="text/javascript" src="<s:url value="/js/jquery.placeholder.min.js"/>"></script> 
         <script type="text/javascript" src="<s:url value="/js/scripts.js"/>"></script>
+
+        <script>
+            // Necesario para que no se arruine el layout!
+            Ext = {
+                buildSettings:{
+                    "scopeResetCSS": true  // Thanks, but I'll do my own scoping please
+                }
+            };
+        </script>
+        <!-- Ext JS js -->
+        <script type="text/javascript" src="<s:url value="/extjs-4.1.1/ext-all.js"/>"></script>        
+        <script type="text/javascript" src="<s:url value="/js/reg-compras-ext.js"/>"></script>
+
 
         <script type="text/javascript"> 
             $(function() {
@@ -438,12 +453,10 @@
                                     <td></td>                                    
                                 </tr>
                             </tbody>
-                        </table>                                                
-
+                        </table>
                     </div>
-
-
-                </div>
+                    <div id="libroComprasExt"></div>
+                </div>                        
                 <div class="spacer"></div>
 
                 <%@ include file="/WEB-INF/jspf/dialog_select_cliente.jspf" %> 
@@ -452,6 +465,7 @@
         </div>
 
         <!-- footer -->                    
-        <%@ include file="/WEB-INF/jspf/footer.jspf" %>        
+        <%@ include file="/WEB-INF/jspf/footer.jspf" %>   
+
     </body>
 </html>

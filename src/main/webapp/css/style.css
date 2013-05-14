@@ -13,7 +13,8 @@ html {
 }
 
 body {
-    background: none repeat scroll 0 0 #FCFCFB;
+    background: none repeat scroll 0 0 #FCFCFB !important; 
+    /*background-color: #FCFCFB !important;*/
     color: #000;
     font-family: 'Dosis', sans-serif;
     font-weight: 400;
