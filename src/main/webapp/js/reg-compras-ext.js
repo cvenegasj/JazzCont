@@ -1,97 +1,413 @@
-Ext.Loader.setConfig({
-    enabled: true
-});
-
 Ext.require([
     'Ext.grid.*',
     'Ext.data.*',
-    'Ext.selection.CheckboxModel'
-]);
+    'Ext.util.*',
+    'Ext.state.*',
+    'Ext.toolbar.Paging',
+    'Ext.ModelManager'    
+    ]);
 
-Ext.onReady(function(){
-    Ext.define('Company', {
+Ext.onReady(function() {
+       
+    Ext.define('DetalleLibroRegistroCompras', {
         extend: 'Ext.data.Model',
         fields: [
-            {name: 'company'},
-            {name: 'price', type: 'float'},
-            {name: 'change', type: 'float'},
-            {name: 'pctChange', type: 'float'},
-            {name: 'lastChange', type: 'date', dateFormat: 'n/j h:ia'},
-            {name: 'industry'},
-            {name: 'desc'}
-         ]
+        {
+            name: 'idDetalleLibroRegistroCompras', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroCorrelativo', 
+            type: 'auto'
+        },
+        {
+            name: 'tipoAdquisicionGravada', 
+            type: 'auto'
+        },
+        {
+            name: 'baseImponible1', 
+            type: 'auto'
+        },
+        {
+            name: 'igv1', 
+            type: 'auto'
+        },
+        {
+            name: 'baseImponible2', 
+            type: 'auto'
+        },
+        {
+            name: 'igv2', 
+            type: 'auto'
+        },
+        {
+            name: 'baseImponible3', 
+            type: 'auto'
+        },
+        {
+            name: 'igv3', 
+            type: 'auto'
+        },
+        {
+            name: 'valorAdquisicionesNoGravadas', 
+            type: 'auto'
+        },
+        {
+            name: 'isc', 
+            type: 'auto'
+        },
+        {
+            name: 'otrosTributosYcargos', 
+            type: 'auto'
+        },
+        {
+            name: 'importeTotal', 
+            type: 'auto'
+        },
+        {
+            name: 'tipoCambio', 
+            type: 'auto'
+        },{
+            name: 'numeroCompPagoSujNoDom', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroConstDepDetraccion', 
+            type: 'auto'
+        },
+        {
+            name: 'fechaEmisionConstDepDetraccion', 
+            type: 'auto'
+        },{
+            name: 'numeroFinalOperDiariasSinCredFiscal', 
+            type: 'auto'
+        },{
+            name: 'marcaComprobanteSujetoAretencion', 
+            type: 'auto'
+        },{
+            name: 'fechaHoraRegistro', 
+            type: 'auto'
+        },          
+        // comprobante
+        {
+            name: 'idComprobanteCompra', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'serieComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'anioEmisionDuaOdsiComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'fechaEmisionComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'fechaVencimientoOpagoComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'baseComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'igvComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'importeTotalComprobante', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroTipoComprobante', 
+            type: 'auto'
+        },        
+        // proveedor
+        {
+            name: 'numeroTipoDocIdentidadProveedor', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroDocIdentidadProveedor', 
+            type: 'auto'
+        },
+        {
+            name: 'razonSocialProveedor', 
+            type: 'auto'
+        },        
+        // comprobante referenciado
+        {
+            name: 'idComprobanteCompraReferenciado', 
+            type: 'auto'
+        },
+        {
+            name: 'fechaComprobanteCompraReferenciado', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroTipoComprobanteCompraReferenciado', 
+            type: 'auto'
+        },
+        {
+            name: 'serieComprobanteCompraReferenciado', 
+            type: 'auto'
+        },
+        {
+            name: 'numeroComprobanteCompraReferenciado', 
+            type: 'auto'
+        }  
+        ]
     });
-    // Array data for the grids
-    Ext.grid.dummyData = [
-        ['3m Co',71.72,0.02,0.03,'9/1 12:00am', 'Manufacturing'],
-        ['Alcoa Inc',29.01,0.42,1.47,'9/1 12:00am', 'Manufacturing'],
-        ['Altria Group Inc',83.81,0.28,0.34,'9/1 12:00am', 'Manufacturing'],
-        ['American Express Company',52.55,0.01,0.02,'9/1 12:00am', 'Finance'],
-        ['American International Group, Inc.',64.13,0.31,0.49,'9/1 12:00am', 'Services'],
-        ['AT&T Inc.',31.61,-0.48,-1.54,'9/1 12:00am', 'Services'],
-        ['Boeing Co.',75.43,0.53,0.71,'9/1 12:00am', 'Manufacturing'],
-        ['Caterpillar Inc.',67.27,0.92,1.39,'9/1 12:00am', 'Services'],
-        ['Citigroup, Inc.',49.37,0.02,0.04,'9/1 12:00am', 'Finance'],
-        ['E.I. du Pont de Nemours and Company',40.48,0.51,1.28,'9/1 12:00am', 'Manufacturing'],
-        ['Exxon Mobil Corp',68.1,-0.43,-0.64,'9/1 12:00am', 'Manufacturing'],
-        ['General Electric Company',34.14,-0.08,-0.23,'9/1 12:00am', 'Manufacturing'],
-        ['General Motors Corporation',30.27,1.09,3.74,'9/1 12:00am', 'Automotive'],
-        ['Hewlett-Packard Co.',36.53,-0.03,-0.08,'9/1 12:00am', 'Computer'],
-        ['Honeywell Intl Inc',38.77,0.05,0.13,'9/1 12:00am', 'Manufacturing'],
-        ['Intel Corporation',19.88,0.31,1.58,'9/1 12:00am', 'Computer'],
-        ['International Business Machines',81.41,0.44,0.54,'9/1 12:00am', 'Computer'],
-        ['Johnson & Johnson',64.72,0.06,0.09,'9/1 12:00am', 'Medical'],
-        ['JP Morgan & Chase & Co',45.73,0.07,0.15,'9/1 12:00am', 'Finance'],
-        ['McDonald\'s Corporation',36.76,0.86,2.40,'9/1 12:00am', 'Food'],
-        ['Merck & Co., Inc.',40.96,0.41,1.01,'9/1 12:00am', 'Medical'],
-        ['Microsoft Corporation',25.84,0.14,0.54,'9/1 12:00am', 'Computer'],
-        ['Pfizer Inc',27.96,0.4,1.45,'9/1 12:00am', 'Medical'],
-        ['The Coca-Cola Company',45.07,0.26,0.58,'9/1 12:00am', 'Food'],
-        ['The Home Depot, Inc.',34.64,0.35,1.02,'9/1 12:00am', 'Retail'],
-        ['The Procter & Gamble Company',61.91,0.01,0.02,'9/1 12:00am', 'Manufacturing'],
-        ['United Technologies Corporation',63.26,0.55,0.88,'9/1 12:00am', 'Computer'],
-        ['Verizon Communications',35.57,0.39,1.11,'9/1 12:00am', 'Services'],
-        ['Wal-Mart Stores, Inc.',45.45,0.73,1.63,'9/1 12:00am', 'Retail'],
-        ['Walt Disney Company (The) (Holding Company)',29.89,0.24,0.81,'9/1 12:00am', 'Services']
-    ];
 
-    // add in some dummy descriptions
-    for(var i = 0; i < Ext.grid.dummyData.length; i++){
-        Ext.grid.dummyData[i].push('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed metus nibh, sodales a, porta at, vulputate eget, dui. Pellentesque ut nisl. ');
-    }
+    var QueryString = function () {
+        // This function is anonymous, is executed immediately and 
+        // the return value is assigned to QueryString!
+        var query_string = {};
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = pair[1];
+            // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [ query_string[pair[0]], pair[1] ];
+                query_string[pair[0]] = arr;
+            // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(pair[1]);
+            }
+        } 
+        return query_string;
+    } ();
 
+    var store = Ext.create('Ext.data.Store', {
+        pageSize: 10,
+        model: 'DetalleLibroRegistroCompras',
+        autoLoad: true,
+        proxy: {
+            type: 'ajax',
+            url : 'LibrosAjaxAction_listDetallesRC?ruc=' + QueryString.ruc + '&idLibro=' + QueryString.idLibro,
+            reader: {
+                type: 'json'                
+            }
+        }      
+    });
 
-    Ext.QuickTips.init();
-
-    var getLocalStore = function() {
-        return Ext.create('Ext.data.ArrayStore', {
-            model: 'Company',
-            data: Ext.grid.dummyData
-        });
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // Grid 2
-    ////////////////////////////////////////////////////////////////////////////////////////
-    var grid2 = Ext.create('Ext.grid.Panel', {
-        id: 'grid2',
-        store: getLocalStore(),
-        selType: 'checkboxmodel',
-        columns: [
-            {text: "Company", width: 200, dataIndex: 'company'},
-            {text: "Price", renderer: Ext.util.Format.usMoney, dataIndex: 'price'},
-            {text: "Change", dataIndex: 'change'},
-            {text: "% Change", dataIndex: 'pctChange'},
-            {text: "Last Updated", width: 135, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
-        ],
+    // create the Grid
+    var grid = Ext.create('Ext.grid.Panel', {
+        store: store,
         columnLines: true,
-        width: 840,
-        height: 400,
-        frame: true,
-        title: 'Registro de compras - 06/2012',
-        iconCls: 'icon-grid',
-        margin: '0 0 20 0',
+        columns: [{
+            text     : 'Número correlativo del registro o código único de la operación',
+            width    : 85,
+            sortable : true,
+            dataIndex: 'numeroCorrelativo'
+        }, {
+            text     : 'Fecha de emisión del comprobante de pago o documento',
+            width    : 105,
+            sortable : true,
+            renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+            dataIndex: 'fechaEmisionComprobante'
+        }, {
+            text     : 'Fecha de vencimiento o fecha de pago',
+            width    : 105,
+            sortable : true,
+            renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+            dataIndex: 'fechaVencimientoOpagoComprobante'
+        }, {
+            text: 'Comprobante de pago o documento',
+            columns: [{
+                text     : 'Tipo (Tabla 10)',
+                width    : 75,
+                sortable : true,                
+                dataIndex: 'numeroTipoComprobante'
+            }, {
+                text     : 'Serie o código de la dependencia aduanera (Tabla 11)',
+                width    : 85,
+                sortable : true,                
+                dataIndex: 'serieComprobante'
+            }, {
+                text     : 'Año de emisión de la DUA o DSI',
+                width    : 75,
+                sortable : true,                
+                dataIndex: 'anioEmisionDuaOdsiComprobante'
+            }]
+        }, {
+            text: 'N° del comprobante de pago, documento, N° de orden del formulario físico o virtual, N° de DUA, DSI \n\
+                     o liquidación de cobranza u otros documetos emitidos por SUNAT para acreditar el crédito fiscal en la importación',
+            width: 200,
+            sortable: true,
+            dataIndex: 'numeroComprobante'
+        }, {
+            text: 'Información del proveedor',
+            columns: [{
+                text     : 'Documento de identidad',
+                columns: [{
+                    text     : 'Tipo (Tabla 2)',
+                    width    : 85,
+                    sortable : true,                    
+                    dataIndex: 'numeroTipoDocIdentidadProveedor'
+                }, {
+                    text     : 'Número',
+                    width    : 125,
+                    sortable : true,                    
+                    dataIndex: 'numeroDocIdentidadProveedor'
+                }]
+            }, {
+                text     : 'Apellidos y nombres, denominación o Razón Social',
+                width    : 295,
+                sortable : true,                
+                dataIndex: 'razonSocialProveedor'
+            }]
+        }, {
+            text     : 'Adquisiciones gravadas destinadas a operaciones gravadas y/o de exportación',
+            columns: [{
+                text     : 'Base imponible',
+                width    : 105,
+                sortable : true,  
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'baseImponible1'
+            }, {
+                text     : 'IGV',
+                width    : 105,
+                sortable : true,   
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'igv1'
+            }]
+        }, {
+            text     : 'Adquisiciones gravadas destinadas a operaciones gravadas y/o de exportación y a operaciones no gravadas',
+            columns: [{
+                text     : 'Base imponible',
+                width    : 105,
+                sortable : true,   
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'baseImponible2'
+            }, {
+                text     : 'IGV',
+                width    : 105,
+                sortable : true,  
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'igv2'
+            }]
+        }, {
+            text     : 'Adquisiciones gravadas destinadas a operaciones no gravadas',
+            columns: [{
+                text     : 'Base imponible',
+                width    : 105,
+                sortable : true,  
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'baseImponible3'
+            }, {
+                text     : 'IGV',
+                width    : 105,
+                sortable : true,  
+                tdCls: 'align-right-td',
+                renderer: Ext.util.Format.numberRenderer('0.00'),
+                dataIndex: 'igv3'
+            }]
+        },{
+            text     : 'Valor de las adquisiciones no gravadas',
+            width    : 105,
+            sortable : true,  
+            tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
+            dataIndex: 'valorAdquisicionesNoGravadas'
+        }, {
+            text     : 'ISC',
+            width    : 105,
+            sortable : true,  
+            tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
+            dataIndex: 'isc'
+        }, {
+            text     : 'Otros tributos y cargos',
+            width    : 105,
+            sortable : true,   
+            tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
+            dataIndex: 'otrosTributosYcargos'
+        }, {
+            text     : 'Importe total',
+            width    : 105,
+            sortable : true, 
+            tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
+            dataIndex: 'importeTotal'
+        }, {
+            text     : 'N° de comprobante de pago emitido por sujeto no domiciliado',
+            width    : 105,
+            sortable : true,
+            dataIndex: 'numeroCompPagoSujNoDom'
+        }, {
+            text     : 'Constancia de depósito de detracción',
+            columns: [{
+                text     : 'Número',
+                width    : 105,
+                sortable : true,                
+                dataIndex: 'numeroConstDepDetraccion'
+            }, {
+                text     : 'Fecha de emisión',
+                width    : 105,
+                sortable : true,
+                renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+                dataIndex: 'fechaEmisionConstDepDetraccion'
+            }]
+        }, {
+            text     : 'Tipo de cambio',
+            width    : 105,
+            sortable : true,  
+            tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
+            dataIndex: 'tipoCambio'
+        }, {
+            text: 'Referencia del comprobante de pago o documento original que se modifica',
+            columns: [{
+                text     : 'Fecha',
+                width    : 105,
+                sortable : true,
+                renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+                dataIndex: 'fechaComprobanteCompraReferenciado'
+            }, {
+                text     : 'Tipo (Tabla 10)',
+                width    : 75,
+                sortable : true,                
+                dataIndex: 'numeroTipoComprobanteCompraReferenciado'
+            }, {
+                text     : 'Serie',
+                width    : 85,
+                sortable : true,                
+                dataIndex: 'serieComprobanteCompraReferenciado'
+            }, {
+                text     : 'N° del comprobante de pago o documento',
+                width    : 105,
+                sortable : true,                
+                dataIndex: 'numeroComprobanteCompraReferenciado'
+            }]
+        }],
+        height: 450,
+        width: 840,         
+        // paging bar on the bottom
+        bbar: Ext.create('Ext.PagingToolbar', {
+            store: store,
+            displayInfo: true,
+            displayMsg: 'Mostrando registros {0} - {1} de {2}',
+            emptyMsg: "No hay registros que mostrar"            
+        }),
+        title: 'Registro Compras ' + QueryString.prd,        
         renderTo: 'libroComprasExt'
-    });
-
+    });   
 });

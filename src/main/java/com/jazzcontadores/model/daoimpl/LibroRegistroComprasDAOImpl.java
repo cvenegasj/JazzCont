@@ -18,14 +18,28 @@ public class LibroRegistroComprasDAOImpl extends GenericDAOImpl<LibroRegistroCom
     @Override
     public LibroRegistroCompras findByPeriodo(long ruc, Date periodo) {
         LibroRegistroCompras libroRegistroCompras;
-        
+
         libroRegistroCompras = (LibroRegistroCompras) getSession().createQuery("from LibroRegistroCompras l "
                 + "where l.empresaCliente.ruc = :ruc "
                 + "and l.periodo = :periodo")
                 .setLong("ruc", ruc)
                 .setDate("periodo", periodo)
                 .uniqueResult();
-        
+
+        return libroRegistroCompras;
+    }
+
+    @Override
+    public LibroRegistroCompras findByIdAndEmpresa(long ruc, int idLibroRegistroCompras) {
+        LibroRegistroCompras libroRegistroCompras;
+
+        libroRegistroCompras = (LibroRegistroCompras) getSession().createQuery("from LibroRegistroCompras l "
+                + "where l.empresaCliente.ruc = :ruc "
+                + "and l.id = :idLibroRegistroCompras")
+                .setLong("ruc", ruc)
+                .setInteger("idLibroRegistroCompras", idLibroRegistroCompras)
+                .uniqueResult();
+
         return libroRegistroCompras;
     }
 }

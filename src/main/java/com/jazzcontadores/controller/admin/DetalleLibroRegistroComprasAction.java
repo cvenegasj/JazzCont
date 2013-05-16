@@ -14,6 +14,7 @@ import com.jazzcontadores.model.dao.TipoDocumentoIdentidadDAO;
 import com.jazzcontadores.model.entities.CodigoAduana;
 import com.jazzcontadores.model.entities.DetalleComprobanteCompra;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
+import com.jazzcontadores.model.entities.DetalleLibroRegistroVentas;
 import com.jazzcontadores.model.entities.EmpresaCliente;
 import com.jazzcontadores.model.entities.LibroRegistroCompras;
 import com.jazzcontadores.model.entities.Proveedor;
@@ -25,6 +26,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -124,6 +127,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 //this.getDetalleLRC().setImporteTotal(this.getDetalleLRC().getComprobanteCompra().getImporteTotal());                
                 this.getDetalleLRC().setLibroRegistroCompras(libroRCNuevo); // no se puede obviar
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
+                this.getDetalleLRC().setNumeroCorrelativo(1); // libro nuevo, primer detalle
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
@@ -158,7 +162,31 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
                 }
 
-                libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
+                // reordenamos la lista de detalles
+                Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroCompras()
+                        .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1)
+                        .getComprobanteCompra().getFechaEmision();
+                if (this.getDetalleLRC().getComprobanteCompra().getFechaEmision().before(ultimaFechaRegistrada)) {                    
+                    this.getDetalleLRC().setNumeroCorrelativo(1000000); // se pone al último de la lista
+                    libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
+                    // reordenamos la lista
+                    Collections.sort(libroExistente.getDetallesLibroRegistroCompras(), new Comparator<DetalleLibroRegistroCompras>() {
+                        @Override
+                        public int compare(DetalleLibroRegistroCompras d1, DetalleLibroRegistroCompras d2) {
+                            return d1.getComprobanteCompra().getFechaEmision().compareTo(d2.getComprobanteCompra().getFechaEmision());
+                        }
+                    });
+                    // establecemos el numero correlativo
+                    for (int i = 0; i < libroExistente.getDetallesLibroRegistroCompras().size(); i++) {
+                        // se reordena la lista de detalles
+                        libroExistente.getDetallesLibroRegistroCompras().get(i).setNumeroCorrelativo(i + 1);
+                    }
+                } else {
+                    // le asignamos el último número correlativo más 1
+                    int ultimoNCorrelativo = libroExistente.getDetallesLibroRegistroCompras()
+                            .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1).getNumeroCorrelativo();
+                    this.getDetalleLRC().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                }
 
             } else {
                 return "libroCerrado";

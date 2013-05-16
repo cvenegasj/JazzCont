@@ -283,7 +283,7 @@
                             </fieldset>  
 
                             <div class="footer_form2">
-                                <s:submit type="submit" cssClass="oneClick" value="Registrar" />
+                                <s:submit type="submit" cssClass="" value="Registrar" />
                             </div>
                         </s:form> 
                     </div>

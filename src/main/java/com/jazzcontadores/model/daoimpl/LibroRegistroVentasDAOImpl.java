@@ -28,4 +28,18 @@ public class LibroRegistroVentasDAOImpl extends GenericDAOImpl<LibroRegistroVent
 
         return libroRegistroVentas;
     }
+
+    @Override
+    public LibroRegistroVentas findByIdAndEmpresa(long ruc, int idLibroRegistroVentas) {
+        LibroRegistroVentas libroRegistroVentas;
+
+        libroRegistroVentas = (LibroRegistroVentas) getSession().createQuery("from LibroRegistroVentas l "
+                + "where l.empresaCliente.ruc = :ruc "
+                + "and l.id = :idLibroRegistroVentas")
+                .setLong("ruc", ruc)
+                .setInteger("idLibroRegistroVentas", idLibroRegistroVentas)
+                .uniqueResult();
+
+        return libroRegistroVentas;
+    }
 }

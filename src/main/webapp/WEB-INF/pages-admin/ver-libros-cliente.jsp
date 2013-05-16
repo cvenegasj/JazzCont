@@ -48,35 +48,38 @@
                 //************** 
                 
                 $("#selectLibroCompras").change(function() {
-                    var selectedOption = $("#selectLibroCompras option:selected").val();
+                    var selectedVal = $("#selectLibroCompras option:selected").val();
+                    var selectedText = $("#selectLibroCompras option:selected").text();
                     
-                    if(selectedOption == "Seleccione mes") {
+                    if(selectedVal == -1) {
                         return;
                     }
 
-                    var urlDestino = "LibroComprasAction_show?ruc=<%= request.getParameter("ruc")%>&periodo=" + selectedOption;
+                    var urlDestino = "LibroComprasAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
                     window.location = urlDestino;
                 });
                 
                 $("#selectLibroVentas").change(function() {
-                    var selectedOption = $("#selectLibroVentas option:selected").val();
+                    var selectedVal = $("#selectLibroVentas option:selected").val();
+                    var selectedText = $("#selectLibroVentas option:selected").text();
                     
-                    if(selectedOption == "Seleccione mes") {
+                    if(selectedVal == -1) {
                         return;
                     }
 
-                    var urlDestino = "LibroVentasAction_show?ruc=<%= request.getParameter("ruc")%>&periodo=" + selectedOption;
+                    var urlDestino = "LibroVentasAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
                     window.location = urlDestino;
                 });
                 
                 $("#selectLibroDiarioS").change(function() {
-                    var selectedOption = $("#selectLibroDiarioS option:selected").val();
+                    var selectedVal = $("#selectLibroDiarioS option:selected").val();
+                    var selectedText = $("#selectLibroDiarioS option:selected").text();
                     
-                    if(selectedOption == "Seleccione mes") {
+                    if(selectedVal == -1) {
                         return;
                     }
 
-                    var urlDestino = "LibroDiarioSimplificadoAction_show?ruc=<%= request.getParameter("ruc")%>&periodo=" + selectedOption;
+                    var urlDestino = "LibroDiarioSimplificadoAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
                     window.location = urlDestino;
                 });
             }); 
@@ -121,42 +124,32 @@
                     </div>                    
 
                     <div id="libros_wrapper">
+
                         <div class="libro_wrapper">
-                            <a id="libroCompras" href="#">Libro de Registro de Compras</a><span> - obligatorio</span>
+                            <a id="libroCompras" href="#">Libro de Registro de Compras</a><span> - obligatorio</span>                                
                             <div class="libroMeses">
-                                <select id="selectLibroCompras">
-                                    <option>Seleccione mes</option>                                   
-                                    <option>06/2012</option>
-                                    <option>07/2012</option>
-                                    <option>08/2012</option>
-                                </select>
+                                <s:select id="selectLibroCompras" name="" list="empresaCliente.librosRegistroCompras" 
+                                          headerKey="-1" headerValue="Seleccione mes"
+                                          listKey="idLibroRegistroCompras" listValue="%{new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)}" />
                             </div>
-                        </div>
+                        </div> 
                         <div class="libro_wrapper">
                             <a id="libroVentas" href="#">Libro de Registro de Ventas e Ingresos</a><span> - obligatorio</span>
                             <div class="libroMeses">
-                                <select id="selectLibroVentas">
-                                    <option>Seleccione mes</option>                                   
-                                    <option>06/2012</option>
-                                    <option>07/2012</option>
-                                    <option>08/2012</option>
-                                </select>
+                                <s:select id="selectLibroVentas" name="" list="empresaCliente.librosRegistroVentas" 
+                                          headerKey="-1" headerValue="Seleccione mes"
+                                          listKey="idLibroRegistroVentas" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
                             </div>
                         </div>
                         <div class="libro_wrapper">
                             <a id="libroDiarioS" href="#">Libro Diario Simplificado</a><span> - obligatorio</span>
-                            <div class="libroMeses">
-                                <select id="selectLibroDiarioS">
-                                    <option>Seleccione mes</option>                                   
-                                    <option>06/2012</option>
-                                    <option>07/2012</option>
-                                    <option>08/2012</option>
-                                </select>
+                            <div class="libroMeses">                               
+                                <s:select id="selectLibroDiarioS" name="" list="empresaCliente.librosDiarioSimplificados" 
+                                          headerKey="-1" headerValue="Seleccione mes"
+                                          listKey="idLibroDiarioSimplificado" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
                             </div>
                         </div>  
-
                     </div>
-
 
                 </div>
                 <div class="spacer"></div>

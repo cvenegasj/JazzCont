@@ -110,7 +110,13 @@ public class EmpresaClienteAction extends ActionSupport {
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         EmpresaClienteDAO empresaDAO = factory.getEmpresaClienteDAO();
 
-        this.setEmpresaCliente(empresaDAO.findByRuc(getRuc()));
+        EmpresaCliente e = empresaDAO.findByRuc(ruc);
+
+        if (e != null) {
+            this.setEmpresaCliente(e);
+        } else {
+            return ERROR;
+        }
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return "show";

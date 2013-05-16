@@ -23,6 +23,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -111,6 +113,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                 //this.getDetalleLRV().setImporteTotal(this.getDetalleLRV().getComprobanteVenta().getImporteTotal());
                 this.getDetalleLRV().setLibroRegistroVentas(libroRVNuevo); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
+                this.getDetalleLRV().setNumeroCorrelativo(1); // libro nuevo, primer detalle
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
@@ -134,8 +137,34 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                     DetalleComprobanteVenta d = it.next();
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
                 }
-
-                libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
+                
+                // reordenamos la lista de detalles
+                Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroVentas()
+                        .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1)
+                        .getComprobanteVenta().getFechaEmision();
+                if (this.getDetalleLRV().getComprobanteVenta().getFechaEmision().before(ultimaFechaRegistrada)) {                    
+                    this.getDetalleLRV().setNumeroCorrelativo(1000000);// se pone al último de la lista
+                    libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
+                    // reordenamos la lista
+                    Collections.sort(libroExistente.getDetallesLibroRegistroVentas(), new Comparator<DetalleLibroRegistroVentas>() {
+                        @Override
+                        public int compare(DetalleLibroRegistroVentas d1, DetalleLibroRegistroVentas d2) {
+                            return d1.getComprobanteVenta().getFechaEmision().compareTo(d2.getComprobanteVenta().getFechaEmision());
+                        }
+                    });
+                    // establecemos el numero correlativo
+                    for (int i = 0; i < libroExistente.getDetallesLibroRegistroVentas().size(); i++) {
+                        // se reordena la lista de detalles
+                        libroExistente.getDetallesLibroRegistroVentas().get(i).setNumeroCorrelativo(i + 1);
+                    }
+                } else {
+                    // le asignamos el último número correlativo más 1
+                    int ultimoNCorrelativo = libroExistente.getDetallesLibroRegistroVentas()
+                            .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1).getNumeroCorrelativo();
+                    this.getDetalleLRV().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                    
+                    libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
+                }                
 
             } else {
                 return "libroCerrado";

@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "tipocomprobantepagoodocumento", catalog = "jazzcontadores")
 public class TipoComprobantePagoODocumento implements java.io.Serializable {
 
-    private byte numero;
+    private Byte numero;
     private String descripcion;
 
     public TipoComprobantePagoODocumento() {
@@ -26,11 +26,11 @@ public class TipoComprobantePagoODocumento implements java.io.Serializable {
 
     @Id
     @Column(name = "numero", unique = true, nullable = false)
-    public byte getNumero() {
+    public Byte getNumero() {
         return this.numero;
     }
 
-    public void setNumero(byte numero) {
+    public void setNumero(Byte numero) {
         this.numero = numero;
     }
 

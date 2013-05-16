@@ -14,4 +14,6 @@ import java.util.Date;
 public interface LibroRegistroVentasDAO extends GenericDAO<LibroRegistroVentas, Integer> {
 
     LibroRegistroVentas findByPeriodo(long ruc, Date periodo);
+
+    LibroRegistroVentas findByIdAndEmpresa(long ruc, int idLibroRegistroVentas);
 }

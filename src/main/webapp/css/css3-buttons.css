@@ -653,6 +653,7 @@ div.dropdown-slider {
 	display: none;
 	
 	overflow: hidden;
+        z-index: 100;
 	
 	margin: 0 2px 5px 2px;
 	position: absolute;

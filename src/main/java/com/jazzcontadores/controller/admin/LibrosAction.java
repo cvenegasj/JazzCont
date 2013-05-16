@@ -27,14 +27,18 @@ public class LibrosAction extends ActionSupport {
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         EmpresaClienteDAO empresaDAO = factory.getEmpresaClienteDAO();
 
-        EmpresaCliente e = empresaDAO.findByRuc(ruc);
+        EmpresaCliente e = empresaDAO.findByRuc(this.getRuc());
 
         if (e != null) {
+            // inicializamos el lazy load para mostrar en la vista
+            e.getLibrosRegistroCompras().size();
+            e.getLibrosRegistroVentas().size();
+            e.getLibrosDiarioSimplificados().size();
             this.setEmpresaCliente(e);
         } else {
             return ERROR;
         }
-
+        
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return SUCCESS;
     }

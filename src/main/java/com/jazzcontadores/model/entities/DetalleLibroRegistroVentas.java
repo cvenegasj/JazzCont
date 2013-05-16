@@ -31,7 +31,7 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
     private ComprobanteVenta comprobanteVenta;
     private LibroRegistroVentas libroRegistroVentas;
     private ComprobanteVenta comprobanteVentaReferenciado;
-    private int numeroCorrelativo;
+    private Integer numeroCorrelativo;
     private BigDecimal valorFacturadoExportacion;
     private BigDecimal baseImponibleOpGravada;
     private BigDecimal totalOperacionExonerada;
@@ -118,11 +118,11 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
     }
 
     @Column(name = "numeroCorrelativo", nullable = false)
-    public int getNumeroCorrelativo() {
+    public Integer getNumeroCorrelativo() {
         return this.numeroCorrelativo;
     }
 
-    public void setNumeroCorrelativo(int numeroCorrelativo) {
+    public void setNumeroCorrelativo(Integer numeroCorrelativo) {
         this.numeroCorrelativo = numeroCorrelativo;
     }
 

@@ -13,8 +13,8 @@ import java.util.Date;
  */
 public class DetalleLibroRegistroVentasSerializable {
 
-    private int idDetalleLibroRegistroVentas;
-    private int numeroCorrelativo;
+    private Integer idDetalleLibroRegistroVentas;
+    private Integer numeroCorrelativo;
     private BigDecimal valorFacturadoExportacion;
     private BigDecimal baseImponibleOpGravada;
     private BigDecimal totalOperacionExonerada;
@@ -31,36 +31,40 @@ public class DetalleLibroRegistroVentasSerializable {
     private Date fechaHoraRegistro;
     // comprobanteVenta
     private Integer idComprobanteVenta;
-    private byte numeroTipoComprobante;
+    private Date fechaEmisionComprobante;
+    private Date fechaVencimientoComprobante;
+    private BigDecimal baseComprobante;
+    private BigDecimal igvComprobante;
+    private BigDecimal importeTotalComprobante;
+    private Byte numeroTipoComprobante;
     private String serieComprobante;
     private String numeroComprobante;
     private String numeroTipoDocIdentidadComprador;
     private String numeroDocIdentidadComprador;
     private String razonSocialONombresComprador;
-    private Date fechaComprobanteReferenciado;
     // comprobanteReferenciado
     private Integer idComprobanteVentaReferenciado;
     private Date fechaComprobanteVentaReferenciado;
-    private byte numeroTipoComprobanteVentaReferenciado;
+    private Byte numeroTipoComprobanteVentaReferenciado;
     private String serieComprobanteVentaReferenciado;
     private String numeroComprobanteVentaReferenciado;
 
     public DetalleLibroRegistroVentasSerializable() {
     }
 
-    public int getIdDetalleLibroRegistroVentas() {
+    public Integer getIdDetalleLibroRegistroVentas() {
         return idDetalleLibroRegistroVentas;
     }
 
-    public void setIdDetalleLibroRegistroVentas(int idDetalleLibroRegistroVentas) {
+    public void setIdDetalleLibroRegistroVentas(Integer idDetalleLibroRegistroVentas) {
         this.idDetalleLibroRegistroVentas = idDetalleLibroRegistroVentas;
     }
 
-    public int getNumeroCorrelativo() {
+    public Integer getNumeroCorrelativo() {
         return numeroCorrelativo;
     }
 
-    public void setNumeroCorrelativo(int numeroCorrelativo) {
+    public void setNumeroCorrelativo(Integer numeroCorrelativo) {
         this.numeroCorrelativo = numeroCorrelativo;
     }
 
@@ -184,11 +188,11 @@ public class DetalleLibroRegistroVentasSerializable {
         this.idComprobanteVenta = idComprobanteVenta;
     }
 
-    public byte getNumeroTipoComprobante() {
+    public Byte getNumeroTipoComprobante() {
         return numeroTipoComprobante;
     }
 
-    public void setNumeroTipoComprobante(byte numeroTipoComprobante) {
+    public void setNumeroTipoComprobante(Byte numeroTipoComprobante) {
         this.numeroTipoComprobante = numeroTipoComprobante;
     }
 
@@ -232,14 +236,6 @@ public class DetalleLibroRegistroVentasSerializable {
         this.razonSocialONombresComprador = razonSocialONombresComprador;
     }
 
-    public Date getFechaComprobanteReferenciado() {
-        return fechaComprobanteReferenciado;
-    }
-
-    public void setFechaComprobanteReferenciado(Date fechaComprobanteReferenciado) {
-        this.fechaComprobanteReferenciado = fechaComprobanteReferenciado;
-    }
-
     public Integer getIdComprobanteVentaReferenciado() {
         return idComprobanteVentaReferenciado;
     }
@@ -256,11 +252,11 @@ public class DetalleLibroRegistroVentasSerializable {
         this.fechaComprobanteVentaReferenciado = fechaComprobanteVentaReferenciado;
     }
 
-    public byte getNumeroTipoComprobanteVentaReferenciado() {
+    public Byte getNumeroTipoComprobanteVentaReferenciado() {
         return numeroTipoComprobanteVentaReferenciado;
     }
 
-    public void setNumeroTipoComprobanteVentaReferenciado(byte numeroTipoComprobanteVentaReferenciado) {
+    public void setNumeroTipoComprobanteVentaReferenciado(Byte numeroTipoComprobanteVentaReferenciado) {
         this.numeroTipoComprobanteVentaReferenciado = numeroTipoComprobanteVentaReferenciado;
     }
 
@@ -278,5 +274,45 @@ public class DetalleLibroRegistroVentasSerializable {
 
     public void setNumeroComprobanteVentaReferenciado(String numeroComprobanteVentaReferenciado) {
         this.numeroComprobanteVentaReferenciado = numeroComprobanteVentaReferenciado;
+    }
+
+    public Date getFechaEmisionComprobante() {
+        return fechaEmisionComprobante;
+    }
+
+    public void setFechaEmisionComprobante(Date fechaEmisionComprobante) {
+        this.fechaEmisionComprobante = fechaEmisionComprobante;
+    }
+
+    public Date getFechaVencimientoComprobante() {
+        return fechaVencimientoComprobante;
+    }
+
+    public void setFechaVencimientoComprobante(Date fechaVencimientoComprobante) {
+        this.fechaVencimientoComprobante = fechaVencimientoComprobante;
+    }
+
+    public BigDecimal getBaseComprobante() {
+        return baseComprobante;
+    }
+
+    public void setBaseComprobante(BigDecimal baseComprobante) {
+        this.baseComprobante = baseComprobante;
+    }
+
+    public BigDecimal getIgvComprobante() {
+        return igvComprobante;
+    }
+
+    public void setIgvComprobante(BigDecimal igvComprobante) {
+        this.igvComprobante = igvComprobante;
+    }
+
+    public BigDecimal getImporteTotalComprobante() {
+        return importeTotalComprobante;
+    }
+
+    public void setImporteTotalComprobante(BigDecimal importeTotalComprobante) {
+        this.importeTotalComprobante = importeTotalComprobante;
     }
 }

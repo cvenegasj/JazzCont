@@ -12,6 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -210,6 +211,7 @@ public class EmpresaCliente implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "empresaCliente")
+    @OrderBy("periodo")
     public List<LibroRegistroCompras> getLibrosRegistroCompras() {
         return this.librosRegistroCompras;
     }
@@ -219,6 +221,7 @@ public class EmpresaCliente implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "empresaCliente")
+    @OrderBy("periodo")
     public List<LibroRegistroVentas> getLibrosRegistroVentas() {
         return this.librosRegistroVentas;
     }
@@ -237,6 +240,7 @@ public class EmpresaCliente implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "empresaCliente")
+    @OrderBy("periodo")
     public List<LibroDiarioSimplificado> getLibrosDiarioSimplificados() {
         return this.librosDiarioSimplificados;
     }
