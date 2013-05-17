@@ -6,8 +6,6 @@ package com.jazzcontadores.controller.admin;
 
 import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroVentas;
-import com.jazzcontadores.model.entities.LibroRegistroCompras;
-import com.jazzcontadores.model.entities.LibroRegistroVentas;
 import com.jazzcontadores.util.DAOFactory;
 import com.jazzcontadores.util.DetalleLibroRegistroComprasSerializable;
 import com.jazzcontadores.util.DetalleLibroRegistroVentasSerializable;
@@ -25,6 +23,10 @@ public class LibrosAjaxAction extends ActionSupport {
     private boolean success; // for ext
     private long ruc;
     private int idLibro;
+    private int page;
+    private int start;
+    private int limit;
+    private int totalCount;
     private List<DetalleLibroRegistroVentasSerializable> listaDetallesRVSrl = new ArrayList<DetalleLibroRegistroVentasSerializable>();
     private List<DetalleLibroRegistroComprasSerializable> listaDetallesRCSrl = new ArrayList<DetalleLibroRegistroComprasSerializable>();
 
@@ -33,10 +35,11 @@ public class LibrosAjaxAction extends ActionSupport {
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
 
-        LibroRegistroVentas libroVentas = factory.getLibroRegistroVentasDAO()
-                .findByIdAndEmpresa(this.getRuc(), this.getIdLibro());
+        this.setTotalCount(factory.getLibroRegistroVentasDAO().getTotalCountOfDetallesByLibro(this.getRuc(), this.getIdLibro()));
+        List<DetalleLibroRegistroVentas> detallesRV = factory.getLibroRegistroVentasDAO()
+                .findDetallesByIdLibroAndEmpresa(this.getRuc(), this.getIdLibro(), this.getStart(), this.getLimit());
 
-        for (DetalleLibroRegistroVentas detalle : libroVentas.getDetallesLibroRegistroVentas()) {
+        for (DetalleLibroRegistroVentas detalle : detallesRV) {
             DetalleLibroRegistroVentasSerializable detalleSrl = new DetalleLibroRegistroVentasSerializable();
             detalleSrl.setIdDetalleLibroRegistroVentas(detalle.getIdDetalleLibroRegistroVentas());
             detalleSrl.setNumeroCorrelativo(detalle.getNumeroCorrelativo());
@@ -89,10 +92,11 @@ public class LibrosAjaxAction extends ActionSupport {
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
 
-        LibroRegistroCompras libroCompras = factory.getLibroRegistroComprasDAO()
-                .findByIdAndEmpresa(this.getRuc(), this.getIdLibro());
+        this.setTotalCount(factory.getLibroRegistroComprasDAO().getTotalCountOfDetallesByLibro(this.getRuc(), this.getIdLibro()));
+        List<DetalleLibroRegistroCompras> detallesRC = factory.getLibroRegistroComprasDAO()
+                .findDetallesByIdLibroAndEmpresa(this.getRuc(), this.getIdLibro(), this.getStart(), this.getLimit());
 
-        for (DetalleLibroRegistroCompras detalle : libroCompras.getDetallesLibroRegistroCompras()) {
+        for (DetalleLibroRegistroCompras detalle : detallesRC) {
             DetalleLibroRegistroComprasSerializable detalleSrl = new DetalleLibroRegistroComprasSerializable();
             detalleSrl.setIdDetalleLibroRegistroCompras(detalle.getIdDetalleLibroRegistroCompras());
             detalleSrl.setNumeroCorrelativo(detalle.getNumeroCorrelativo());
@@ -118,7 +122,7 @@ public class LibrosAjaxAction extends ActionSupport {
                 detalleSrl.setBaseImponible3(detalle.getComprobanteCompra().getBase());
                 detalleSrl.setIgv3(detalle.getComprobanteCompra().getIgv());
             }
-            
+
             // comprobante
             detalleSrl.setIdComprobanteCompra(detalle.getComprobanteCompra().getIdComprobanteCompra());
             detalleSrl.setNumeroComprobante(detalle.getComprobanteCompra().getNumero());
@@ -188,5 +192,37 @@ public class LibrosAjaxAction extends ActionSupport {
 
     public void setListaDetallesRCSrl(List<DetalleLibroRegistroComprasSerializable> listaDetallesRCSrl) {
         this.listaDetallesRCSrl = listaDetallesRCSrl;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 }

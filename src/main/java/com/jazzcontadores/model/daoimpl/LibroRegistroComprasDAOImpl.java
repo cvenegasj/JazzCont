@@ -5,8 +5,10 @@
 package com.jazzcontadores.model.daoimpl;
 
 import com.jazzcontadores.model.dao.LibroRegistroComprasDAO;
+import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
 import com.jazzcontadores.model.entities.LibroRegistroCompras;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -41,5 +43,36 @@ public class LibroRegistroComprasDAOImpl extends GenericDAOImpl<LibroRegistroCom
                 .uniqueResult();
 
         return libroRegistroCompras;
+    }
+
+    @Override
+    public List<DetalleLibroRegistroCompras> findDetallesByIdLibroAndEmpresa(long ruc, int idLibroRegistroCompras, int start, int limit) {
+        List<DetalleLibroRegistroCompras> detallesLibroRegistroCompras;
+
+        detallesLibroRegistroCompras = (List<DetalleLibroRegistroCompras>) getSession().createQuery("from DetalleLibroRegistroCompras d "
+                + "where d.libroRegistroCompras.empresaCliente.ruc = :ruc "
+                + "and d.libroRegistroCompras.id = :idLibroRegistroCompras "
+                + "order by d.numeroCorrelativo")
+                .setLong("ruc", ruc)
+                .setInteger("idLibroRegistroCompras", idLibroRegistroCompras)
+                .setFirstResult(start)
+                .setMaxResults(limit)
+                .list();
+
+        return detallesLibroRegistroCompras;
+    }
+
+    @Override
+    public int getTotalCountOfDetallesByLibro(long ruc, int idLibroRegistroCompras) {
+        int count = ((Long) getSession().createQuery("select count(*) "
+                + "from DetalleLibroRegistroCompras d "
+                + "where d.libroRegistroCompras.empresaCliente.ruc = :ruc "
+                + "and d.libroRegistroCompras.id = :idLibroRegistroCompras")
+                .setLong("ruc", ruc)
+                .setInteger("idLibroRegistroCompras", idLibroRegistroCompras)
+                .uniqueResult())
+                .intValue();
+
+        return count;
     }
 }

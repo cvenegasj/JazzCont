@@ -77,7 +77,7 @@ Ext.onReady(function() {
         },
         {
             name: 'fechaEmisionConstDepDetraccion', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },{
             name: 'numeroFinalOperDiariasSinCredFiscal', 
             type: 'auto'
@@ -107,11 +107,11 @@ Ext.onReady(function() {
         },
         {
             name: 'fechaEmisionComprobante', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'fechaVencimientoOpagoComprobante', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'baseComprobante', 
@@ -149,7 +149,7 @@ Ext.onReady(function() {
         },
         {
             name: 'fechaComprobanteCompraReferenciado', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'numeroTipoComprobanteCompraReferenciado', 
@@ -190,14 +190,16 @@ Ext.onReady(function() {
     } ();
 
     var store = Ext.create('Ext.data.Store', {
-        pageSize: 10,
+        pageSize: 20,
         model: 'DetalleLibroRegistroCompras',
         autoLoad: true,
         proxy: {
             type: 'ajax',
             url : 'LibrosAjaxAction_listDetallesRC?ruc=' + QueryString.ruc + '&idLibro=' + QueryString.idLibro,
             reader: {
-                type: 'json'                
+                type: 'json',
+                root: 'listaDetallesRCSrl',
+                totalProperty: 'totalCount'
             }
         }      
     });
@@ -398,7 +400,7 @@ Ext.onReady(function() {
                 dataIndex: 'numeroComprobanteCompraReferenciado'
             }]
         }],
-        height: 450,
+        height: 550,
         width: 840,         
         // paging bar on the bottom
         bbar: Ext.create('Ext.PagingToolbar', {

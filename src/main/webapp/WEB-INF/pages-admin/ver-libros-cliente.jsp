@@ -120,13 +120,27 @@
                     <%@ include file="/WEB-INF/jspf/header_cliente_sesion_admin.jspf" %>
 
                     <div id="headerContentArea">
-                        <h1 class="medium">Libros contables: Régimen General, Contabilidad Simplificada</h1>
+                        <h1 class="medium">Libros contables: 
+                            <s:if test="%{empresaCliente.getTipoRegimen() == 'NRUS'}">
+                                <span> Nuevo RUS (NRUS)</span>
+                            </s:if>
+                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER'}">
+                                <span> Régimen Especial (RER)</span>
+                            </s:if>
+                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RG'}">
+                                <span> Régimen General (RG)</span>
+                            </s:if>
+                        </h1>
                     </div>                    
 
                     <div id="libros_wrapper">
 
                         <div class="libro_wrapper">
-                            <a id="libroCompras" href="#">Libro de Registro de Compras</a><span> - obligatorio</span>                                
+                            <a id="libroCompras" href="#">Libro de Registro de Compras</a>
+                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER' || empresaCliente.getTipoRegimen() == 'RG'}">
+                                <span> - obligatorio</span>
+                            </s:if>                            
+
                             <div class="libroMeses">
                                 <s:select id="selectLibroCompras" name="" list="empresaCliente.librosRegistroCompras" 
                                           headerKey="-1" headerValue="Seleccione mes"
@@ -134,21 +148,29 @@
                             </div>
                         </div> 
                         <div class="libro_wrapper">
-                            <a id="libroVentas" href="#">Libro de Registro de Ventas e Ingresos</a><span> - obligatorio</span>
+                            <a id="libroVentas" href="#">Libro de Registro de Ventas e Ingresos</a>
+                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER' || empresaCliente.getTipoRegimen() == 'RG'}">
+                                <span> - obligatorio</span>
+                            </s:if>  
+
                             <div class="libroMeses">
                                 <s:select id="selectLibroVentas" name="" list="empresaCliente.librosRegistroVentas" 
                                           headerKey="-1" headerValue="Seleccione mes"
                                           listKey="idLibroRegistroVentas" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
                             </div>
                         </div>
-                        <div class="libro_wrapper">
-                            <a id="libroDiarioS" href="#">Libro Diario Simplificado</a><span> - obligatorio</span>
-                            <div class="libroMeses">                               
-                                <s:select id="selectLibroDiarioS" name="" list="empresaCliente.librosDiarioSimplificados" 
-                                          headerKey="-1" headerValue="Seleccione mes"
-                                          listKey="idLibroDiarioSimplificado" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
-                            </div>
-                        </div>  
+                        <!-- Libro diario simplificado -->
+                        <s:if test="%{empresaCliente.isDiarioSimplificadoHabilitado()}">
+                            <div class="libro_wrapper">
+                                <a id="libroDiarioS" href="#">Libro Diario Simplificado</a><span> - obligatorio</span>
+                                <div class="libroMeses">                               
+                                    <s:select id="selectLibroDiarioS" name="" list="empresaCliente.librosDiarioSimplificados" 
+                                              headerKey="-1" headerValue="Seleccione mes"
+                                              listKey="idLibroDiarioSimplificado" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
+                                </div>
+                            </div>  
+                        </s:if>
+
                     </div>
 
                 </div>

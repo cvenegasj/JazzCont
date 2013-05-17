@@ -211,14 +211,14 @@
         
         <action name="LibrosAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibrosAjaxAction">
             <result name="listDetallesRV" type="json"> 
-                <param name="root">
-                    listaDetallesRVSrl                    
+                <param name="excludeProperties">
+                    success, ruc, idLibro, page, start, limit, listaDetallesRCSrl               
                 </param>
             </result>
             <result name="listDetallesRC" type="json"> 
-                <param name="root">
-                    listaDetallesRCSrl                    
-                </param>
+                <param name="excludeProperties">
+                    success, ruc, idLibro, page, start, limit, listaDetallesRVSrl
+                </param>                                   
             </result>
         </action>
         

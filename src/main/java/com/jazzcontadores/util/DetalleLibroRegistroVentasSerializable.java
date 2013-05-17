@@ -6,6 +6,7 @@ package com.jazzcontadores.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import org.apache.struts2.json.annotations.JSON;
 
 /**
  *
@@ -244,6 +245,7 @@ public class DetalleLibroRegistroVentasSerializable {
         this.idComprobanteVentaReferenciado = idComprobanteVentaReferenciado;
     }
 
+    @JSON(format = "dd/MM/yyyy")
     public Date getFechaComprobanteVentaReferenciado() {
         return fechaComprobanteVentaReferenciado;
     }
@@ -276,6 +278,7 @@ public class DetalleLibroRegistroVentasSerializable {
         this.numeroComprobanteVentaReferenciado = numeroComprobanteVentaReferenciado;
     }
 
+    @JSON(format = "dd/MM/yyyy")
     public Date getFechaEmisionComprobante() {
         return fechaEmisionComprobante;
     }
@@ -284,6 +287,7 @@ public class DetalleLibroRegistroVentasSerializable {
         this.fechaEmisionComprobante = fechaEmisionComprobante;
     }
 
+    @JSON(format = "dd/MM/yyyy")
     public Date getFechaVencimientoComprobante() {
         return fechaVencimientoComprobante;
     }

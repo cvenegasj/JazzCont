@@ -83,11 +83,11 @@ Ext.onReady(function() {
         },
         {
             name: 'fechaEmisionComprobante', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'fechaVencimientoComprobante', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'baseComprobante', 
@@ -133,7 +133,7 @@ Ext.onReady(function() {
         },
         {
             name: 'fechaComprobanteVentaReferenciado', 
-            type: 'auto'
+            type: 'date', dateFormat: 'd/m/Y'
         },
         {
             name: 'numeroTipoComprobanteVentaReferenciado', 
@@ -181,7 +181,9 @@ Ext.onReady(function() {
             type: 'ajax',
             url : 'LibrosAjaxAction_listDetallesRV?ruc=' + QueryString.ruc + '&idLibro=' + QueryString.idLibro,
             reader: {
-                type: 'json'                
+                type: 'json',
+                root: 'listaDetallesRVSrl',
+                totalProperty: 'totalCount'                
             }
         }      
     });
@@ -282,6 +284,7 @@ Ext.onReady(function() {
             width    : 105,
             sortable : true,  
             tdCls: 'align-right-td',
+            renderer: Ext.util.Format.numberRenderer('0.00'),
             dataIndex: 'isc'
         }, {
             text     : 'IGV y/o IPM',
@@ -336,7 +339,7 @@ Ext.onReady(function() {
                 dataIndex: 'numeroComprobanteVentaReferenciado'
             }]
         }],
-        height: 450,
+        height: 550,
         width: 840,         
         // paging bar on the bottom
         bbar: Ext.create('Ext.PagingToolbar', {
