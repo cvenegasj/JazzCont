@@ -46,8 +46,9 @@
                 }); // END document.bind
                 //**************   
                 
-                $("button.btnEditar").on("click", function(event) {
+                $("button.btnEditar").on("click", function(event) {                    
                     var actual = $(event.target).prev("span").text();
+                    alert(actual);
                     $(event.target).parent().next().children(":first-child").val(actual);
                     $(event.target).parent().addClass("hide").next("div").removeClass("hide");
                 });
@@ -210,7 +211,7 @@
                                     <button title="Editar" class="btnEditar smallButton mediumOpacity"><span class="editButtonImage"></span></button>                                                                  
                                 </div>
                                 <div class="hide">
-                                    <input type="text" value="20103065211" />
+                                    <input type="text" value="<s:property value="empresaCliente.ruc" />" />
                                     <button title="Guardar" class="btnGuardar button"><span>Guardar</span></button>
                                     <button title="Cancelar" class="btnCancelar button"><span>Cancelar</span></button>
                                 </div>

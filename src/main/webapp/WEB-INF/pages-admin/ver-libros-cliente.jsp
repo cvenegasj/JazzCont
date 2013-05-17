@@ -162,7 +162,7 @@
                         <!-- Libro diario simplificado -->
                         <s:if test="%{empresaCliente.isDiarioSimplificadoHabilitado()}">
                             <div class="libro_wrapper">
-                                <a id="libroDiarioS" href="#">Libro Diario Simplificado</a><span> - obligatorio</span>
+                                <a id="libroDiarioS" href="#">Libro Diario Simplificado</a>
                                 <div class="libroMeses">                               
                                     <s:select id="selectLibroDiarioS" name="" list="empresaCliente.librosDiarioSimplificados" 
                                               headerKey="-1" headerValue="Seleccione mes"
