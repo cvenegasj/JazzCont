@@ -188,6 +188,14 @@ Ext.onReady(function() {
         }      
     });
 
+    // renderers
+    function renderNumeroComprobante(value, p, record) {
+        if (value == null) {
+            return '';
+        }
+        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idComp="{1}" title="Ver comprobante detallado"></span>', value, value);
+    }
+
     // create the Grid
     var grid = Ext.create('Ext.grid.Panel', {
         store: store,
@@ -223,8 +231,9 @@ Ext.onReady(function() {
                 dataIndex: 'serieComprobante'
             }, {
                 text     : 'Número',
-                width    : 105,
-                sortable : true,                
+                width    : 135,
+                sortable : true, 
+                renderer: renderNumeroComprobante,
                 dataIndex: 'numeroComprobante'
             }]
         }, {
@@ -335,7 +344,8 @@ Ext.onReady(function() {
             }, {
                 text     : 'N° del comprobante de pago o documento',
                 width    : 105,
-                sortable : true,                
+                sortable : true,  
+                renderer: renderNumeroComprobante,
                 dataIndex: 'numeroComprobanteVentaReferenciado'
             }]
         }],

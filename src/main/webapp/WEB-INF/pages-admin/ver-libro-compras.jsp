@@ -50,7 +50,33 @@
                         $('span.toggle').removeClass('active');
                     }
                 }); // END document.bind
-                //**************               
+                //**************   
+                $(document).on("click", "span.verDetallesComprobanteIcon", function() {                    
+                    $("#dialogDetallesComprobante").dialog("open");  
+                    
+                    //$("#dialogDetallesComprobante").html("<span class=\"loadingGif\"></span>");
+                    
+                    // obtener el id del comprobante a extraer de la BD
+                    
+                    
+                    // llamada ajax para obtener los datos
+                    
+                        
+                });
+                
+                $("#dialogDetallesComprobante").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    resizable: false,                    
+                    width: 455,   
+                    height: 455,
+                    buttons: {
+                        "Aceptar": function() {
+                            $(this).dialog("close");                                                        
+                        }
+                    },                    
+                    position: "center"
+                }); 
             });  
         </script>
 
@@ -102,6 +128,110 @@
                 </div>                        
                 <div class="spacer"></div>
 
+                <!-- dialogDetallesComprobante -->
+                <div id="dialogDetallesComprobante" title="Detalles del comprobante">
+                    <div>
+                        <div class="lineaDetalleDialog1">
+                            <div class="lfloat">
+                                <span>Fecha</span>
+                            </div>
+                            <div class="lfloat">
+                                <span>20/12/2012</span>                                
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                        <div class="lineaDetalleDialog1">
+                            <div class="lfloat">
+                                <span>Tipo de comprobante</span>
+                            </div>
+                            <div class="lfloat">
+                                <span>(01) Factura</span>                                
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                        <div class="lineaDetalleDialog1">
+                            <div class="lfloat">
+                                <span>Serie</span>
+                            </div>
+                            <div class="lfloat">
+                                <span>200</span>                                
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                        <div class="lineaDetalleDialog1">
+                            <div class="lfloat">
+                                <span>Número</span>
+                            </div>
+                            <div class="lfloat">
+                                <span>2001</span>                                
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                        <div class="lineaDetalleDialog1">
+                            <div class="lfloat">
+                                <span>Razón Social</span>
+                            </div>
+                            <div class="lfloat">
+                                <span>Empresa Prueba SRL</span>                                
+                            </div>
+                            <div class="spacer"></div>
+                        </div>                        
+                    </div>
+                    <div>
+                        <table class="verDetallesComprobanteTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35px">Cantidad</th>
+                                    <th style="width: 195px">Descripción</th>
+                                    <th style="width: 55px">P. Unitario</th>
+                                    <th style="width: 55px">Importe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Kent HD</td>
+                                    <td class="right">1.00</td>
+                                    <td class="right">3.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Marlboro</td>
+                                    <td class="right">1.00</td>
+                                    <td class="right">3.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Yves Saint Laurent</td>
+                                    <td class="right">1.00</td>
+                                    <td class="right">3.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Lucky Strike</td>
+                                    <td class="right">1.00</td>
+                                    <td class="right">3.00</td>
+                                </tr>                                                              
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="right">Total</th>
+                                    <th class="right">3.00</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="right">Base</th>
+                                    <th class="right">2.00</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="3" class="right">Igv</th>
+                                    <th class="right">1.00</th>
+                                </tr>
+                            </tfoot>                            
+                        </table>
+                    </div>
+                </div>
+                <!-- ********** -->
+                
                 <%@ include file="/WEB-INF/jspf/dialog_select_cliente.jspf" %> 
 
             </div>

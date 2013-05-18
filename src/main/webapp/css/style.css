@@ -954,7 +954,7 @@ textarea {
     padding: 5px;       
 }
 
-.editButtonImage {
+span.editButtonImage {
     background-image: url('../img/iconic/pen_alt_stroke_12x12.png');
     background-position: center center;
     background-repeat: no-repeat;
@@ -968,7 +968,6 @@ textarea {
 
     overflow: hidden;
     text-indent: -9999px;
-
 }
 
 .detalleDatosCliente div:nth-child(2) span + button {
@@ -1164,3 +1163,21 @@ textarea {
     padding-left: 20px;
 }
 
+span.verDetallesComprobanteIcon {
+    background-image: url('../img/iconic/read_more_12x12.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    display: inline-block;
+
+    line-height: 12px;
+    height: 12px;
+    width: 12px;
+    max-width: 12px;
+
+    overflow: hidden;
+    text-indent: -9999px;
+    
+    cursor: pointer;
+    float: right;
+}
