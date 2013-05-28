@@ -193,7 +193,14 @@ Ext.onReady(function() {
         if (value == null) {
             return '';
         }
-        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idComp="{1}" title="Ver comprobante detallado"></span>', value, value);
+        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idComp="{1}" title="Ver comprobante detallado"></span>', value, record.data.idComprobanteVenta);
+    }
+    
+    function renderNumeroComprobanteReferenciado(value, p, record) {
+        if (value == null) {
+            return '';
+        }
+        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idComp="{1}" title="Ver comprobante detallado"></span>', value, record.data.idComprobanteVentaReferenciado);
     }
 
     // create the Grid

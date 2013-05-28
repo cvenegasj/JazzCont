@@ -108,15 +108,14 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                     this.getDetalleLRV().getComprobanteVenta().setComprador(comprador);
                 }
 
-                //this.getDetalleLRV().setBaseImponibleOpGravada(this.getDetalleLRV().getComprobanteVenta().getBase());
-                //this.getDetalleLRV().setIgv_ipm(this.getDetalleLRV().getComprobanteVenta().getIgv());
-                //this.getDetalleLRV().setImporteTotal(this.getDetalleLRV().getComprobanteVenta().getImporteTotal());
                 this.getDetalleLRV().setLibroRegistroVentas(libroRVNuevo); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
                 this.getDetalleLRV().setNumeroCorrelativo(1); // libro nuevo, primer detalle
+                
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
+                    d.getProductoVentas().setPrecio(d.getPrecioUnitario());
                 }
 
                 libroRVNuevo.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
@@ -136,12 +135,14 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
+                    d.getProductoVentas().setPrecio(d.getPrecioUnitario());
                 }
                 
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroVentas()
                         .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1)
                         .getComprobanteVenta().getFechaEmision();
+                // si la fecha de emision del comprobante es anterior a la fecha del último detalle ordenado
                 if (this.getDetalleLRV().getComprobanteVenta().getFechaEmision().before(ultimaFechaRegistrada)) {                    
                     this.getDetalleLRV().setNumeroCorrelativo(1000000);// se pone al último de la lista
                     libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());

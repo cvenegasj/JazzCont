@@ -5,7 +5,6 @@
 package com.jazzcontadores.controller.admin;
 
 import com.jazzcontadores.model.dao.CodigoAduanaDAO;
-import com.jazzcontadores.model.dao.ComprobanteCompraDAO;
 import com.jazzcontadores.model.dao.EmpresaClienteDAO;
 import com.jazzcontadores.model.dao.LibroRegistroComprasDAO;
 import com.jazzcontadores.model.dao.ProveedorDAO;
@@ -14,7 +13,6 @@ import com.jazzcontadores.model.dao.TipoDocumentoIdentidadDAO;
 import com.jazzcontadores.model.entities.CodigoAduana;
 import com.jazzcontadores.model.entities.DetalleComprobanteCompra;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
-import com.jazzcontadores.model.entities.DetalleLibroRegistroVentas;
 import com.jazzcontadores.model.entities.EmpresaCliente;
 import com.jazzcontadores.model.entities.LibroRegistroCompras;
 import com.jazzcontadores.model.entities.Proveedor;
@@ -122,15 +120,14 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     this.getDetalleLRC().getComprobanteCompra().setCodigoAduana(null);
                 }
 
-                //this.getDetalleLRC().setBaseImponible1(this.getDetalleLRC().getComprobanteCompra().getBase());
-                //this.getDetalleLRC().setIgv1(this.getDetalleLRC().getComprobanteCompra().getIgv());
-                //this.getDetalleLRC().setImporteTotal(this.getDetalleLRC().getComprobanteCompra().getImporteTotal());                
                 this.getDetalleLRC().setLibroRegistroCompras(libroRCNuevo); // no se puede obviar
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
                 this.getDetalleLRC().setNumeroCorrelativo(1); // libro nuevo, primer detalle
+                
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
+                    d.getProductoCompras().setPrecio(d.getPrecioUnitario()); // se copia el precio
                 }
 
                 libroRCNuevo.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
@@ -153,19 +150,20 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     this.getDetalleLRC().getComprobanteCompra().setCodigoAduana(null);
                 }
 
-                //this.getDetalleLRC().setBaseImponible1(this.getDetalleLRC().getComprobanteCompra().getBase());
-                //this.getDetalleLRC().setIgv1(this.getDetalleLRC().getComprobanteCompra().getIgv());
-                //this.getDetalleLRC().setImporteTotal(this.getDetalleLRC().getComprobanteCompra().getImporteTotal());
                 this.getDetalleLRC().setLibroRegistroCompras(libroExistente);
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
-                for (DetalleComprobanteCompra d : this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra()) {
+                
+                for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
+                    DetalleComprobanteCompra d = it.next();
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
-                }
+                    d.getProductoCompras().setPrecio(d.getPrecioUnitario()); // se copia el precio
+                }                
 
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroCompras()
                         .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1)
                         .getComprobanteCompra().getFechaEmision();
+                // si la fecha de emision del comprobante es anterior a la fecha del último detalle ordenado
                 if (this.getDetalleLRC().getComprobanteCompra().getFechaEmision().before(ultimaFechaRegistrada)) {                    
                     this.getDetalleLRC().setNumeroCorrelativo(1000000); // se pone al último de la lista
                     libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());

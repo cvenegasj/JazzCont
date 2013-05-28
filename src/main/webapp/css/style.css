@@ -1179,5 +1179,5 @@ span.verDetallesComprobanteIcon {
     text-indent: -9999px;
     
     cursor: pointer;
-    float: right;
+    text-align: right;
 }

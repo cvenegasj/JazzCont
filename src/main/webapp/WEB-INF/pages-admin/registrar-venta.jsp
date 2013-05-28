@@ -82,7 +82,16 @@
                     hintText: "Ingrese el nombre del producto",
                     searchingText: "buscando...",
                     propertyToSearch: "nombre",
-                    tokenValue: "nombre"
+                    tokenValue: "nombre",
+                    onAdd: function(item) {
+                        $("#pUnitarioInput").val(item.precio);                       
+                        var importe = $("#cantidadInput").val() * item.precio;
+                        $("#importeInput").val(importe);
+                    },
+                    onDelete: function() {
+                        $("#pUnitarioInput").val("");
+                        $("#importeInput").val("");                       
+                    }
                 });
                 
                 // variables para calcular totales

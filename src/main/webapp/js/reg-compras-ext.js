@@ -209,7 +209,14 @@ Ext.onReady(function() {
         if (value == null) {
             return '';
         }
-        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idComp="{1}" title="Ver comprobante detallado"></span>', value, value);
+        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idcomp="{1}" title="Ver comprobante detallado"></span>', value, record.data.idComprobanteCompra);
+    }
+    
+    function renderNumeroComprobanteReferenciado(value, p, record) {
+        if (value == null) {
+            return '';
+        }
+        return Ext.String.format('{0}<span class="verDetallesComprobanteIcon" data-idcomp="{1}" title="Ver comprobante detallado"></span>', value, record.data.idComprobanteCompraReferenciado);
     }
 
     // create the Grid
@@ -406,7 +413,7 @@ Ext.onReady(function() {
                 text     : 'N° del comprobante de pago o documento',
                 width    : 105,
                 sortable : true, 
-                renderer: renderNumeroComprobante,
+                renderer: renderNumeroComprobanteReferenciado,
                 dataIndex: 'numeroComprobanteCompraReferenciado'
             }]
         }],

@@ -51,16 +51,32 @@
                     }
                 }); // END document.bind
                 //**************     
-                $(document).on("click", "span.verDetallesComprobanteIcon", function() {                    
+                $(document).on("click", "span.verDetallesComprobanteIcon", function(e) {                    
                     $("#dialogDetallesComprobante").dialog("open");  
-                    
-                    //$("#dialogDetallesComprobante").html("<span class=\"loadingGif\"></span>");
+                    // cargando
+                    $("#dialogDetallesComprobante").html("<span class=\"loadingGif\"></span>");
                     
                     // obtener el id del comprobante a extraer de la BD
-                    
+                    var idComp = $(e.target).attr("data-idcomp");
+                    alert(idComp);
                     
                     // llamada ajax para obtener los datos
-                    
+                    /*$.ajax({
+                        type: "GET",
+                        url: "sffsf",
+                        cache: false,
+                        dataType: "json",
+                        data: {idComp: idComp},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){
+                            alert('Error ' + textStatus);
+                            alert(errorThrown);
+                            alert(XMLHttpRequest.responseText);
+                        },
+                        success: function(data){         
+                            alert('SUCCESS' + '\nDATA: ' + data);
+                            $("").html(data);
+                        }                         
+                    })*/
                         
                 });
                 
@@ -231,7 +247,7 @@
                     </div>
                 </div>
                 <!-- ********** -->
-                
+
                 <%@ include file="/WEB-INF/jspf/dialog_select_cliente.jspf" %> 
 
             </div>
