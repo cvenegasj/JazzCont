@@ -101,10 +101,6 @@
                             
                             var tfoot = "<tfoot>\n\
                                             <tr>\n\
-                                                <th colspan=\"3\" class=\"right\">Total</th>\n\
-                                                <th class=\"right\">" + $.number(data.importeTotal, 2) + "</th>\n\
-                                            </tr>\n\
-                                            <tr>\n\
                                                 <th colspan=\"3\" class=\"right\">Base</th>\n\
                                                 <th class=\"right\">" + $.number(data.base, 2) + "</th>\n\
                                             </tr>\n\
@@ -112,7 +108,10 @@
                                                 <th colspan=\"3\" class=\"right\">Igv</th>\n\
                                                 <th class=\"right\">" + $.number(data.igv, 2) + "</th>\n\
                                             </tr>\n\
-                                        </tfoot>";
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Total</th>\n\
+                                                <th class=\"right\">" + $.number(data.importeTotal, 2) + "</th>\n\
+                                            </tr>\n\</tfoot>";
                             
                             
                             // tabla completa
@@ -263,105 +262,7 @@
 
                 <!-- dialogDetallesComprobante -->
                 <div id="dialogDetallesComprobante" title="Detalles del comprobante">
-                    <div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Fecha</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>20/12/2012</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Tipo de comprobante</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>(01) Factura</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Serie</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>200</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Número</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>2001</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Razón Social</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>Empresa Prueba SRL</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>                        
-                    </div>
-                    <div>
-                        <table class="verDetallesComprobanteTable">
-                            <thead>
-                                <tr>
-                                    <th style="width: 35px">Cantidad</th>
-                                    <th style="width: 195px">Descripción</th>
-                                    <th style="width: 55px">P. Unitario</th>
-                                    <th style="width: 55px">Importe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Kent HD</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Marlboro</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Yves Saint Laurent</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Lucky Strike</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>                                                              
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan="3" class="right">Total</th>
-                                    <th class="right">3.00</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="3" class="right">Base</th>
-                                    <th class="right">2.00</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="3" class="right">Igv</th>
-                                    <th class="right">1.00</th>
-                                </tr>
-                            </tfoot>                            
-                        </table>
-                    </div>
+                   
                 </div>
                 <!-- ********** -->
 

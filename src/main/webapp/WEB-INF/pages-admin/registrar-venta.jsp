@@ -84,10 +84,10 @@
                     propertyToSearch: "nombre",
                     tokenValue: "nombre",
                     onAdd: function(item) {
-                        $("#pUnitarioInput").val(item.precio);                       
+                        $("#pUnitarioInput").val($.number(item.precio, 2, '.', ''));                       
                         var importe = $("#cantidadInput").val() * item.precio;
-                        $("#importeInput").val(importe);
-                        $("#spanIdProducto").text(item.precio);
+                        $("#importeInput").val($.number(importe, 2, '.', ''));
+                        $("#spanIdProducto").text(item.idProductoVentas);
                     },
                     onDelete: function() {
                         $("#pUnitarioInput").val("");
@@ -141,14 +141,14 @@
                     
                     var p = cantidad * pUnitario;
                     
-                    if ($.number(p, 2) != $.number(importe, 2)) {
+                    if ($.number(p, 2, '.', '') != $.number(importe, 2, '.', '')) {
                         alert("El importe no es correcto.");
                         return;
                     }                                        
                     // *************
                     
-                    var pUnitarioF = $.number(pUnitario, 2);
-                    var importeF = $.number(importe, 2);
+                    var pUnitarioF = $.number(pUnitario, 2, '.', '');
+                    var importeF = $.number(importe, 2, '.', '');
                     var idProducto = $("#spanIdProducto").text();
                     if (idProducto == "") {
                         idProducto = 0;
@@ -181,19 +181,19 @@
                     igv = total * 0.18;
                     
                     // se establecen los campos
-                    $("#base").val($.number(base, 2));
-                    $("#igv").val($.number(igv, 2)); 
-                    $("#total").val($.number(total, 2));
-                    $("#baseImponible").val($.number(base, 2));
-                    $("#igvResumen").val($.number(igv, 2));
-                    $("#importeTotal").val($.number(total, 2));
+                    $("#base").val($.number(base, 2, '.', ''));
+                    $("#igv").val($.number(igv, 2, '.', '')); 
+                    $("#total").val($.number(total, 2, '.', ''));
+                    $("#baseImponible").val($.number(base, 2, '.', ''));
+                    $("#igvResumen").val($.number(igv, 2, '.', ''));
+                    $("#importeTotal").val($.number(total, 2, '.', ''));
                     
                     indexDetalle++;                    
                 });
                 
                 $("#pUnitarioInput").on("input", function() {
                     var importe = parseFloat($("#cantidadInput").val()) * parseFloat($("#pUnitarioInput").val());
-                    $("#importeInput").val($.number(importe, 2));
+                    $("#importeInput").val($.number(importe, 2, '.', ''));
                 });
                 
                 // casilla para registrar nuevo comprador
@@ -305,8 +305,8 @@
                                 <legend class="little2">Información del comprador</legend>
                                 <dl>
                                     <dt>
-                                    <input type="checkbox" name="" value="false" id="registrarNuevoComprador"/>
-                                    <label for="registrarNuevoComprador">Registrar nuevo comprador</label>                                    
+                                    <s:checkbox name="nuevoComprador" id="registrarNuevoComprador"/>
+                                    <s:label for="registrarNuevoComprador" value="Registrar nuevo comprador" />                                                                       
                                     </dt>
                                     <dd></dd>
                                     <dt>Apellidos y nombres, denominación o razón social</dt>

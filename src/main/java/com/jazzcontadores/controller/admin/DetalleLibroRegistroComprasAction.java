@@ -41,6 +41,7 @@ import java.util.List;
 public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
     private long ruc;
+    private boolean nuevoProveedor;
     private EmpresaCliente empresaCliente;
     private DetalleLibroRegistroCompras detalleLRC;
     private List<TipoComprobantePagoODocumento> tiposComprobantes = new ArrayList<TipoComprobantePagoODocumento>();
@@ -107,14 +108,9 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 libroComprasDAO.makePersistent(libroRCNuevo);
 
-                // establecemos el proveedor
-                Proveedor proveedor = proveedorDAO.findByTipoDocumentoYNumeroDocumento(
-                        this.getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero(),
-                        this.getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
-                if (proveedor == null) {
+                if (this.isNuevoProveedor()) {
+                    // viene validado, solo es necesario registrar
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
-                } else {
-                    this.getDetalleLRC().getComprobanteCompra().setProveedor(proveedor);
                 }
 
                 if (this.getDetalleLRC().getComprobanteCompra().getCodigoAduana().getNumero() != -1) {
@@ -133,7 +129,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
-                    
+
                     if (d.getProductoCompras().getIdProductoCompras() == 0) {
                         // crear nueva referencia para registrar nuevo producto
                         ProductoCompras pc = new ProductoCompras();
@@ -153,16 +149,14 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
                 libroRCNuevo.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
 
-            } else if (!libroExistente.isEstaCerrado()) {
+            } else {
+                if (libroExistente.isEstaCerrado()) {
+                    return "libroCerrado";
+                }
 
                 // establecemos el proveedor
-                Proveedor proveedor = proveedorDAO.findByTipoDocumentoYNumeroDocumento(
-                        this.getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero(),
-                        this.getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
-                if (proveedor == null) {
+                if (this.isNuevoProveedor()) {
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
-                } else {
-                    this.getDetalleLRC().getComprobanteCompra().setProveedor(proveedor);
                 }
 
                 if (this.getDetalleLRC().getComprobanteCompra().getCodigoAduana().getNumero() != -1) {
@@ -180,7 +174,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
-                   
+
                     if (d.getProductoCompras().getIdProductoCompras() == 0) {
                         // crear nueva referencia para registrar nuevo producto
                         ProductoCompras pc = new ProductoCompras();
@@ -198,14 +192,13 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
                 this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
                 this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
-                libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
+
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroCompras()
                         .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1)
                         .getComprobanteCompra().getFechaEmision();
                 // si la fecha de emision del comprobante es anterior a la fecha del último detalle ordenado
                 if (this.getDetalleLRC().getComprobanteCompra().getFechaEmision().before(ultimaFechaRegistrada)) {
-                    this.getDetalleLRC().setNumeroCorrelativo(1000000); // se pone al último de la lista
                     libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                     // reordenamos la lista
                     Collections.sort(libroExistente.getDetallesLibroRegistroCompras(), new Comparator<DetalleLibroRegistroCompras>() {
@@ -220,14 +213,20 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                         libroExistente.getDetallesLibroRegistroCompras().get(i).setNumeroCorrelativo(i + 1);
                     }
                 } else {
-                    // le asignamos el último número correlativo más 1
-                    int ultimoNCorrelativo = libroExistente.getDetallesLibroRegistroCompras()
-                            .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1).getNumeroCorrelativo();
-                    this.getDetalleLRC().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                    // nos aseguramos que el tamaño sea mayor que 0 para no generar una excepcion
+                    if (libroExistente.getDetallesLibroRegistroCompras().size() > 0) {
+                        // le asignamos el último número correlativo más 1
+                        DetalleLibroRegistroCompras d = libroExistente.getDetallesLibroRegistroCompras().get(libroExistente.getDetallesLibroRegistroCompras().size() - 1);
+                        int ultimoNCorrelativo = d.getNumeroCorrelativo();
+                        this.getDetalleLRC().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                    } else {
+                        this.getDetalleLRC().setNumeroCorrelativo(1);
+                    }
+
+                    libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                 }
 
-            } else {
-                return "libroCerrado";
+
             }
 
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
@@ -258,8 +257,6 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         // llenar los códigos aduaneros
         this.setCodigosAduana(factory.getCodigoAduanaDAO().findAll());
 
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-
         // validaciones
         if (getDetalleLRC().getComprobanteCompra().getFechaEmision() == null) {
             addActionError("Debe especificar la fecha de emisión del comprobante.");
@@ -267,8 +264,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() <= 0) {
             addActionError("Debe especificar el tipo de comprobante (Tabla 10).");
         }
-        if (getDetalleLRC().getComprobanteCompra().getSerie() != null
-                && getDetalleLRC().getComprobanteCompra().getSerie().trim().equals("")) {
+        if (!getDetalleLRC().getComprobanteCompra().getSerie().trim().matches("-|\\w{1,20}")) {
             addActionError("El formato de la serie del comprobante es incorrecto.");
         }
         if (!getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi().trim().equals("")
@@ -300,13 +296,47 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 && !getDetalleLRC().getComprobanteCompra().getProveedor().getRazonSocial().trim().matches("^.{1,60}")) {
             addActionError("El formato de la razón social del proveedor es incorrecto.");
         }
+        // verificar existencia de proveedor
+        if (getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero() != null
+                && getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad() != null) {
+            Proveedor proveedor = factory.getProveedorDAO().findByTipoDocumentoYNumeroDocumento(
+                    this.getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero(),
+                    this.getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
+            if (this.isNuevoProveedor()) {
+                if (proveedor != null) {
+                    addActionError("El proveedor a registrar ya existe en la base de datos.");
+                }
+            } else {
+                getDetalleLRC().getComprobanteCompra().setProveedor(proveedor); // se inyecta el proveedor
+            }
+        }
+        // reglas del formato de libros electronicos
+        if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() != null
+                && getDetalleLRC().getComprobanteCompra().getNumero() != null) {
+            if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 1
+                    || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 3
+                    || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 4
+                    || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 8) {
+                if (!getDetalleLRC().getComprobanteCompra().getSerie().matches("-|\\w{1,4}")) {
+                    addActionError("El número de serie para el tipo de comprobante seleccionado debe tener hasta 4 dígitos.");
+                }
+            }
+            if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 50
+                    || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 52) {
+                if (!getDetalleLRC().getComprobanteCompra().getSerie().matches("-|\\w{1,3}")) {
+                    addActionError("El número de serie para el tipo de comprobante seleccionado debe tener hasta 3 dígitos.");
+                }
+            }
+        }
         // importe total del comprobante
         /*if (getDetalleLRC().getComprobanteCompra().getImporteTotal() == null
-                || getDetalleLRC().getComprobanteCompra().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRC().getComprobanteCompra().getImporteTotal().precision() > 14
-                || getDetalleLRC().getComprobanteCompra().getImporteTotal().scale() > 2) {
-            addActionError("El formato del importe total del comprobante es incorrecto");
-        }*/
+         || getDetalleLRC().getComprobanteCompra().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
+         || getDetalleLRC().getComprobanteCompra().getImporteTotal().precision() > 14
+         || getDetalleLRC().getComprobanteCompra().getImporteTotal().scale() > 2) {
+         addActionError("El formato del importe total del comprobante es incorrecto");
+         }*/
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
 
     public long getRuc() {
@@ -355,5 +385,13 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
     public void setCodigosAduana(List<CodigoAduana> codigosAduana) {
         this.codigosAduana = codigosAduana;
+    }
+
+    public boolean isNuevoProveedor() {
+        return nuevoProveedor;
+    }
+
+    public void setNuevoProveedor(boolean nuevoProveedor) {
+        this.nuevoProveedor = nuevoProveedor;
     }
 }

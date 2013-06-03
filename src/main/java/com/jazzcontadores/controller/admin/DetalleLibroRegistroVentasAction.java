@@ -21,7 +21,6 @@ import com.jazzcontadores.model.entities.TipoDocumentoIdentidad;
 import com.jazzcontadores.util.DAOFactory;
 import com.jazzcontadores.util.HibernateUtil;
 import com.opensymphony.xwork2.ActionSupport;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import java.util.List;
 public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
     private long ruc;
+    private boolean nuevoComprador;
     private EmpresaCliente empresaCliente;
     private DetalleLibroRegistroVentas detalleLRV;
     private List<TipoComprobantePagoODocumento> tiposComprobantes = new ArrayList<TipoComprobantePagoODocumento>();
@@ -75,8 +75,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         LibroRegistroVentasDAO libroVentasDAO = factory.getLibroRegistroVentasDAO();
-        CompradorDAO compradorDAO = factory.getCompradorDAO();
-        ComprobanteVentaDAO cVentaDAO = factory.getComprobanteVentaDAO();
+        CompradorDAO compradorDAO = factory.getCompradorDAO();        
 
         // buscamos libro de registro de ventas existente, sino creamos uno.
         Calendar cPeriodo = new GregorianCalendar();
@@ -87,7 +86,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         LibroRegistroVentas libroExistente = libroVentasDAO.findByPeriodo(this.getEmpresaCliente().getRuc(), cPeriodo.getTime());
 
         try {
-            if (libroExistente == null) {
+            if (libroExistente == null) {                
                 Calendar cFechaFin = (Calendar) cPeriodo.clone();
                 cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
 
@@ -100,14 +99,9 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
                 libroVentasDAO.makePersistent(libroRVNuevo);
 
-                Comprador comprador = compradorDAO.findByTipoDocumentoYNumeroDocumento(
-                        this.getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero(),
-                        this.getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad());
-                if (comprador == null) {
+                if (this.isNuevoComprador()) {
                     compradorDAO.makePersistent(this.getDetalleLRV().getComprobanteVenta().getComprador());
-                } else {
-                    this.getDetalleLRV().getComprobanteVenta().setComprador(comprador);
-                }
+                } 
 
                 this.getDetalleLRV().setLibroRegistroVentas(libroRVNuevo); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
@@ -129,15 +123,14 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
                 libroRVNuevo.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
 
-            } else if (!libroExistente.isEstaCerrado()) {
-                Comprador comprador = compradorDAO.findByTipoDocumentoYNumeroDocumento(
-                        this.getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero(),
-                        this.getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad());
-                if (comprador == null) {
-                    compradorDAO.makePersistent(this.getDetalleLRV().getComprobanteVenta().getComprador());
-                } else {
-                    this.getDetalleLRV().getComprobanteVenta().setComprador(comprador);
+            } else {
+                if (libroExistente.isEstaCerrado()) {
+                    return "libroCerrado";
                 }
+                
+                if (this.isNuevoComprador()) {
+                    compradorDAO.makePersistent(this.getDetalleLRV().getComprobanteVenta().getComprador());
+                } 
 
                 this.getDetalleLRV().setLibroRegistroVentas(libroExistente); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
@@ -185,9 +178,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                     libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
                 }
 
-            } else {
-                return "libroCerrado";
-            }
+            } 
 
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
@@ -225,20 +216,37 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() <= 0) {
             addActionError("Debe especificar el tipo de comprobante (Tabla 10).");
         }
-        if (getDetalleLRV().getComprobanteVenta().getSerie().trim().equals("")) {
+        if (getDetalleLRV().getComprobanteVenta().getSerie() != null 
+                && (!getDetalleLRV().getComprobanteVenta().getSerie().trim().equals("-")
+                || !getDetalleLRV().getComprobanteVenta().getSerie().trim().matches("^\\w{1,20}$"))) {
             addActionError("El formato de la serie del comprobante es incorrecto.");
         }
         if (!getDetalleLRV().getComprobanteVenta().getNumero().trim().equals("")
                 && !getDetalleLRV().getComprobanteVenta().getNumero().trim().matches("^\\d{1,20}")) {
             addActionError("El formato del número de comprobante es incorrecto.");
-        }        
+        }
+        // verificar existencia de comprador
+        if (getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero() != null 
+                && getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad() != null) {
+            Comprador comprador = factory.getCompradorDAO().findByTipoDocumentoYNumeroDocumento(
+                            this.getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero(),
+                            this.getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad());
+            if (this.isNuevoComprador()) {
+                if (comprador != null) {
+                    addActionError("El comprador a registrar ya existe en la base de datos.");
+                }                
+            } else {
+                getDetalleLRV().getComprobanteVenta().setComprador(comprador); // se inyecta el comprador
+            }
+        }
+        
         // importe total del comprobante
         /*if (getDetalleLRV().getComprobanteVenta().getImporteTotal() == null
-                || getDetalleLRV().getComprobanteVenta().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRV().getComprobanteVenta().getImporteTotal().precision() > 14
-                || getDetalleLRV().getComprobanteVenta().getImporteTotal().scale() > 2) {
-            addActionError("El formato del importe total del comprobante es incorrecto");
-        }*/
+         || getDetalleLRV().getComprobanteVenta().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
+         || getDetalleLRV().getComprobanteVenta().getImporteTotal().precision() > 14
+         || getDetalleLRV().getComprobanteVenta().getImporteTotal().scale() > 2) {
+         addActionError("El formato del importe total del comprobante es incorrecto");
+         }*/
     }
 
     public long getRuc() {
@@ -279,5 +287,13 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
     public void setTiposDocumentos(List<TipoDocumentoIdentidad> tiposDocumentos) {
         this.tiposDocumentos = tiposDocumentos;
+    }
+
+    public boolean isNuevoComprador() {
+        return nuevoComprador;
+    }
+
+    public void setNuevoComprador(boolean nuevoComprador) {
+        this.nuevoComprador = nuevoComprador;
     }
 }

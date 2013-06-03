@@ -84,10 +84,10 @@
                     propertyToSearch: "nombre",
                     tokenValue: "nombre",
                     onAdd: function(item) {
-                        $("#pUnitarioInput").val(item.precio);                       
+                        $("#pUnitarioInput").val($.number(item.precio, 2, '.', ''));                       
                         var importe = $("#cantidadInput").val() * item.precio;
-                        $("#importeInput").val(importe);
-                        $("#spanIdProducto").text(item.precio);
+                        $("#importeInput").val($.number(importe, 2, '.', ''));
+                        $("#spanIdProducto").text(item.idProductoCompras);
                     },
                     onDelete: function() {
                         $("#pUnitarioInput").val("");
@@ -141,14 +141,14 @@
                     
                     var p = cantidad * pUnitario;
                     
-                    if ($.number(p, 2) != $.number(importe, 2)) {
+                    if ($.number(p, 2, '.', '') != $.number(importe, 2, '.', '')) {
                         alert("El importe no es correcto.");
                         return;
                     }                                        
                     // *************
                     
-                    var pUnitarioF = $.number(pUnitario, 2);
-                    var importeF = $.number(importe, 2);
+                    var pUnitarioF = $.number(pUnitario, 2, '.', '');
+                    var importeF = $.number(importe, 2, '.', '');
                     var idProducto = $("#spanIdProducto").text();
                     if (idProducto == "") {
                         idProducto = 0;
@@ -163,84 +163,84 @@
                                      <td></td>\n\
                                      </tr>";
                     
-                    $("#inputLineDetallesComprobante").before(nuevaLinea);
+                        $("#inputLineDetallesComprobante").before(nuevaLinea);
                     
-                    // limpiar valores de linea input
-                    $("#descripcionProductoInput").tokenInput("clear");
-                    $("#descripcionProductoInput2").val("");
-                    $("#pUnitarioInput").val("");
-                    $("#importeInput").val("");
-                    $("#cantidadInput").val("").focus();
-                    $("#registrarNuevoProducto").prop('checked', false);
-                    $("#descripcionProducto1").removeClass("hide");
-                    $("#descripcionProducto2").addClass("hide");
+                        // limpiar valores de linea input
+                        $("#descripcionProductoInput").tokenInput("clear");
+                        $("#descripcionProductoInput2").val("");
+                        $("#pUnitarioInput").val("");
+                        $("#importeInput").val("");
+                        $("#cantidadInput").val("").focus();
+                        $("#registrarNuevoProducto").prop('checked', false);
+                        $("#descripcionProducto1").removeClass("hide");
+                        $("#descripcionProducto2").addClass("hide");
                                         
-                    // se calculan los totales
-                    total += parseFloat(importe);
-                    base = total * 0.82;
-                    igv = total * 0.18;
+                        // se calculan los totales
+                        total += parseFloat(importe);
+                        base = total * 0.82;
+                        igv = total * 0.18;
                     
-                    // se establecen los campos
-                    $("#base").val($.number(base, 2));
-                    $("#igv").val($.number(igv, 2)); 
-                    $("#total").val($.number(total, 2));
-                    $("#baseImponibleAG").val($.number(base, 2));
-                    $("#igvAG").val($.number(igv, 2));
-                    $("#importeTotal").val($.number(total, 2));
+                        // se establecen los campos
+                        $("#base").val($.number(base, 2, '.', ''));
+                        $("#igv").val($.number(igv, 2, '.', '')); 
+                        $("#total").val($.number(total, 2, '.', ''));
+                        $("#baseImponibleAG").val($.number(base, 2, '.', ''));
+                        $("#igvAG").val($.number(igv, 2, '.', ''));
+                        $("#importeTotal").val($.number(total, 2, '.', ''));
                     
-                    indexDetalle++;                    
-                });
+                        indexDetalle++;                    
+                    });
                 
-                $("#pUnitarioInput").on("input", function() {
-                    var importe = parseFloat($("#cantidadInput").val()) * parseFloat($("#pUnitarioInput").val());
-                    $("#importeInput").val($.number(importe, 2));
-                });
+                    $("#pUnitarioInput").on("input", function() {
+                        var importe = parseFloat($("#cantidadInput").val()) * parseFloat($("#pUnitarioInput").val());
+                        $("#importeInput").val($.number(importe, 2, '.', ''));
+                    });
                 
-                // Para calcular los igvs automáticamente
-                $("#baseImponibleAG").on("input", function() {
-                    var base = parseFloat($(this).val());
-                    var igv =  base * 0.18;
-                    var total = base + igv;
-                    $("#igvAG").val($.number(igv, 2));                    
-                    $("#importeTotal").val($.number(total, 2));
-                });
+                    // Para calcular los igvs automáticamente
+                    $("#baseImponibleAG").on("input", function() {
+                        var base = parseFloat($(this).val());
+                        var igv =  base * 0.18;
+                        var total = base + igv;
+                        $("#igvAG").val($.number(igv, 2, '.', ''));                    
+                        $("#importeTotal").val($.number(total, 2, '.', ''));
+                    });
                                 
-                // casilla para registrar nuevo proveedor
-                $("#registrarNuevoProveedor").on("click", function() {
-                    if ($(this).is(":checked")) { 
-                        $("#rs1").addClass("hide");
-                        $("#rs2").removeClass("hide");
-                        $("#rsProveedor").prop("name", "");
-                        $("#rsProveedorNuevo").prop("name", "detalleLRC.comprobanteCompra.proveedor.razonSocial");
-                        // limpiamos los campos                        
-                        $("#proveedorNroDoc").val("").prop("readonly", false);
-                        $("#proveedorTipoDoc").val("-1");
-                        $("#proveedorTipoDoc option:not(:selected)").prop('disabled', false);
-                    } else {
-                        $("#rs1").removeClass("hide"); 
-                        $("#rs2").addClass("hide");
-                        $("#rsProveedor").prop("name", "detalleLRC.comprobanteCompra.proveedor.razonSocial");   
-                        $("#rsProveedorNuevo").prop("name", "").val(""); 
-                        // limpiamos los campos
-                        $("#proveedorNroDoc").val("").prop("readonly", false);
-                        $("#proveedorTipoDoc").val("-1");
-                        $("#proveedorTipoDoc option:not(:selected)").prop('disabled', false);
-                        $("#rsProveedor").tokenInput("clear");
-                    }
-                });
+                    // casilla para registrar nuevo proveedor
+                    $("#registrarNuevoProveedor").on("click", function() {
+                        if ($(this).is(":checked")) { 
+                            $("#rs1").addClass("hide");
+                            $("#rs2").removeClass("hide");
+                            $("#rsProveedor").prop("name", "");
+                            $("#rsProveedorNuevo").prop("name", "detalleLRC.comprobanteCompra.proveedor.razonSocial");
+                            // limpiamos los campos                        
+                            $("#proveedorNroDoc").val("").prop("readonly", false);
+                            $("#proveedorTipoDoc").val("-1");
+                            $("#proveedorTipoDoc option:not(:selected)").prop('disabled', false);
+                        } else {
+                            $("#rs1").removeClass("hide"); 
+                            $("#rs2").addClass("hide");
+                            $("#rsProveedor").prop("name", "detalleLRC.comprobanteCompra.proveedor.razonSocial");   
+                            $("#rsProveedorNuevo").prop("name", "").val(""); 
+                            // limpiamos los campos
+                            $("#proveedorNroDoc").val("").prop("readonly", false);
+                            $("#proveedorTipoDoc").val("-1");
+                            $("#proveedorTipoDoc option:not(:selected)").prop('disabled', false);
+                            $("#rsProveedor").tokenInput("clear");
+                        }
+                    });
                 
-                // casilla para registrar nuevo producto
-                $("#registrarNuevoProducto").on("click", function() {
-                    if ($(this).is(":checked")) { 
-                        $("#descripcionProducto1").addClass("hide");
-                        $("#descripcionProducto2").removeClass("hide");                                            
-                    } else {
-                        $("#descripcionProducto1").removeClass("hide"); 
-                        $("#descripcionProducto2").addClass("hide");                                                          
-                    }
-                });
+                    // casilla para registrar nuevo producto
+                    $("#registrarNuevoProducto").on("click", function() {
+                        if ($(this).is(":checked")) { 
+                            $("#descripcionProducto1").addClass("hide");
+                            $("#descripcionProducto2").removeClass("hide");                                            
+                        } else {
+                            $("#descripcionProducto1").removeClass("hide"); 
+                            $("#descripcionProducto2").addClass("hide");                                                          
+                        }
+                    });
                                 
-            });     
+                });     
         </script>
 
     </head>
@@ -324,9 +324,8 @@
                                 <legend class="little2">Información del proveedor</legend>
                                 <dl>
                                     <dt>
-                                    <input type="checkbox" name="" value="false" id="registrarNuevoProveedor"/>
-                                    <label for="registrarNuevoProveedor">Registrar nuevo proveedor</label>                                    
-                                    </dt>
+                                    <s:checkbox name="nuevoProveedor" id="registrarNuevoProveedor"/>
+                                    <s:label for="registrarNuevoProveedor" value="Registrar nuevo proveedor" />
                                     <dd></dd>
                                     <dt>Apellidos y nombres, denominación o Razón Social</dt>
                                     <dd>
