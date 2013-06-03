@@ -4,6 +4,7 @@
  */
 package com.jazzcontadores.controller.admin;
 
+import com.jazzcontadores.extra.JCConstants;
 import com.jazzcontadores.model.dao.CodigoAduanaDAO;
 import com.jazzcontadores.model.dao.EmpresaClienteDAO;
 import com.jazzcontadores.model.dao.LibroRegistroComprasDAO;
@@ -15,6 +16,7 @@ import com.jazzcontadores.model.entities.DetalleComprobanteCompra;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
 import com.jazzcontadores.model.entities.EmpresaCliente;
 import com.jazzcontadores.model.entities.LibroRegistroCompras;
+import com.jazzcontadores.model.entities.ProductoCompras;
 import com.jazzcontadores.model.entities.Proveedor;
 import com.jazzcontadores.model.entities.TipoComprobantePagoODocumento;
 import com.jazzcontadores.model.entities.TipoDocumentoIdentidad;
@@ -22,6 +24,7 @@ import com.jazzcontadores.util.DAOFactory;
 import com.jazzcontadores.util.HibernateUtil;
 import com.opensymphony.xwork2.ActionSupport;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -123,13 +126,31 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 this.getDetalleLRC().setLibroRegistroCompras(libroRCNuevo); // no se puede obviar
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
                 this.getDetalleLRC().setNumeroCorrelativo(1); // libro nuevo, primer detalle
-                
+
+                //para calcular el total
+                BigDecimal total = new BigDecimal("0.00");
+                total.setScale(2, RoundingMode.HALF_EVEN);
+
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
+                    
+                    if (d.getProductoCompras().getIdProductoCompras() == 0) {
+                        // crear nueva referencia para registrar nuevo producto
+                        ProductoCompras pc = new ProductoCompras();
+                        pc.setNombre(d.getProductoCompras().getNombre());
+                        pc.setPrecio(d.getProductoCompras().getPrecio());
+                        d.setProductoCompras(pc);
+                    }
+                    BigDecimal subtotal = d.getProductoCompras().getPrecio().multiply(new BigDecimal(d.getCantidad()));
+                    d.setSubtotal(subtotal);
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
-                    d.getProductoCompras().setPrecio(d.getPrecioUnitario()); // se copia el precio
+                    d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
+                    total = total.add(d.getSubtotal());
                 }
 
+                this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
+                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
+                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
                 libroRCNuevo.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
 
             } else if (!libroExistente.isEstaCerrado()) {
@@ -152,19 +173,38 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 this.getDetalleLRC().setLibroRegistroCompras(libroExistente);
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
-                
+
+                //para calcular el total
+                BigDecimal total = new BigDecimal("0.00");
+                total.setScale(2, RoundingMode.HALF_EVEN);
+
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
+                   
+                    if (d.getProductoCompras().getIdProductoCompras() == 0) {
+                        // crear nueva referencia para registrar nuevo producto
+                        ProductoCompras pc = new ProductoCompras();
+                        pc.setNombre(d.getProductoCompras().getNombre());
+                        pc.setPrecio(d.getProductoCompras().getPrecio());
+                        d.setProductoCompras(pc);
+                    }
+                    BigDecimal subtotal = d.getProductoCompras().getPrecio().multiply(new BigDecimal(d.getCantidad()));
+                    d.setSubtotal(subtotal);
                     d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
-                    d.getProductoCompras().setPrecio(d.getPrecioUnitario()); // se copia el precio
-                }                
+                    d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
+                    total = total.add(d.getSubtotal());
+                }
 
+                this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
+                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
+                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
+                libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroCompras()
                         .get(libroExistente.getDetallesLibroRegistroCompras().size() - 1)
                         .getComprobanteCompra().getFechaEmision();
                 // si la fecha de emision del comprobante es anterior a la fecha del último detalle ordenado
-                if (this.getDetalleLRC().getComprobanteCompra().getFechaEmision().before(ultimaFechaRegistrada)) {                    
+                if (this.getDetalleLRC().getComprobanteCompra().getFechaEmision().before(ultimaFechaRegistrada)) {
                     this.getDetalleLRC().setNumeroCorrelativo(1000000); // se pone al último de la lista
                     libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                     // reordenamos la lista
@@ -260,39 +300,13 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 && !getDetalleLRC().getComprobanteCompra().getProveedor().getRazonSocial().trim().matches("^.{1,60}")) {
             addActionError("El formato de la razón social del proveedor es incorrecto.");
         }
-        /*
-         // comparar la base del comprobante con la del detalle
-         if (getDetalleLRC().getBaseImponible1().compareTo(getDetalleLRC().getComprobanteCompra().getBase()) != 0) {
-         addActionError("La base del comprobante no coincide con la del formulario.");
-         }
-         if (getDetalleLRC().getIgv1().compareTo(getDetalleLRC().getComprobanteCompra().getIgv()) != 0) {
-         addActionError("El IGV del comprobante no coincide con el del formulario.");
-         }
-         if (getDetalleLRC().getImporteTotal().compareTo(getDetalleLRC().getComprobanteCompra().getImporteTotal()) != 0) {
-         addActionError("El importe del comprobante no coincide con el del formulario.");
-         }    */
-        // base del comprobante
-        if (getDetalleLRC().getComprobanteCompra().getBase() == null
-                || getDetalleLRC().getComprobanteCompra().getBase().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRC().getComprobanteCompra().getBase().precision() > 14
-                || getDetalleLRC().getComprobanteCompra().getBase().scale() > 2) {
-            addActionError("El formato de la base del comprobante es incorrecto");
-        } else {
-        }
-        // igv del comprobante
-        if (getDetalleLRC().getComprobanteCompra().getIgv() == null
-                || getDetalleLRC().getComprobanteCompra().getIgv().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRC().getComprobanteCompra().getIgv().precision() > 14
-                || getDetalleLRC().getComprobanteCompra().getIgv().scale() > 2) {
-            addActionError("El formato del IGV del comprobante es incorrecto");
-        }
         // importe total del comprobante
-        if (getDetalleLRC().getComprobanteCompra().getImporteTotal() == null
+        /*if (getDetalleLRC().getComprobanteCompra().getImporteTotal() == null
                 || getDetalleLRC().getComprobanteCompra().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
                 || getDetalleLRC().getComprobanteCompra().getImporteTotal().precision() > 14
                 || getDetalleLRC().getComprobanteCompra().getImporteTotal().scale() > 2) {
             addActionError("El formato del importe total del comprobante es incorrecto");
-        }
+        }*/
     }
 
     public long getRuc() {

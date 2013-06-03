@@ -240,6 +240,7 @@ Ext.onReady(function() {
                 text     : 'Número',
                 width    : 135,
                 sortable : true, 
+                tdCls: 'align-right-td',
                 renderer: renderNumeroComprobante,
                 dataIndex: 'numeroComprobante'
             }]

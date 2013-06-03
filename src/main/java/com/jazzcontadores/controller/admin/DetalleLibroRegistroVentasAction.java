@@ -15,6 +15,7 @@ import com.jazzcontadores.model.entities.DetalleComprobanteVenta;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroVentas;
 import com.jazzcontadores.model.entities.EmpresaCliente;
 import com.jazzcontadores.model.entities.LibroRegistroVentas;
+import com.jazzcontadores.model.entities.ProductoVentas;
 import com.jazzcontadores.model.entities.TipoComprobantePagoODocumento;
 import com.jazzcontadores.model.entities.TipoDocumentoIdentidad;
 import com.jazzcontadores.util.DAOFactory;
@@ -111,11 +112,19 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                 this.getDetalleLRV().setLibroRegistroVentas(libroRVNuevo); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
                 this.getDetalleLRV().setNumeroCorrelativo(1); // libro nuevo, primer detalle
-                
+
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
+
+                    if (d.getProductoVentas().getIdProductoVentas() == 0) {
+                        // registrar nuevo producto
+                        ProductoVentas pv = new ProductoVentas();
+                        pv.setNombre(d.getProductoVentas().getNombre());
+                        pv.setPrecio(d.getProductoVentas().getPrecio());
+                        d.setProductoVentas(pv);
+                    }
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
-                    d.getProductoVentas().setPrecio(d.getPrecioUnitario());
+                    d.setPrecioUnitario(d.getProductoVentas().getPrecio()); // se copia el precio
                 }
 
                 libroRVNuevo.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
@@ -132,18 +141,27 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
                 this.getDetalleLRV().setLibroRegistroVentas(libroExistente); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
+
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
+
+                    if (d.getProductoVentas().getIdProductoVentas() == 0) {
+                        // registrar nuevo producto
+                        ProductoVentas pv = new ProductoVentas();
+                        pv.setNombre(d.getProductoVentas().getNombre());
+                        pv.setPrecio(d.getProductoVentas().getPrecio());
+                        d.setProductoVentas(pv);
+                    }
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
-                    d.getProductoVentas().setPrecio(d.getPrecioUnitario());
+                    d.setPrecioUnitario(d.getProductoVentas().getPrecio()); // se copia el precio
                 }
-                
+
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroVentas()
                         .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1)
                         .getComprobanteVenta().getFechaEmision();
                 // si la fecha de emision del comprobante es anterior a la fecha del último detalle ordenado
-                if (this.getDetalleLRV().getComprobanteVenta().getFechaEmision().before(ultimaFechaRegistrada)) {                    
+                if (this.getDetalleLRV().getComprobanteVenta().getFechaEmision().before(ultimaFechaRegistrada)) {
                     this.getDetalleLRV().setNumeroCorrelativo(1000000);// se pone al último de la lista
                     libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
                     // reordenamos la lista
@@ -163,9 +181,9 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                     int ultimoNCorrelativo = libroExistente.getDetallesLibroRegistroVentas()
                             .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1).getNumeroCorrelativo();
                     this.getDetalleLRV().setNumeroCorrelativo(ultimoNCorrelativo + 1);
-                    
+
                     libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
-                }                
+                }
 
             } else {
                 return "libroCerrado";
@@ -213,28 +231,14 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         if (!getDetalleLRV().getComprobanteVenta().getNumero().trim().equals("")
                 && !getDetalleLRV().getComprobanteVenta().getNumero().trim().matches("^\\d{1,20}")) {
             addActionError("El formato del número de comprobante es incorrecto.");
-        }
-        // base del comprobante
-        if (getDetalleLRV().getComprobanteVenta().getBase() == null
-                || getDetalleLRV().getComprobanteVenta().getBase().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRV().getComprobanteVenta().getBase().precision() > 14
-                || getDetalleLRV().getComprobanteVenta().getBase().scale() > 2) {
-            addActionError("El formato de la base del comprobante es incorrecto");
-        }
-        // igv del comprobante
-        if (getDetalleLRV().getComprobanteVenta().getIgv() == null
-                || getDetalleLRV().getComprobanteVenta().getIgv().compareTo(BigDecimal.ZERO) <= 0
-                || getDetalleLRV().getComprobanteVenta().getIgv().precision() > 14
-                || getDetalleLRV().getComprobanteVenta().getIgv().scale() > 2) {
-            addActionError("El formato del IGV del comprobante es incorrecto");
-        }
+        }        
         // importe total del comprobante
-        if (getDetalleLRV().getComprobanteVenta().getImporteTotal() == null
+        /*if (getDetalleLRV().getComprobanteVenta().getImporteTotal() == null
                 || getDetalleLRV().getComprobanteVenta().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
                 || getDetalleLRV().getComprobanteVenta().getImporteTotal().precision() > 14
                 || getDetalleLRV().getComprobanteVenta().getImporteTotal().scale() > 2) {
             addActionError("El formato del importe total del comprobante es incorrecto");
-        }
+        }*/
     }
 
     public long getRuc() {

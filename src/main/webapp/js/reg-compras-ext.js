@@ -263,6 +263,7 @@ Ext.onReady(function() {
                      o liquidación de cobranza u otros documetos emitidos por SUNAT para acreditar el crédito fiscal en la importación',
             width: 200,
             sortable: true,
+            tdCls: 'align-right-td',
             renderer: renderNumeroComprobante,
             dataIndex: 'numeroComprobante'
         }, {

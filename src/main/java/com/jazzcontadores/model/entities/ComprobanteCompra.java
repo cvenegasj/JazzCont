@@ -112,7 +112,7 @@ public class ComprobanteCompra implements java.io.Serializable {
         this.numero = numero;
     }
 
-    @Column(name = "serie", length = 20)
+    @Column(name = "serie", nullable = false, length = 20)
     public String getSerie() {
         return this.serie;
     }

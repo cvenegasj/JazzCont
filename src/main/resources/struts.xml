@@ -222,6 +222,19 @@
             </result>
         </action>
         
+        <action name="ComprobantesAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ComprobantesAjaxAction">
+            <result name="showComprobanteVenta" type="json">
+                <param name="root">
+                    comprobanteVentaSerializable
+                </param>
+            </result>
+            <result name="showComprobanteCompra" type="json">
+                <param name="root">
+                    comprobanteCompraSerializable
+                </param>
+            </result>
+        </action>            
+        
         <action name="UtilityAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.UtilityAjaxAction">
             <result name="listCuentasContables" type="json"> 
                 <param name="root">

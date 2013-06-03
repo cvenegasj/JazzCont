@@ -87,10 +87,12 @@
                         $("#pUnitarioInput").val(item.precio);                       
                         var importe = $("#cantidadInput").val() * item.precio;
                         $("#importeInput").val(importe);
+                        $("#spanIdProducto").text(item.precio);
                     },
                     onDelete: function() {
                         $("#pUnitarioInput").val("");
-                        $("#importeInput").val("");                       
+                        $("#importeInput").val("");  
+                        $("#spanIdProducto").text("");
                     }
                 });
                 
@@ -147,12 +149,17 @@
                     
                     var pUnitarioF = $.number(pUnitario, 2);
                     var importeF = $.number(importe, 2);
+                    var idProducto = $("#spanIdProducto").text();
+                    if (idProducto == "") {
+                        idProducto = 0;
+                    }
                     
                     var nuevaLinea = "<tr class=\"linea\">\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" cssClass="inputLittle right" />\n\
+                                              <s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.idProductoVentas" value="'+ idProducto + '" readonly="true" cssClass="hide" />' + "</td>\n\
                                      <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.nombre" value="'+ descripcion + '" readonly="inputLarge2 true" />' + "</td>\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].precioUnitario" value="'+ pUnitarioF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
-                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].subtotal" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.precio" value="'+ pUnitarioF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
+                                     <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                      <td></td>\n\
                                      </tr>";
                     
@@ -380,6 +387,7 @@
                                             <td>
                                                 <input style="float: left;" type="checkbox" name="" value="false" id="registrarNuevoProducto" tabindex="-1" />
                                                 <label style="float: left;" class="little3" for="registrarNuevoProducto">Registrar nuevo producto</label> 
+                                                <span id="spanIdProducto" class="hide"></span>
                                                 <div id="descripcionProducto1">
                                                     <input id="descripcionProductoInput" type="text" class="inputLarge2 border1" />                                                    
                                                 </div>
@@ -395,17 +403,17 @@
                                     <tfoot>
                                         <tr>
                                             <th colspan="3" class="right">Base</th>
-                                            <th><s:textfield id="base" name="detalleLRV.comprobanteVenta.base" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="base" name="" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th>                                             
                                         </tr>
                                         <tr> 
                                             <th colspan="3" class="right">IGV</th>
-                                            <th><s:textfield id="igv" name="detalleLRV.comprobanteVenta.igv" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="igv" name="" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th> 
                                         </tr>
                                         <tr>                                                                                      
                                             <th colspan="3" class="right">Total</th>
-                                            <th><s:textfield id="total" name="detalleLRV.comprobanteVenta.importeTotal" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
+                                            <th><s:textfield id="total" name="" cssClass="inputLittle right" value="0.00" readonly="true" /></th>
                                             <th></th>
                                         </tr>
                                     </tfoot>

@@ -6,7 +6,11 @@ package com.jazzcontadores.controller.admin;
 
 import com.jazzcontadores.model.entities.ComprobanteCompra;
 import com.jazzcontadores.model.entities.ComprobanteVenta;
+import com.jazzcontadores.model.entities.DetalleComprobanteCompra;
+import com.jazzcontadores.util.ComprobanteCompraSerializable;
+import com.jazzcontadores.util.ComprobanteVentaSerializable;
 import com.jazzcontadores.util.DAOFactory;
+import com.jazzcontadores.util.DetalleComprobanteCompraSerializable;
 import com.jazzcontadores.util.HibernateUtil;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -17,8 +21,8 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ComprobantesAjaxAction extends ActionSupport {
 
     private int idComp;
-    private ComprobanteVenta comprobanteVenta;
-    private ComprobanteCompra comprobanteCompra;
+    private ComprobanteVentaSerializable comprobanteVentaSerializable;
+    private ComprobanteCompraSerializable comprobanteCompraSerializable;
 
     public String showComprobanteVenta() {
 
@@ -26,8 +30,7 @@ public class ComprobantesAjaxAction extends ActionSupport {
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         
         ComprobanteVenta cv = factory.getComprobanteVentaDAO().findById(this.getIdComp());
-        cv.getDetallesComprobanteVenta().size();
-        this.setComprobanteVenta(cv);
+        //ComprobanteVentaSerializable cvs = new 
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return "showComprobanteVenta";
@@ -39,9 +42,38 @@ public class ComprobantesAjaxAction extends ActionSupport {
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         
         ComprobanteCompra cc = factory.getComprobanteCompraDAO().findById(this.getIdComp());
-        cc.getDetallesComprobanteCompra().size();
-        this.setComprobanteCompra(cc);
-
+        ComprobanteCompraSerializable ccs = new ComprobanteCompraSerializable();
+        ccs.setIdComprobanteCompra(cc.getIdComprobanteCompra());
+        ccs.setNumeroTipoCompPago(cc.getTipoComprobantePagoODocumento().getNumero());
+        ccs.setDescTipoCompPago(cc.getTipoComprobantePagoODocumento().getDescripcion());
+        ccs.setNumero(cc.getNumero());
+        ccs.setSerie(cc.getSerie());
+        ccs.setAnioEmisionDuaOdsi(cc.getAnioEmisionDuaOdsi());
+        ccs.setFechaEmision(cc.getFechaEmision());
+        ccs.setFechaVencimientoOpago(cc.getFechaVencimientoOpago());
+        ccs.setBase(cc.getBase());
+        ccs.setIgv(cc.getIgv());
+        ccs.setImporteTotal(cc.getImporteTotal());        
+        ccs.setNumeroCodigoAduana(cc.getCodigoAduana() == null? null : cc.getCodigoAduana().getNumero());
+        ccs.setDescripcionCodigoAduana(cc.getCodigoAduana() == null? null : cc.getCodigoAduana().getDescripcion());
+        ccs.setRazonSocialProveedor(cc.getProveedor().getRazonSocial());
+        ccs.setNumeroDocIdentidadProveedor(cc.getProveedor().getNumeroDocumentoIdentidad());
+        ccs.setNumeroTipoDocIdentidadProveedor(cc.getProveedor().getTipoDocumentoIdentidad().getNumero());
+        
+        for (DetalleComprobanteCompra dcc : cc.getDetallesComprobanteCompra()) {
+            DetalleComprobanteCompraSerializable dccs = new DetalleComprobanteCompraSerializable();
+            dccs.setIdDetalleComprobanteCompra(dcc.getIdDetalleComprobanteCompra());
+            dccs.setCantidad(dcc.getCantidad());
+            dccs.setPrecioUnitario(dcc.getPrecioUnitario());
+            dccs.setSubtotal(dcc.getSubtotal());
+            dccs.setIdProductoCompras(dcc.getProductoCompras().getIdProductoCompras());
+            dccs.setNombreProducto(dcc.getProductoCompras().getNombre());
+            dccs.setPrecioProducto(dcc.getProductoCompras().getPrecio());
+            dccs.setUnidadDeMedidaProducto(dcc.getProductoCompras().getUnidadDeMedida());
+            ccs.getDetallesComprobanteCompra().add(dccs);
+        }
+        
+        this.setComprobanteCompraSerializable(ccs);
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return "showComprobanteCompra";
     }
@@ -52,21 +84,21 @@ public class ComprobantesAjaxAction extends ActionSupport {
 
     public void setIdComp(int idComp) {
         this.idComp = idComp;
+    }  
+
+    public ComprobanteVentaSerializable getComprobanteVentaSerializable() {
+        return comprobanteVentaSerializable;
     }
 
-    public ComprobanteVenta getComprobanteVenta() {
-        return comprobanteVenta;
+    public void setComprobanteVentaSerializable(ComprobanteVentaSerializable comprobanteVentaSerializable) {
+        this.comprobanteVentaSerializable = comprobanteVentaSerializable;
     }
 
-    public void setComprobanteVenta(ComprobanteVenta comprobanteVenta) {
-        this.comprobanteVenta = comprobanteVenta;
+    public ComprobanteCompraSerializable getComprobanteCompraSerializable() {
+        return comprobanteCompraSerializable;
     }
 
-    public ComprobanteCompra getComprobanteCompra() {
-        return comprobanteCompra;
-    }
-
-    public void setComprobanteCompra(ComprobanteCompra comprobanteCompra) {
-        this.comprobanteCompra = comprobanteCompra;
+    public void setComprobanteCompraSerializable(ComprobanteCompraSerializable comprobanteCompraSerializable) {
+        this.comprobanteCompraSerializable = comprobanteCompraSerializable;
     }
 }

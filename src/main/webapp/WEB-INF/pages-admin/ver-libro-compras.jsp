@@ -22,13 +22,16 @@
         <link type="text/css" href="<s:url value="/css/css3-buttons.css"/>" rel="stylesheet" />
         <!-- Ext JS css -->
         <link type="text/css" href="<s:url value="/extjs-4.2.0/resources/css/ext-all-neptune.css"/>" rel="stylesheet" />
-        
+
         <link type="text/css" href="<s:url value="/css/custom-theme/jquery-ui-1.9.1.custom.min.css"/>" rel="stylesheet" />	
         <script type="text/javascript" src="<s:url value="/js/jquery-1.7.2.min.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/jquery-ui-1.9.1.custom.min.js"/>"></script> 
 
         <script type="text/javascript" src="<s:url value="/js/jquery.placeholder.min.js"/>"></script> 
         <script type="text/javascript" src="<s:url value="/js/scripts.js"/>"></script>
+        
+        <!-- JQuery number plugin -->
+        <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
 
         <!-- Ext JS js -->
         <script type="text/javascript" src="<s:url value="/extjs-4.2.0/ext-all-debug.js"/>"></script>        
@@ -51,33 +54,163 @@
                     }
                 }); // END document.bind
                 //**************   
-                $(document).on("click", "span.verDetallesComprobanteIcon", function() {                    
+                $(document).on("click", "span.verDetallesComprobanteIcon", function(e) {                    
                     $("#dialogDetallesComprobante").dialog("open");  
                     
-                    //$("#dialogDetallesComprobante").html("<span class=\"loadingGif\"></span>");
+                    // cargando
+                    $("#dialogDetallesComprobante").html("<span class=\"loadingGif\"></span>");
                     
                     // obtener el id del comprobante a extraer de la BD
-                    
+                    var idComp = $(e.target).attr("data-idcomp");
+                    //alert(idComp);
                     
                     // llamada ajax para obtener los datos
-                    
-                        
-                });
+                    $.ajax({
+                        type: "GET",
+                        url: "ComprobantesAjaxAction_showComprobanteCompra",
+                        cache: false,
+                        dataType: "json",
+                        data: {idComp: idComp},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){
+                            alert('Error ' + textStatus);
+                            alert(errorThrown);
+                            alert(XMLHttpRequest.responseText);
+                        },
+                        success: function(data){         
+                            //alert('SUCCESS' + '\nDATA: ' + data);
+                            var fechaVencimientoOpago = "";
+                            if (data.fechaVencimientoOpago != null) {
+                                fechaVencimientoOpago = data.fechaVencimientoOpago;
+                            } 
+                            
+                            var numeroCodigoAduana = "";
+                            if (data.numeroCodigoAduana != null) {
+                                numeroCodigoAduana = "(" + data.numeroCodigoAduana + ") " + data.descripcionCodigoAduana;  
+                            }
+                            
+                            var tbody = "<tbody>";
+                            $.each(data.detallesComprobanteCompra, function(i, item) {
+                                tbody += "<tr>\n\
+                                            <td>" + item.cantidad + "</td>\n\
+                                            <td>" + item.nombreProducto + "</td>\n\
+                                            <td class=\"right\">" + $.number(item.precioUnitario, 2) + "</td>\n\
+                                            <td class=\"right\">" + $.number(item.subtotal, 2) + "</td>\n\
+                                         </tr>"
+                            })
+                            tbody += "</tbody>";
+                            
+                            var tfoot = "<tfoot>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Total</th>\n\
+                                                <th class=\"right\">" + $.number(data.importeTotal, 2) + "</th>\n\
+                                            </tr>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Base</th>\n\
+                                                <th class=\"right\">" + $.number(data.base, 2) + "</th>\n\
+                                            </tr>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Igv</th>\n\
+                                                <th class=\"right\">" + $.number(data.igv, 2) + "</th>\n\
+                                            </tr>\n\
+                                        </tfoot>";
+                            
+                            
+                            // tabla completa
+                            var html = "<div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Fecha</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.fechaEmision + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Tipo de comprobante</span></div>\n\
+                                                <div class=\"lfloat\"><span>(" + data.numeroTipoCompPago + ") " + data.descTipoCompPago + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Serie</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.serie + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Número</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.numero + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Año de emisión de la DUA o DSI</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.anioEmisionDuaOdsi + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Fecha de vencimiento o fecha de pago</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + fechaVencimientoOpago + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Código aduana</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + numeroCodigoAduana + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Razón social de proveedor</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.razonSocialProveedor + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Documento de identidad de proveedor</span></div>\n\
+                                                <div class=\"lfloat\"><span>(" + data.numeroTipoDocIdentidadProveedor + ") " + data.numeroDocIdentidadProveedor + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <table class=\"verDetallesComprobanteTable\">\n\
+                                                <thead>\n\
+                                                    <tr>\n\
+                                                    <th style=\"width: 35px\">Cantidad</th>\n\
+                                                    <th style=\"width: 195px\">Descripción</th>\n\
+                                                    <th style=\"width: 55px\">P. Unitario</th>\n\
+                                                    <th style=\"width: 55px\">Importe</th>\n\
+                                                    </tr>\n\
+                                                </thead>\n" + tbody + "\n" + tfoot +
+                                            "</table>";
+                            
+                            
+                            $("#dialogDetallesComprobante").html(html);
+                        }                         
+                })                       
+        });
                 
-                $("#dialogDetallesComprobante").dialog({
-                    autoOpen: false,
-                    modal: true,
-                    resizable: false,                    
-                    width: 455,   
-                    height: 455,
-                    buttons: {
-                        "Aceptar": function() {
-                            $(this).dialog("close");                                                        
-                        }
-                    },                    
-                    position: "center"
-                }); 
-            });  
+        $("#dialogDetallesComprobante").dialog({
+            autoOpen: false,
+            modal: true,
+            resizable: false,                    
+            width: 515,   
+            height: 465,
+            buttons: {
+                "Aceptar": function() {
+                    $(this).dialog("close");                                                        
+                }
+            },                    
+            position: "center"
+        }); 
+    });  
         </script>
 
     </head>
@@ -231,7 +364,7 @@
                     </div>
                 </div>
                 <!-- ********** -->
-                
+
                 <%@ include file="/WEB-INF/jspf/dialog_select_cliente.jspf" %> 
 
             </div>
