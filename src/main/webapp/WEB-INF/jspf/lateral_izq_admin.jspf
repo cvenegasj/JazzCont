@@ -6,20 +6,7 @@
         <p class="menu_head_link"><s:a href="main.action" >Inicio</s:a></p>
 
         <p class="menu_head_link"><s:a href="EmpresaClienteAction_add">Registrar nuevo cliente</s:a></p>
-        
-        <p class="menu_head">Registrar en libro</p>
-        <div class="menu_body">
-            <a id="registrarAsiento" href="#">Diario Simplificado</a>
-            <a id="registrarCompra" href="#">Compras</a>
-            <a id="registrarVenta" href="#">Ventas e ingresos</a>
-        </div>
-        
-        <p class="menu_head">Registrar comprobante</p>
-        <div class="menu_body">
-            <a id="registrarComprobanteCompra" href="#">De compra</a>
-            <a id="registrarComprobanteVenta" href="#">De venta</a>
-        </div>
-        
+            
         <p class="menu_head">Ver calendarios de pago</p>
         <div class="menu_body">
             <a href="#">De la semana</a>

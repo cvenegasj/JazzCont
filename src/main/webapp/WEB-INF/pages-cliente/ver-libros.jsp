@@ -1,6 +1,6 @@
 <%-- 
-    Document   : ver-libros-rg-simp
-    Created on : 24/12/2012, 01:38:09 PM
+    Document   : ver-libros
+    Created on : 05/06/2013, 03:32:12 PM
     Author     : Venegas
 --%>
 
@@ -18,9 +18,6 @@
         <link rel="shortcut icon" href="<s:url value="/favicon1.ico"/>">
         <link rel="icon" type="image/ico" href="<s:url value="/favicon1.ico"/>">
 
-        <!-- Botones estilo Google+ -->
-        <link type="text/css" href="<s:url value="/css/css3-buttons.css"/>" rel="stylesheet" />
-
         <link type="text/css" href="<s:url value="/css/custom-theme/jquery-ui-1.9.1.custom.min.css"/>" rel="stylesheet" />	
         <script type="text/javascript" src="<s:url value="/js/jquery-1.7.2.min.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/jquery-ui-1.9.1.custom.min.js"/>"></script> 
@@ -31,58 +28,7 @@
         <script type="text/javascript"> 
             $(function() {
                 
-                // Toggle the dropdown menu's
-                $(".dropdown .button").on('click', function () {
-                    $(this).parent().find('.dropdown-slider').slideToggle('fast');
-                    $(this).find('span.toggle').toggleClass('active');
-                    return false;
-                });
-                
-                // Close open dropdown slider/s by clicking elsewhwere on page
-                $(document).on('click', function (e) {            
-                    if (!$(e.target).is(".dropdown .dropdown-slider a span")) {
-                        $('.dropdown-slider').slideUp();
-                        $('span.toggle').removeClass('active');
-                    }
-                }); // END document.bind
-                //************** 
-                
-                $("#selectLibroCompras").change(function() {
-                    var selectedVal = $("#selectLibroCompras option:selected").val();
-                    var selectedText = $("#selectLibroCompras option:selected").text();
-                    
-                    if(selectedVal == -1) {
-                        return;
-                    }
-
-                    var urlDestino = "LibroComprasAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
-                    window.location = urlDestino;
-                });
-                
-                $("#selectLibroVentas").change(function() {
-                    var selectedVal = $("#selectLibroVentas option:selected").val();
-                    var selectedText = $("#selectLibroVentas option:selected").text();
-                    
-                    if(selectedVal == -1) {
-                        return;
-                    }
-
-                    var urlDestino = "LibroVentasAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
-                    window.location = urlDestino;
-                });
-                
-                $("#selectLibroDiarioS").change(function() {
-                    var selectedVal = $("#selectLibroDiarioS option:selected").val();
-                    var selectedText = $("#selectLibroDiarioS option:selected").text();
-                    
-                    if(selectedVal == -1) {
-                        return;
-                    }
-
-                    var urlDestino = "LibroDiarioSimplificadoAction_show?ruc=<%= request.getParameter("ruc")%>&idLibro=" + selectedVal + "&prd=" + selectedText;
-                    window.location = urlDestino;
-                });
-            }); 
+            });     
         </script>
 
     </head>
@@ -108,63 +54,61 @@
         <div id="fixed_main"> 
 
             <div id="sesion">
-                <%@ include file="/WEB-INF/jspf/barra_sesion_admin.jspf" %>                
+                <%@ include file="/WEB-INF/jspf/barra_sesion_cliente.jspf" %>                
             </div>           
 
             <div id="widthArea">
 
-                <%@ include file="/WEB-INF/jspf/lateral_izq_admin.jspf" %>
+                <%@ include file="/WEB-INF/jspf/lateral_izq_cliente.jspf" %>
 
-                <div id="contentArea">
-
-                    <%@ include file="/WEB-INF/jspf/header_cliente_sesion_admin.jspf" %>
+                <div id="contentArea">                    
 
                     <div id="headerContentArea">
                         <h1 class="medium">Libros contables: 
-                            <s:if test="%{empresaCliente.getTipoRegimen() == 'NRUS'}">
+                            <s:if test="%{#session.sesionUsuario.empresaCliente.getTipoRegimen() == 'NRUS'}">
                                 <span> Nuevo RUS (NRUS)</span>
                             </s:if>
-                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER'}">
+                            <s:if test="%{#session.sesionUsuario.empresaCliente.getTipoRegimen() == 'RER'}">
                                 <span> Régimen Especial (RER)</span>
                             </s:if>
-                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RG'}">
+                            <s:if test="%{#session.sesionUsuario.empresaCliente.getTipoRegimen() == 'RG'}">
                                 <span> Régimen General (RG)</span>
                             </s:if>
                         </h1>
                     </div>                    
 
-                    <div id="libros_wrapper">
+                    <div id="divR_wrapper">
 
                         <div class="libro_wrapper">
                             <a id="libroCompras" href="#">Libro de Registro de Compras</a>
-                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER' || empresaCliente.getTipoRegimen() == 'RG'}">
+                            <s:if test="%{#session.sesionUsuario.empresaCliente.getTipoRegimen() == 'RER' || #session.sesionUsuario.empresaCliente.getTipoRegimen() == 'RG'}">
                                 <span> - obligatorio</span>
                             </s:if>                            
 
                             <div class="libroMeses">
-                                <s:select id="selectLibroCompras" name="" list="empresaCliente.librosRegistroCompras" 
+                                <s:select id="selectLibroCompras" name="" list="librosCompras" 
                                           headerKey="-1" headerValue="Seleccione mes"
                                           listKey="idLibroRegistroCompras" listValue="%{new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)}" />
                             </div>
                         </div> 
                         <div class="libro_wrapper">
                             <a id="libroVentas" href="#">Libro de Registro de Ventas e Ingresos</a>
-                            <s:if test="%{empresaCliente.getTipoRegimen() == 'RER' || empresaCliente.getTipoRegimen() == 'RG'}">
+                            <s:if test="%{#session.sesionUsuario.empresaCliente.getTipoRegimen() == 'RER' || empresaCliente.empresaCliente.getTipoRegimen() == 'RG'}">
                                 <span> - obligatorio</span>
                             </s:if>  
 
                             <div class="libroMeses">
-                                <s:select id="selectLibroVentas" name="" list="empresaCliente.librosRegistroVentas" 
+                                <s:select id="selectLibroVentas" name="" list="librosVentas" 
                                           headerKey="-1" headerValue="Seleccione mes"
                                           listKey="idLibroRegistroVentas" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
                             </div>
                         </div>
                         <!-- Libro diario simplificado -->
-                        <s:if test="%{empresaCliente.isDiarioSimplificadoHabilitado()}">
+                        <s:if test="%{#session.sesionUsuario.empresaCliente.isDiarioSimplificadoHabilitado()}">
                             <div class="libro_wrapper">
                                 <a id="libroDiarioS" href="#">Libro Diario Simplificado</a>
                                 <div class="libroMeses">                               
-                                    <s:select id="selectLibroDiarioS" name="" list="empresaCliente.librosDiarioSimplificados" 
+                                    <s:select id="selectLibroDiarioS" name="" list="librosDiarioSimplificados" 
                                               headerKey="-1" headerValue="Seleccione mes"
                                               listKey="idLibroDiarioSimplificado" listValue="new java.text.SimpleDateFormat(\"MM-yyyy\").format(periodo)" />
                                 </div>
@@ -172,9 +116,8 @@
                         </s:if>
 
                     </div>
-
                 </div>
-                <div class="spacer"></div>
+                <div class="spacer"></div>                
 
             </div>
         </div>
@@ -183,3 +126,4 @@
         <%@ include file="/WEB-INF/jspf/footer.jspf" %>        
     </body>
 </html>
+

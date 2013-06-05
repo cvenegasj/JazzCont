@@ -247,24 +247,15 @@
     
     
     <!-- paquete de acciones del cliente RG -->    
-    <package name="cliente" namespace="/app/cliente" extends="struts-default">
+    <package name="cliente" namespace="/app/cliente" extends="base-package,json-default">
+        <default-interceptor-ref name="secureStack"/>
+        
         <action name="test">
             <result>/success.jsp</result>
         </action>
-        <action name="main">
-            <result>/WEB-INF/pages-cliente/intro-cliente.jsp</result>
+        <action name="main" class="com.jazzcontadores.controller.cliente.LibrosAction">
+            <result>/WEB-INF/pages-cliente/ver-libros.jsp</result>
         </action>
     </package>
-    <!-- paquete de acciones del cliente nrus -->    
-    <package name="clientenrus" namespace="/app/clientenrus" extends="struts-default">
-        <action name="test">
-            <result>/success.jsp</result>
-        </action>
-    </package>
-    <!-- paquete de acciones del cliente rer -->    
-    <package name="clienterer" namespace="/app/clienterer" extends="struts-default">
-        <action name="test">
-            <result>/success.jsp</result>
-        </action>
-    </package>    
+    
 </struts>

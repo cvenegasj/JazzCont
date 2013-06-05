@@ -104,8 +104,6 @@
                 </div>
                 <div class="spacer"></div>
 
-                <%@ include file="/WEB-INF/jspf/dialog_select_cliente.jspf" %> 
-
             </div>
         </div>
 
