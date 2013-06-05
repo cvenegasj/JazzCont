@@ -30,6 +30,9 @@
         <script type="text/javascript" src="<s:url value="/js/jquery.placeholder.min.js"/>"></script> 
         <script type="text/javascript" src="<s:url value="/js/scripts.js"/>"></script>
 
+        <!-- JQuery number plugin -->
+        <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
+
         <!-- Ext JS js -->
         <script type="text/javascript" src="<s:url value="/extjs-4.2.0/ext-all-debug.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/reg-ventas-ext.js"/>"></script>
@@ -58,12 +61,12 @@
                     
                     // obtener el id del comprobante a extraer de la BD
                     var idComp = $(e.target).attr("data-idcomp");
-                    alert(idComp);
+                    //alert(idComp);
                     
                     // llamada ajax para obtener los datos
-                    /*$.ajax({
+                    $.ajax({
                         type: "GET",
-                        url: "sffsf",
+                        url: "ComprobantesAjaxAction_showComprobanteVenta",
                         cache: false,
                         dataType: "json",
                         data: {idComp: idComp},
@@ -73,10 +76,103 @@
                             alert(XMLHttpRequest.responseText);
                         },
                         success: function(data){         
-                            alert('SUCCESS' + '\nDATA: ' + data);
-                            $("").html(data);
+                            //alert('SUCCESS' + '\nDATA: ' + data);
+                            var fechaVencimiento = "";
+                            if (data.fechaVencimiento != null) {
+                                fechaVencimiento = data.fechaVencimiento;
+                            } 
+                            
+                            var tbody = "<tbody>";
+                            $.each(data.detallesComprobanteVenta, function(i, item) {
+                                tbody += "<tr>\n\
+                                            <td>" + item.cantidad + "</td>\n\
+                                            <td>" + item.nombreProducto + "</td>\n\
+                                            <td class=\"right\">" + $.number(item.precioUnitario, 2) + "</td>\n\
+                                            <td class=\"right\">" + $.number(item.subtotal, 2) + "</td>\n\
+                                         </tr>"
+                            })
+                            tbody += "</tbody>";
+                            
+                            var tfoot = "<tfoot>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Base</th>\n\
+                                                <th class=\"right\">" + $.number(data.base, 2) + "</th>\n\
+                                            </tr>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Igv</th>\n\
+                                                <th class=\"right\">" + $.number(data.igv, 2) + "</th>\n\
+                                            </tr>\n\
+                                            <tr>\n\
+                                                <th colspan=\"3\" class=\"right\">Total</th>\n\
+                                                <th class=\"right\">" + $.number(data.importeTotal, 2) + "</th>\n\
+                                            </tr>\n\</tfoot>";
+                            
+                            
+                            // tabla completa
+                            var html = "<div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Fecha</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.fechaEmision + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Tipo de comprobante</span></div>\n\
+                                                <div class=\"lfloat\"><span>(" + data.numeroTipoCompPago + ") " + data.descTipoCompPago + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Serie</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.serie + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Número</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.numero + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Fecha de vencimiento</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + fechaVencimiento + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Razón social o nombres del comprador</span></div>\n\
+                                                <div class=\"lfloat\"><span>" + data.razonSocialONombresComprador + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <div class=\"lineaDetalleDialog1\">\n\
+                                                <div class=\"lfloat\"><span>Documento de identidad del comprador</span></div>\n\
+                                                <div class=\"lfloat\"><span>(" + data.numeroTipoDocIdentidadComprador + ") " + data.numeroDocIdentidadComprador + "</span></div>\n\
+                                                <div class=\"spacer\"></div> \n\
+                                            </div>\n\
+                                        </div>\n\
+                                        <div>\n\
+                                            <table class=\"verDetallesComprobanteTable\">\n\
+                                                <thead>\n\
+                                                    <tr>\n\
+                                                    <th style=\"width: 35px\">Cantidad</th>\n\
+                                                    <th style=\"width: 195px\">Descripción</th>\n\
+                                                    <th style=\"width: 55px\">P. Unitario</th>\n\
+                                                    <th style=\"width: 55px\">Importe</th>\n\
+                                                    </tr>\n\
+                                                </thead>\n" + tbody + "\n" + tfoot +
+                                "</table>";
+                                                        
+                            $("#dialogDetallesComprobante").html(html);
                         }                         
-                    })*/
+                    })  
                         
                 });
                 
@@ -84,8 +180,8 @@
                     autoOpen: false,
                     modal: true,
                     resizable: false,                    
-                    width: 455,   
-                    height: 455,
+                    width: 515,   
+                    height: 485,
                     buttons: {
                         "Aceptar": function() {
                             $(this).dialog("close");                                                        
@@ -131,11 +227,18 @@
                     <%@ include file="/WEB-INF/jspf/header_cliente_sesion_admin.jspf" %>
 
                     <div id="headerContentArea">
-                        <h1 class="medium">Libro de Registro de Ventas e Ingresos: <s:property value="periodo" /></h1>
-                        <div class="right">
-                            <a id="btnPdf" href="#" title="Ver en pdf"><img width="25" src="<s:url value="/img/pdf_icon.png" />" /></a>
-                            <a id="btnExcel" href="#" title="Ver en excel"><img width="25" src="<s:url value="/img/excel_2010_icon.png" />" /></a>                        
+                        <h1 class="medium">Libro de Registro de Ventas e Ingresos</h1>
+                        <div class="fRight">
+                            <div class="dropdown">
+                                <a href="#" class="button"><span class="icon icon96">&nbsp;</span><span class="label">Opciones</span><span class="toggle">&nbsp;</span></a>
+                                <div class="dropdown-slider">
+                                    <a href="#" class="ddm"><span class="label">Descargar como PDF</span></a>
+                                    <a href="#" class="ddm"><span class="label">Descargar como Excel</span></a>
+                                    <a href="#" class="ddm"><span class="label">Cerrar libro</span></a>
+                                </div> <!-- /.dropdown-slider -->
+                            </div> <!-- /.dropdown -->                            
                         </div>
+                        <div class="spacer"></div>
                     </div>                    
 
                     <div id="libroContableWrapper">
@@ -146,105 +249,7 @@
 
                 <!-- dialogDetallesComprobante -->
                 <div id="dialogDetallesComprobante" title="Detalles del comprobante">
-                    <div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Fecha</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>20/12/2012</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Tipo de comprobante</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>(01) Factura</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Serie</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>200</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Número</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>2001</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>
-                        <div class="lineaDetalleDialog1">
-                            <div class="lfloat">
-                                <span>Razón Social</span>
-                            </div>
-                            <div class="lfloat">
-                                <span>Empresa Prueba SRL</span>                                
-                            </div>
-                            <div class="spacer"></div>
-                        </div>                        
-                    </div>
-                    <div>
-                        <table class="verDetallesComprobanteTable">
-                            <thead>
-                                <tr>
-                                    <th style="width: 35px">Cantidad</th>
-                                    <th style="width: 195px">Descripción</th>
-                                    <th style="width: 55px">P. Unitario</th>
-                                    <th style="width: 55px">Importe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Kent HD</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Marlboro</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Yves Saint Laurent</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Lucky Strike</td>
-                                    <td class="right">1.00</td>
-                                    <td class="right">3.00</td>
-                                </tr>                                                              
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan="3" class="right">Total</th>
-                                    <th class="right">3.00</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="3" class="right">Base</th>
-                                    <th class="right">2.00</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="3" class="right">Igv</th>
-                                    <th class="right">1.00</th>
-                                </tr>
-                            </tfoot>                            
-                        </table>
-                    </div>
+
                 </div>
                 <!-- ********** -->
 

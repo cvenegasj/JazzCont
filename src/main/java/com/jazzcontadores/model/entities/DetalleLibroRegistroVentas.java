@@ -32,8 +32,7 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
     private LibroRegistroVentas libroRegistroVentas;
     private ComprobanteVenta comprobanteVentaReferenciado;
     private Integer numeroCorrelativo;
-    private BigDecimal valorFacturadoExportacion;
-    private BigDecimal baseImponibleOpGravada;
+    private BigDecimal valorFacturadoExportacion;    
     private BigDecimal totalOperacionExonerada;
     private BigDecimal totalOperacionInafecta;
     private BigDecimal isc;
@@ -44,7 +43,7 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
     private BigDecimal tipoCambio;
     private BigDecimal baseImponibleArrozPilado;
     private BigDecimal impuestoVentasArrozPilado;
-    private Byte estadoOportunidadDeAnotación;
+    private String estadoOportunidadDeAnotacion;
     private Date fechaHoraRegistro;
 
     public DetalleLibroRegistroVentas() {
@@ -57,13 +56,12 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
         this.importeTotal = importeTotal;
     }
 
-    public DetalleLibroRegistroVentas(ComprobanteVenta comprobanteventaByIdComprobanteVenta, LibroRegistroVentas libroregistroventas, ComprobanteVenta comprobanteventaByIdComprobanteVentaReferenciado, int numeroCorrelativo, BigDecimal valorFacturadoExportacion, BigDecimal baseImponibleOpGravada, BigDecimal totalOperacionExonerada, BigDecimal totalOperacionInafecta, BigDecimal isc, BigDecimal otrosTributos, BigDecimal importeTotal, Long numeroFinalTicketOcintaDelDia, BigDecimal tipoCambio, BigDecimal baseImponibleArrozPilado, BigDecimal impuestoVentasArrozPilado, Byte estadoOportunidadDeAnotación) {
+    public DetalleLibroRegistroVentas(ComprobanteVenta comprobanteventaByIdComprobanteVenta, LibroRegistroVentas libroregistroventas, ComprobanteVenta comprobanteventaByIdComprobanteVentaReferenciado, int numeroCorrelativo, BigDecimal valorFacturadoExportacion, BigDecimal totalOperacionExonerada, BigDecimal totalOperacionInafecta, BigDecimal isc, BigDecimal otrosTributos, BigDecimal importeTotal, Long numeroFinalTicketOcintaDelDia, BigDecimal tipoCambio, BigDecimal baseImponibleArrozPilado, BigDecimal impuestoVentasArrozPilado, String estadoOportunidadDeAnotación) {
         this.comprobanteVenta = comprobanteventaByIdComprobanteVenta;
         this.libroRegistroVentas = libroregistroventas;
         this.comprobanteVentaReferenciado = comprobanteventaByIdComprobanteVentaReferenciado;
         this.numeroCorrelativo = numeroCorrelativo;
-        this.valorFacturadoExportacion = valorFacturadoExportacion;
-        this.baseImponibleOpGravada = baseImponibleOpGravada;
+        this.valorFacturadoExportacion = valorFacturadoExportacion;        
         this.totalOperacionExonerada = totalOperacionExonerada;
         this.totalOperacionInafecta = totalOperacionInafecta;
         this.isc = isc;
@@ -73,7 +71,7 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
         this.tipoCambio = tipoCambio;
         this.baseImponibleArrozPilado = baseImponibleArrozPilado;
         this.impuestoVentasArrozPilado = impuestoVentasArrozPilado;
-        this.estadoOportunidadDeAnotación = estadoOportunidadDeAnotación;
+        this.estadoOportunidadDeAnotacion = estadoOportunidadDeAnotación;
     }
 
     @Id
@@ -134,16 +132,7 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
     public void setValorFacturadoExportacion(BigDecimal valorFacturadoExportacion) {
         this.valorFacturadoExportacion = valorFacturadoExportacion;
     }
-
-    @Column(name = "baseImponibleOpGravada", precision = 14, scale = 2)
-    public BigDecimal getBaseImponibleOpGravada() {
-        return this.baseImponibleOpGravada;
-    }
-
-    public void setBaseImponibleOpGravada(BigDecimal baseImponibleOpGravada) {
-        this.baseImponibleOpGravada = baseImponibleOpGravada;
-    }
-
+    
     @Column(name = "totalOperacionExonerada", precision = 14, scale = 2)
     public BigDecimal getTotalOperacionExonerada() {
         return this.totalOperacionExonerada;
@@ -234,13 +223,13 @@ public class DetalleLibroRegistroVentas implements java.io.Serializable {
         this.impuestoVentasArrozPilado = impuestoVentasArrozPilado;
     }
 
-    @Column(name = "estadoOportunidadDeAnotación")
-    public Byte getEstadoOportunidadDeAnotación() {
-        return this.estadoOportunidadDeAnotación;
+    @Column(name = "estadoOportunidadDeAnotacion", nullable = false, length = 1)
+    public String getEstadoOportunidadDeAnotacion() {
+        return this.estadoOportunidadDeAnotacion;
     }
 
-    public void setEstadoOportunidadDeAnotación(Byte estadoOportunidadDeAnotación) {
-        this.estadoOportunidadDeAnotación = estadoOportunidadDeAnotación;
+    public void setEstadoOportunidadDeAnotacion(String estadoOportunidadDeAnotacion) {
+        this.estadoOportunidadDeAnotacion = estadoOportunidadDeAnotacion;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

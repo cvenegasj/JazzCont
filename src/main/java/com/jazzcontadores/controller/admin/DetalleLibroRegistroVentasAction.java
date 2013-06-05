@@ -4,8 +4,8 @@
  */
 package com.jazzcontadores.controller.admin;
 
+import com.jazzcontadores.extra.JCConstants;
 import com.jazzcontadores.model.dao.CompradorDAO;
-import com.jazzcontadores.model.dao.ComprobanteVentaDAO;
 import com.jazzcontadores.model.dao.EmpresaClienteDAO;
 import com.jazzcontadores.model.dao.LibroRegistroVentasDAO;
 import com.jazzcontadores.model.dao.TipoComprobantePagoODocumentoDAO;
@@ -21,6 +21,8 @@ import com.jazzcontadores.model.entities.TipoDocumentoIdentidad;
 import com.jazzcontadores.util.DAOFactory;
 import com.jazzcontadores.util.HibernateUtil;
 import com.opensymphony.xwork2.ActionSupport;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -75,7 +77,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         LibroRegistroVentasDAO libroVentasDAO = factory.getLibroRegistroVentasDAO();
-        CompradorDAO compradorDAO = factory.getCompradorDAO();        
+        CompradorDAO compradorDAO = factory.getCompradorDAO();
 
         // buscamos libro de registro de ventas existente, sino creamos uno.
         Calendar cPeriodo = new GregorianCalendar();
@@ -86,7 +88,7 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         LibroRegistroVentas libroExistente = libroVentasDAO.findByPeriodo(this.getEmpresaCliente().getRuc(), cPeriodo.getTime());
 
         try {
-            if (libroExistente == null) {                
+            if (libroExistente == null) {
                 Calendar cFechaFin = (Calendar) cPeriodo.clone();
                 cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
 
@@ -101,11 +103,15 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
 
                 if (this.isNuevoComprador()) {
                     compradorDAO.makePersistent(this.getDetalleLRV().getComprobanteVenta().getComprador());
-                } 
+                }
 
                 this.getDetalleLRV().setLibroRegistroVentas(libroRVNuevo); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
                 this.getDetalleLRV().setNumeroCorrelativo(1); // libro nuevo, primer detalle
+
+                // para calcular el total
+                BigDecimal total = new BigDecimal("0.00");
+                total.setScale(2, RoundingMode.HALF_EVEN);
 
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
@@ -117,23 +123,34 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                         pv.setPrecio(d.getProductoVentas().getPrecio());
                         d.setProductoVentas(pv);
                     }
+                    BigDecimal subtotal = d.getProductoVentas().getPrecio().multiply(new BigDecimal(d.getCantidad()));
+                    d.setSubtotal(subtotal);
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
                     d.setPrecioUnitario(d.getProductoVentas().getPrecio()); // se copia el precio
+                    total = total.add(d.getSubtotal());
                 }
 
+                this.getDetalleLRV().getComprobanteVenta().setImporteTotal(total);
+                this.getDetalleLRV().getComprobanteVenta().setBase(total.multiply(JCConstants.BASE));
+                this.getDetalleLRV().getComprobanteVenta().setIgv(total.multiply(JCConstants.IGV));
                 libroRVNuevo.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
 
             } else {
                 if (libroExistente.isEstaCerrado()) {
                     return "libroCerrado";
                 }
-                
+
+                // establecemos el comprador
                 if (this.isNuevoComprador()) {
                     compradorDAO.makePersistent(this.getDetalleLRV().getComprobanteVenta().getComprador());
-                } 
+                }
 
                 this.getDetalleLRV().setLibroRegistroVentas(libroExistente); // no se puede obviar
                 this.getDetalleLRV().setFechaHoraRegistro(new Date());
+
+                //para calcular el total
+                BigDecimal total = new BigDecimal("0.00");
+                total.setScale(2, RoundingMode.HALF_EVEN);
 
                 for (Iterator<DetalleComprobanteVenta> it = this.getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().iterator(); it.hasNext();) {
                     DetalleComprobanteVenta d = it.next();
@@ -145,9 +162,16 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                         pv.setPrecio(d.getProductoVentas().getPrecio());
                         d.setProductoVentas(pv);
                     }
+                    BigDecimal subtotal = d.getProductoVentas().getPrecio().multiply(new BigDecimal(d.getCantidad()));
+                    d.setSubtotal(subtotal);
                     d.setComprobanteVenta(this.getDetalleLRV().getComprobanteVenta());
                     d.setPrecioUnitario(d.getProductoVentas().getPrecio()); // se copia el precio
+                    total = total.add(d.getSubtotal());
                 }
+
+                this.getDetalleLRV().getComprobanteVenta().setImporteTotal(total);
+                this.getDetalleLRV().getComprobanteVenta().setBase(total.multiply(JCConstants.BASE));
+                this.getDetalleLRV().getComprobanteVenta().setIgv(total.multiply(JCConstants.IGV));
 
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroVentas()
@@ -170,15 +194,20 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
                         libroExistente.getDetallesLibroRegistroVentas().get(i).setNumeroCorrelativo(i + 1);
                     }
                 } else {
-                    // le asignamos el último número correlativo más 1
-                    int ultimoNCorrelativo = libroExistente.getDetallesLibroRegistroVentas()
-                            .get(libroExistente.getDetallesLibroRegistroVentas().size() - 1).getNumeroCorrelativo();
-                    this.getDetalleLRV().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                    // nos aseguramos que el tamaño sea mayor que 0 para no generar una excepcion
+                    if (libroExistente.getDetallesLibroRegistroVentas().size() > 0) {
+                        // le asignamos el último número correlativo más 1
+                        DetalleLibroRegistroVentas d = libroExistente.getDetallesLibroRegistroVentas().get(libroExistente.getDetallesLibroRegistroVentas().size() - 1);
+                        int ultimoNCorrelativo = d.getNumeroCorrelativo();
+                        this.getDetalleLRV().setNumeroCorrelativo(ultimoNCorrelativo + 1);
+                    } else {
+                        this.getDetalleLRV().setNumeroCorrelativo(1);
+                    }
 
                     libroExistente.getDetallesLibroRegistroVentas().add(this.getDetalleLRV());
                 }
 
-            } 
+            }
 
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
@@ -207,46 +236,179 @@ public class DetalleLibroRegistroVentasAction extends ActionSupport {
         // llenar la lista de tipo de documentos en la vista
         this.setTiposDocumentos(factory.getTipoDocumentoIdentidadDAO().findAll());
 
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-
         // validaciones
+        if (getDetalleLRV().getComprobanteVenta().getDetallesComprobanteVenta().isEmpty()) {
+            addActionError("Debe especificar las líneas del comprobante.");
+        }
         if (getDetalleLRV().getComprobanteVenta().getFechaEmision() == null) {
             addActionError("Debe especificar la fecha de emisión del comprobante.");
         }
-        if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() <= 0) {
+        if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() < 0) {
             addActionError("Debe especificar el tipo de comprobante (Tabla 10).");
         }
-        if (getDetalleLRV().getComprobanteVenta().getSerie() != null 
-                && (!getDetalleLRV().getComprobanteVenta().getSerie().trim().equals("-")
-                || !getDetalleLRV().getComprobanteVenta().getSerie().trim().matches("^\\w{1,20}$"))) {
+        if (!getDetalleLRV().getComprobanteVenta().getSerie().trim().matches("-|\\w{1,20}")) {
             addActionError("El formato de la serie del comprobante es incorrecto.");
         }
         if (!getDetalleLRV().getComprobanteVenta().getNumero().trim().equals("")
                 && !getDetalleLRV().getComprobanteVenta().getNumero().trim().matches("^\\d{1,20}")) {
             addActionError("El formato del número de comprobante es incorrecto.");
         }
+
         // verificar existencia de comprador
-        if (getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero() != null 
+        if (getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero() != null
                 && getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad() != null) {
             Comprador comprador = factory.getCompradorDAO().findByTipoDocumentoYNumeroDocumento(
-                            this.getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero(),
-                            this.getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad());
+                    this.getEmpresaCliente().getRuc(),
+                    this.getDetalleLRV().getComprobanteVenta().getComprador().getTipoDocumentoIdentidad().getNumero(),
+                    this.getDetalleLRV().getComprobanteVenta().getComprador().getNumeroDocumentoIdentidad());
             if (this.isNuevoComprador()) {
                 if (comprador != null) {
                     addActionError("El comprador a registrar ya existe en la base de datos.");
-                }                
+                }
             } else {
                 getDetalleLRV().getComprobanteVenta().setComprador(comprador); // se inyecta el comprador
             }
         }
-        
-        // importe total del comprobante
-        /*if (getDetalleLRV().getComprobanteVenta().getImporteTotal() == null
-         || getDetalleLRV().getComprobanteVenta().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
-         || getDetalleLRV().getComprobanteVenta().getImporteTotal().precision() > 14
-         || getDetalleLRV().getComprobanteVenta().getImporteTotal().scale() > 2) {
-         addActionError("El formato del importe total del comprobante es incorrecto");
-         }*/
+
+        // =========================================================
+        // reglas del formato de libros electronicos *********************
+        // fecha de emisión
+        if (getDetalleLRV().getComprobanteVenta().getFechaEmision() != null) {
+            if (getDetalleLRV().getComprobanteVenta().getFechaEmision().after(new Date())) {
+                addActionError("La fecha de emisión es incorrecta. No se puede registrar fechas futuras en el sistema.");
+            } else {
+                // 1. Obligatorio, excepto cuando el campo 27 = '2'
+                // 2. Menor o igual al periodo informado
+                // 3. Menor o igual al periodo señalado en el campo 1.
+                getDetalleLRV().setEstadoOportunidadDeAnotacion("1");
+            }
+        }
+
+        // serie 
+        if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() != null
+                && getDetalleLRV().getComprobanteVenta().getNumero() != null) {
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 1
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 3
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 4
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 8) {
+                if (!getDetalleLRV().getComprobanteVenta().getSerie().matches("-|\\w{1,4}")) {
+                    addActionError("El número de serie para el tipo de comprobante seleccionado debe tener hasta 4 dígitos.");
+                }
+            }
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 0) {
+                if (!getDetalleLRV().getComprobanteVenta().getSerie().matches("-")) {
+                    addActionError("El número de serie para el tipo de comprobante seleccionado debe ser '-'.");
+                }
+            }
+        }
+
+        // valor facturado de la exportación        
+        if (getDetalleLRV().getValorFacturadoExportacion() != null) {
+            // 3. Acepta negativos sólo si campo 5 = '07' o '87' 0 '97'
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                if (getDetalleLRV().getValorFacturadoExportacion().precision() > 14
+                        || getDetalleLRV().getValorFacturadoExportacion().scale() > 2) {
+                    addActionError("El formato del valor facturado de la exportación es incorrecto.");
+                }
+            } else {
+                if (getDetalleLRV().getValorFacturadoExportacion().compareTo(BigDecimal.ZERO) < 0
+                        || getDetalleLRV().getValorFacturadoExportacion().precision() > 14
+                        || getDetalleLRV().getValorFacturadoExportacion().scale() > 2) {
+                    addActionError("El formato del valor facturado de la exportación es incorrecto.");
+                }
+            }
+        } else {
+            // de no existir registrar '0.00'
+            getDetalleLRV().setValorFacturadoExportacion(new BigDecimal("0.00"));
+        }
+
+        // importe total de la operación exonerada
+        if (getDetalleLRV().getTotalOperacionExonerada() != null) {
+            // 3. Acepta negativos sólo si campo 5 = '07' o '87' 0 '97'
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                if (getDetalleLRV().getTotalOperacionExonerada().precision() > 14
+                        || getDetalleLRV().getTotalOperacionExonerada().scale() > 2) {
+                    addActionError("El formato del importe total de la operación exonerada es incorrecto.");
+                }
+            } else {
+                if (getDetalleLRV().getTotalOperacionExonerada().compareTo(BigDecimal.ZERO) < 0
+                        || getDetalleLRV().getTotalOperacionExonerada().precision() > 14
+                        || getDetalleLRV().getTotalOperacionExonerada().scale() > 2) {
+                    addActionError("El formato del importe total de la operación exonerada es incorrecto.");
+                }
+            }
+        } else {
+            // de no existir registrar '0.00'
+            getDetalleLRV().setTotalOperacionExonerada(new BigDecimal("0.00"));
+        }
+
+        // importe total de la operación inafecta
+        if (getDetalleLRV().getTotalOperacionInafecta() != null) {
+            // 3. Acepta negativos sólo si campo 5 = '07' o '87' 0 '97'
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                if (getDetalleLRV().getTotalOperacionInafecta().precision() > 14
+                        || getDetalleLRV().getTotalOperacionInafecta().scale() > 2) {
+                    addActionError("El formato del importe total de la operación inafecta es incorrecto.");
+                }
+            } else {
+                if (getDetalleLRV().getTotalOperacionInafecta().compareTo(BigDecimal.ZERO) < 0
+                        || getDetalleLRV().getTotalOperacionInafecta().precision() > 14
+                        || getDetalleLRV().getTotalOperacionInafecta().scale() > 2) {
+                    addActionError("El formato del importe total de la operación inafecta es incorrecto.");
+                }
+            }
+        } else {
+            // de no existir registrar '0.00'
+            getDetalleLRV().setTotalOperacionInafecta(new BigDecimal("0.00"));
+        }
+
+        // ISC
+        if (getDetalleLRV().getIsc() != null) {
+            // 3. Acepta negativos sólo si campo 5 = '07' o '87' 0 '97'
+            if (getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || getDetalleLRV().getComprobanteVenta().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                if (getDetalleLRV().getIsc().precision() > 14
+                        || getDetalleLRV().getIsc().scale() > 2) {
+                    addActionError("El formato del ISC es incorrecto.");
+                }
+            } else {
+                if (getDetalleLRV().getIsc().compareTo(BigDecimal.ZERO) < 0
+                        || getDetalleLRV().getIsc().precision() > 14
+                        || getDetalleLRV().getIsc().scale() > 2) {
+                    addActionError("El formato del ISC es incorrecto.");
+                }
+            }
+        } else {
+            // de no existir registrar '0.00'
+            getDetalleLRV().setTotalOperacionInafecta(new BigDecimal("0.00"));
+        }
+
+        // Base imponible de la operacion gravada ????????
+
+        // IGV ????????
+
+
+        // otros tributos y cargos
+        if (getDetalleLRV().getOtrosTributos() != null) {
+            if (getDetalleLRV().getOtrosTributos().compareTo(BigDecimal.ZERO) < 0
+                    || getDetalleLRV().getOtrosTributos().precision() > 14
+                    || getDetalleLRV().getOtrosTributos().scale() > 2) {
+                addActionError("El formato de Otros tributos y cargos es incorrecto.");
+            }
+        } else {
+            // de no existir registrar '0.00'
+            getDetalleLRV().setOtrosTributos(new BigDecimal("0.00"));
+        }
+
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
 
     public long getRuc() {

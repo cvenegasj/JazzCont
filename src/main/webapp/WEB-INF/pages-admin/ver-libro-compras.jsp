@@ -29,7 +29,7 @@
 
         <script type="text/javascript" src="<s:url value="/js/jquery.placeholder.min.js"/>"></script> 
         <script type="text/javascript" src="<s:url value="/js/scripts.js"/>"></script>
-        
+
         <!-- JQuery number plugin -->
         <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
 
@@ -188,28 +188,27 @@
                                                     <th style=\"width: 55px\">Importe</th>\n\
                                                     </tr>\n\
                                                 </thead>\n" + tbody + "\n" + tfoot +
-                                            "</table>";
-                            
-                            
+                                "</table>";
+                                                        
                             $("#dialogDetallesComprobante").html(html);
                         }                         
-                })                       
-        });
+                    })                       
+                });
                 
-        $("#dialogDetallesComprobante").dialog({
-            autoOpen: false,
-            modal: true,
-            resizable: false,                    
-            width: 515,   
-            height: 465,
-            buttons: {
-                "Aceptar": function() {
-                    $(this).dialog("close");                                                        
-                }
-            },                    
-            position: "center"
-        }); 
-    });  
+                $("#dialogDetallesComprobante").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    resizable: false,                    
+                    width: 515,   
+                    height: 485,
+                    buttons: {
+                        "Aceptar": function() {
+                            $(this).dialog("close");                                                        
+                        }
+                    },                    
+                    position: "center"
+                }); 
+            });  
         </script>
 
     </head>
@@ -247,11 +246,18 @@
                     <%@ include file="/WEB-INF/jspf/header_cliente_sesion_admin.jspf" %>
 
                     <div id="headerContentArea">
-                        <h1 class="medium">Libro de Registro de Compras: <strong><s:property value="periodo" /></strong></h1><br />
-                        <div class="right">
-                            <a id="btnPdf" href="#" title="Ver en pdf"><img width="25" src="<s:url value="/img/pdf_icon.png" />" /></a>
-                            <a id="btnExcel" href="#" title="Ver en excel"><img width="25" src="<s:url value="/img/excel_2010_icon.png" />" /></a>                        
+                        <h1 class="medium">Libro de Registro de Compras</strong></h1><br />
+                        <div class="fRight">
+                            <div class="dropdown">
+                                <a href="#" class="button"><span class="icon icon96">&nbsp;</span><span class="label">Opciones</span><span class="toggle">&nbsp;</span></a>
+                                <div class="dropdown-slider">
+                                    <a href="#" class="ddm"><span class="label">Descargar como PDF</span></a>
+                                    <a href="#" class="ddm"><span class="label">Descargar como Excel</span></a>
+                                    <a href="#" class="ddm"><span class="label">Cerrar libro</span></a>
+                                </div> <!-- /.dropdown-slider -->
+                            </div> <!-- /.dropdown -->                            
                         </div>
+                        <div class="spacer"></div>
                     </div>                    
 
                     <div id="libroContableWrapper">
@@ -262,7 +268,7 @@
 
                 <!-- dialogDetallesComprobante -->
                 <div id="dialogDetallesComprobante" title="Detalles del comprobante">
-                   
+
                 </div>
                 <!-- ********** -->
 

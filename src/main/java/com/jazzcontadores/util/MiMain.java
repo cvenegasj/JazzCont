@@ -18,6 +18,7 @@ import com.jazzcontadores.model.entities.AsientoContable;
 import com.jazzcontadores.model.entities.Comprador;
 import com.jazzcontadores.model.entities.ComprobanteCompra;
 import com.jazzcontadores.model.entities.ComprobanteVenta;
+import com.jazzcontadores.model.entities.Contacto;
 import com.jazzcontadores.model.entities.Contador;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroCompras;
 import com.jazzcontadores.model.entities.DetalleLibroRegistroVentas;
@@ -64,44 +65,50 @@ public class MiMain {
          System.out.format("%s\n", p.getRazonSocial());
          }*/
 
-        /*
-         Contador contador = cDAO.findById(2);
-        
-         ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
-         String hashedPassword = new Sha512Hash(contador.getPassword(), salt, 500000).toHex();                        
-        
-         contador.setPassword(hashedPassword);
-         contador.setSalt(salt.toHex());*/
 
-        List<EmpresaCliente> listaClientes = factory.getEmpresaClienteDAO().findAll();
+        List<Contacto> contactos = factory.getContactoDAO().findAll();
 
-        for (EmpresaCliente e : listaClientes) {
-            for (LibroRegistroVentas lrv : e.getLibrosRegistroVentas()) {
-                Collections.sort(lrv.getDetallesLibroRegistroVentas(), new Comparator<DetalleLibroRegistroVentas>() {
-                    @Override
-                    public int compare(DetalleLibroRegistroVentas d1, DetalleLibroRegistroVentas d2) {
-                        return d1.getComprobanteVenta().getFechaEmision().compareTo(d2.getComprobanteVenta().getFechaEmision());
-                    }
-                });
-                int i = 1;
-                for (DetalleLibroRegistroVentas d : lrv.getDetallesLibroRegistroVentas()) {
-                    d.setNumeroCorrelativo(i++);
-                }
-            }
-            for (LibroRegistroCompras lrc : e.getLibrosRegistroCompras()) {
-                Collections.sort(lrc.getDetallesLibroRegistroCompras(), new Comparator<DetalleLibroRegistroCompras>() {
-                    @Override
-                    public int compare(DetalleLibroRegistroCompras d1, DetalleLibroRegistroCompras d2) {
-                        return d1.getComprobanteCompra().getFechaEmision().compareTo(d2.getComprobanteCompra().getFechaEmision());
-                    }
-                });
-                int i = 1;
-                for (DetalleLibroRegistroCompras d : lrc.getDetallesLibroRegistroCompras()) {
-                    d.setNumeroCorrelativo(i++);
-                }
-            }
+        for (Contacto c : contactos) {
+            ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
+            String hashedPassword = new Sha512Hash(c.getPassword(), salt, 200000).toHex();
+
+            c.setPassword(hashedPassword);
+            c.setSalt(salt.toHex());
         }
 
+
+        /*
+         * Ordenamiento por número correlativos
+         * 
+         List<EmpresaCliente> listaClientes = factory.getEmpresaClienteDAO().findAll();
+
+         for (EmpresaCliente e : listaClientes) {
+         for (LibroRegistroVentas lrv : e.getLibrosRegistroVentas()) {
+         Collections.sort(lrv.getDetallesLibroRegistroVentas(), new Comparator<DetalleLibroRegistroVentas>() {
+         @Override
+         public int compare(DetalleLibroRegistroVentas d1, DetalleLibroRegistroVentas d2) {
+         return d1.getComprobanteVenta().getFechaEmision().compareTo(d2.getComprobanteVenta().getFechaEmision());
+         }
+         });
+         int i = 1;
+         for (DetalleLibroRegistroVentas d : lrv.getDetallesLibroRegistroVentas()) {
+         d.setNumeroCorrelativo(i++);
+         }
+         }
+         for (LibroRegistroCompras lrc : e.getLibrosRegistroCompras()) {
+         Collections.sort(lrc.getDetallesLibroRegistroCompras(), new Comparator<DetalleLibroRegistroCompras>() {
+         @Override
+         public int compare(DetalleLibroRegistroCompras d1, DetalleLibroRegistroCompras d2) {
+         return d1.getComprobanteCompra().getFechaEmision().compareTo(d2.getComprobanteCompra().getFechaEmision());
+         }
+         });
+         int i = 1;
+         for (DetalleLibroRegistroCompras d : lrc.getDetallesLibroRegistroCompras()) {
+         d.setNumeroCorrelativo(i++);
+         }
+         }
+         }
+         */
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 

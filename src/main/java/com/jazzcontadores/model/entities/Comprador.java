@@ -28,7 +28,7 @@ public class Comprador implements java.io.Serializable {
     private TipoDocumentoIdentidad tipoDocumentoIdentidad;
     private String razonSocialONombres;
     private String numeroDocumentoIdentidad;
-    private List<ComprobanteVenta> comprobantesVentas = new ArrayList<ComprobanteVenta>();
+    private List<ComprobanteVenta> comprobantesVenta = new ArrayList<ComprobanteVenta>();
 
     public Comprador() {
     }
@@ -43,7 +43,7 @@ public class Comprador implements java.io.Serializable {
         this.tipoDocumentoIdentidad = tipodocumentoidentidad;
         this.razonSocialONombres = razonSocialOnombres;
         this.numeroDocumentoIdentidad = numeroDocumentoIdentidad;
-        this.comprobantesVentas = comprobanteventas;
+        this.comprobantesVenta = comprobanteventas;
     }
 
     @Id
@@ -87,10 +87,10 @@ public class Comprador implements java.io.Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "comprador")
     public List<ComprobanteVenta> getComprobantesVenta() {
-        return this.comprobantesVentas;
+        return this.comprobantesVenta;
     }
 
     public void setComprobantesVenta(List<ComprobanteVenta> comprobanteventas) {
-        this.comprobantesVentas = comprobanteventas;
+        this.comprobantesVenta = comprobanteventas;
     }
 }

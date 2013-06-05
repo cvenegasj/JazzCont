@@ -12,5 +12,5 @@ import com.jazzcontadores.model.entities.Comprador;
  */
 public interface CompradorDAO extends GenericDAO<Comprador, Integer> {
 
-    Comprador findByTipoDocumentoYNumeroDocumento(String numeroTipoDoc, String numeroDocumento);
+    Comprador findByTipoDocumentoYNumeroDocumento(long rucCliente, String numeroTipoDoc, String numeroDocumento);
 }

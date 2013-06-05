@@ -28,7 +28,7 @@ public class DetalleLibroRegistroVentasSerializable {
     private BigDecimal tipoCambio;
     private BigDecimal baseImponibleArrozPilado;
     private BigDecimal impuestoVentasArrozPilado;
-    private Byte estadoOportunidadDeAnotación;
+    private String estadoOportunidadDeAnotación;
     private Date fechaHoraRegistro;
     // comprobanteVenta
     private Integer idComprobanteVenta;
@@ -165,11 +165,11 @@ public class DetalleLibroRegistroVentasSerializable {
         this.impuestoVentasArrozPilado = impuestoVentasArrozPilado;
     }
 
-    public Byte getEstadoOportunidadDeAnotación() {
+    public String getEstadoOportunidadDeAnotación() {
         return estadoOportunidadDeAnotación;
     }
 
-    public void setEstadoOportunidadDeAnotación(Byte estadoOportunidadDeAnotación) {
+    public void setEstadoOportunidadDeAnotación(String estadoOportunidadDeAnotación) {
         this.estadoOportunidadDeAnotación = estadoOportunidadDeAnotación;
     }
 

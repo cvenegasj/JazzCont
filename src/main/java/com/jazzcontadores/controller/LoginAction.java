@@ -88,7 +88,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
             session.put(JCConstants.USER, contador);            
             return JCConstants.SESION_ADMIN;
             
-        } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_RG)) {
+        } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE)) {
             
             //se obtiene el objeto y se almacena en la sesion
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -102,26 +102,13 @@ public class LoginAction extends ActionSupport implements SessionAware {
             contacto.setPassword(String.valueOf(token.getPassword()));
             
             session.put(JCConstants.USER, contacto);            
-            return JCConstants.SESION_CLIENTE_RG;
-            
-        } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_NRUS)) {
-            
-            //se obtiene el objeto y se almacena en la sesion
-
-            return JCConstants.SESION_CLIENTE_NRUS;
-            
-        } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_RER)) {
-            
-            //se obtiene el objeto y se almacena en la sesion
-
-            return JCConstants.SESION_CLIENTE_RER;
+            return JCConstants.SESION_CLIENTE;
             
         } else {
             
             //No tiene rol definido
             addActionError("El usuario existe, pero no tiene un rol definido");
-            return JCConstants.FAILURE;
-            
+            return JCConstants.FAILURE;            
         }
 
     }

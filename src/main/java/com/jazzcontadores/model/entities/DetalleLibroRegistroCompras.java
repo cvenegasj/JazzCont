@@ -43,6 +43,7 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     private Date fechaEmisionConstDepDetraccion;
     private Long numeroFinalOperDiariasSinCredFiscal;
     private Boolean marcaComprobanteSujetoAretencion;
+    private String estadoOportunidadDeAnotacion;
     private Date fechaHoraRegistro;
 
     public DetalleLibroRegistroCompras() {
@@ -221,6 +222,15 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
 
     public void setMarcaComprobanteSujetoAretencion(Boolean marcaComprobanteSujetoAretencion) {
         this.marcaComprobanteSujetoAretencion = marcaComprobanteSujetoAretencion;
+    }
+
+    @Column(name = "estadoOportunidadDeAnotacion", nullable = false, length = 1)
+    public String getEstadoOportunidadDeAnotacion() {
+        return this.estadoOportunidadDeAnotacion;
+    }
+
+    public void setEstadoOportunidadDeAnotacion(String estadoOportunidadDeAnotacion) {
+        this.estadoOportunidadDeAnotacion = estadoOportunidadDeAnotacion;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

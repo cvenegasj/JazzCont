@@ -35,6 +35,10 @@
         <!-- JQuery number plugin -->
         <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
 
+        <!-- JQuery Qtip2 plugin -->
+        <link type="text/css" href="<s:url value="/css/jquery.qtip.css"/>" rel="stylesheet" />
+        <script type="text/javascript" src="<s:url value="/js/jquery.qtip.js"/>"></script>
+
         <script type="text/javascript"> 
             $(function() {
                 // Toggle the dropdown menu's
@@ -53,7 +57,10 @@
                 }); // END document.bind
                 //**************    
                 
-                $("#fechaEmisionComprobante, #fechaVencimiento, #fechaEmisionConstanciaDep, #fechaEmisionCompMod").datepicker({dateFormat: 'dd/mm/yy'});  
+                $("#fechaEmisionComprobante, #fechaVencimiento, #fechaEmisionConstanciaDep, #fechaEmisionCompMod").datepicker({dateFormat: 'dd/mm/yy'}); 
+                $("span.verInfo").qtip({
+                    style: { classes: 'qtip-green' }
+                });
                 
                 $("#rsProveedor").tokenInput("ClienteAjaxAction_listProveedoresByCliente?ruc=<s:property value="empresaCliente.ruc" />", {
                     queryParam: "term",
@@ -156,7 +163,7 @@
                     
                     var nuevaLinea = "<tr class=\"linea\">\n\
                                      <td>" + '<s:textfield name="detalleLRC.comprobanteCompra.detallesComprobanteCompra[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" cssClass="inputLittle right" />\n\
-                                              <s:textfield name="detalleLRC.comprobanteCompra.detallesComprobanteCompra[' + indexDetalle + '].productoCompras.idProductoCompras" value="'+ idProducto + '" readonly="true" cssClass="hide" />' + "</td>\n\
+            <s:textfield name="detalleLRC.comprobanteCompra.detallesComprobanteCompra[' + indexDetalle + '].productoCompras.idProductoCompras" value="'+ idProducto + '" readonly="true" cssClass="hide" />' + "</td>\n\
                                      <td>" + '<s:textfield name="detalleLRC.comprobanteCompra.detallesComprobanteCompra[' + indexDetalle + '].productoCompras.nombre" value="'+ descripcion + '" readonly="true" cssClass="inputLarge2" />' + "</td>\n\
                                      <td>" + '<s:textfield name="detalleLRC.comprobanteCompra.detallesComprobanteCompra[' + indexDetalle + '].productoCompras.precio" value="'+ pUnitarioF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                      <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
@@ -295,19 +302,20 @@
                             <fieldset id="rCompraForm_comprobantePago">
                                 <legend class="little2">Información del comprobante de pago</legend>
                                 <dl>
-                                    <dt>Fecha de emisión del comprobante de pago o documento</dt>
+                                    <dt>Fecha de emisión del comprobante de pago o documento <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd><s:textfield name="detalleLRC.comprobanteCompra.fechaEmision" id="fechaEmisionComprobante" placeholder="" /></dd>
                                     <dt> Fecha de vencimiento o fecha de pago</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.fechaVencimientoOpago" id="fechaVencimiento" placeholder="" /></dd>
-                                    <dt>Tipo de comprobante (Tabla 10)</dt>
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.fechaVencimientoOpago" id="fechaVencimiento" placeholder="" /><span class="verInfo" title="Obligatorio cuando el tipo de comprobante es 14. Debe ser menor o igual que el periodo señalado." /></dd>
+                                    <dt>Tipo de comprobante (Tabla 10) <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd>                                        
                                         <s:select name="detalleLRC.comprobanteCompra.tipoComprobantePagoODocumento.numero" list="tiposComprobantes" 
                                                   headerKey="-1" headerValue="Seleccione el tipo de comprobante"
                                                   listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
 
                                     </dd>
-                                    <dt>Serie</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.serie" id="" placeholder="" /></dd>
+                                    <dt>Serie <span class="importante" title="campo obligatorio">*</span></dt>
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.serie" id="" placeholder="" />
+                                        <span class="verInfo" title="De no existir registrar '-'." /></dd>
                                     <dt>Código de dependencia aduanera (Tabla 11)</dt>
                                     <dd>                                        
                                         <s:select name="detalleLRC.comprobanteCompra.codigoAduana.numero" list="codigosAduana" 
@@ -315,8 +323,9 @@
                                                   listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
                                     </dd>
                                     <dt>Año de emisión de la DUA o DSI</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.anioEmisionDuaOdsi" id="" placeholder="" /></dd>
-                                    <dt>Número del comprobante de pago</dt>
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.anioEmisionDuaOdsi" id="" placeholder="" />
+                                        <span class="verInfo" title="Si el tipo de comprobante es 50 ó 52, registrar un año menor o igual a la fecha de emisión del comprobante. Si es otro tipo de comprobante se registrará '0'." /></dd>
+                                    <dt>Número del comprobante de pago <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd><s:textfield name="detalleLRC.comprobanteCompra.numero" id="" placeholder="" /></dd>                                    
                                 </dl>
                             </fieldset>
@@ -347,7 +356,7 @@
                                     Adquisiciones gravadas
                                 </legend>
                                 <dl>
-                                    <dt>Tipo de adquisición</dt>
+                                    <dt>Tipo de adquisición <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd>
                                         <select name="detalleLRC.tipoAdquisicionGravada">
                                             <option value="gravada/exportacion">Gravadas/exportación</option>
@@ -371,7 +380,7 @@
                                     <dt>Otros tributos y cargos</dt>
                                     <dd><s:textfield name="detalleLRC.otrosTributosYCargos" id="" placeholder="" /></dd>
                                     <dt>Importe total</dt>
-                                    <dd><s:textfield name="detalleLRC.importeTotal" id="importeTotal" placeholder="(autocalculado)" /></dd>
+                                    <dd><s:textfield name="" id="importeTotal" placeholder="(autocalculado)" /></dd>
                                 </dl>
                             </fieldset>
 

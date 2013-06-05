@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.sql.DataSource;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -20,17 +19,12 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.authc.credential.PasswordMatcher;
-import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.codec.Hex;
-import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
-import org.apache.shiro.util.SimpleByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +101,7 @@ public class CustomSecurityRealm extends JdbcRealm {
 
             HashedCredentialsMatcher hcm = new HashedCredentialsMatcher();
             hcm.setHashAlgorithmName(Sha512Hash.ALGORITHM_NAME);
-            hcm.setHashIterations(500000);
+            hcm.setHashIterations(200000);
             hcm.setStoredCredentialsHexEncoded(true);           
             setCredentialsMatcher(hcm);
 
@@ -214,6 +208,7 @@ public class CustomSecurityRealm extends JdbcRealm {
 
                 // Add the role to the list of names if it isn't null
                 if (roleName != null) {
+                    roleNames.add(JCConstants.ROLE_CLIENTE);
                     if (roleName.equals("RG")) {
                         roleNames.add(JCConstants.ROLE_CLIENTE_RG);
                     } else if (roleName.equals("NRUS")) {

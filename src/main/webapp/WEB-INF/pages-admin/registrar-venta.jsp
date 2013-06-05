@@ -35,6 +35,10 @@
         <!-- JQuery number plugin -->
         <script type="text/javascript" src="<s:url value="/js/jquery.number.min.js"/>"></script>
 
+        <!-- JQuery Qtip2 plugin -->
+        <link type="text/css" href="<s:url value="/css/jquery.qtip.css"/>" rel="stylesheet" />
+        <script type="text/javascript" src="<s:url value="/js/jquery.qtip.js"/>"></script>
+
         <script type="text/javascript"> 
             $(function() {
                 // Toggle the dropdown menu's
@@ -53,7 +57,10 @@
                 }); // END document.bind
                 //**************    
                 
-                $("#fechaEmisionComprobante, #fechaVencimiento").datepicker({dateFormat: 'dd/mm/yy'});  
+                $("#fechaEmisionComprobante, #fechaVencimiento").datepicker({dateFormat: 'dd/mm/yy'}); 
+                $("span.verInfo").qtip({
+                    style: { classes: 'qtip-green' }
+                });
                 
                 $("#rsComprador").tokenInput("ClienteAjaxAction_listCompradoresByCliente?ruc=<s:property value="empresaCliente.ruc" />", {
                     queryParam: "term",
@@ -156,81 +163,81 @@
                     
                     var nuevaLinea = "<tr class=\"linea\">\n\
                                      <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].cantidad" value="'+ cantidad + '" readonly="true" cssClass="inputLittle right" />\n\
-                                              <s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.idProductoVentas" value="'+ idProducto + '" readonly="true" cssClass="hide" />' + "</td>\n\
+            <s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.idProductoVentas" value="'+ idProducto + '" readonly="true" cssClass="hide" />' + "</td>\n\
                                      <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.nombre" value="'+ descripcion + '" readonly="inputLarge2 true" />' + "</td>\n\
                                      <td>" + '<s:textfield name="detalleLRV.comprobanteVenta.detallesComprobanteVenta[' + indexDetalle + '].productoVentas.precio" value="'+ pUnitarioF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                      <td>" + '<s:textfield name="" value="'+ importeF + '" readonly="true" cssClass="inputLittle right" />' + "</td>\n\
                                      <td></td>\n\
                                      </tr>";
                     
-                    $("#inputLineDetallesComprobante").before(nuevaLinea);
+                        $("#inputLineDetallesComprobante").before(nuevaLinea);
                     
-                    // limpiar valores de linea input
-                    $("#descripcionProductoInput").tokenInput("clear");
-                    $("#descripcionProductoInput2").val("");
-                    $("#pUnitarioInput").val("");
-                    $("#importeInput").val("");
-                    $("#cantidadInput").val("").focus();
-                    $("#registrarNuevoProducto").prop('checked', false);
-                    $("#descripcionProducto1").removeClass("hide");
-                    $("#descripcionProducto2").addClass("hide");
+                        // limpiar valores de linea input
+                        $("#descripcionProductoInput").tokenInput("clear");
+                        $("#descripcionProductoInput2").val("");
+                        $("#pUnitarioInput").val("");
+                        $("#importeInput").val("");
+                        $("#cantidadInput").val("").focus();
+                        $("#registrarNuevoProducto").prop('checked', false);
+                        $("#descripcionProducto1").removeClass("hide");
+                        $("#descripcionProducto2").addClass("hide");
                                         
-                    // se calculan los totales
-                    total += parseFloat(importe);
-                    base = total * 0.82;
-                    igv = total * 0.18;
+                        // se calculan los totales
+                        total += parseFloat(importe);
+                        base = total * 0.82;
+                        igv = total * 0.18;
                     
-                    // se establecen los campos
-                    $("#base").val($.number(base, 2, '.', ''));
-                    $("#igv").val($.number(igv, 2, '.', '')); 
-                    $("#total").val($.number(total, 2, '.', ''));
-                    $("#baseImponible").val($.number(base, 2, '.', ''));
-                    $("#igvResumen").val($.number(igv, 2, '.', ''));
-                    $("#importeTotal").val($.number(total, 2, '.', ''));
+                        // se establecen los campos
+                        $("#base").val($.number(base, 2, '.', ''));
+                        $("#igv").val($.number(igv, 2, '.', '')); 
+                        $("#total").val($.number(total, 2, '.', ''));
+                        $("#baseImponible").val($.number(base, 2, '.', ''));
+                        $("#igvResumen").val($.number(igv, 2, '.', ''));
+                        $("#importeTotal").val($.number(total, 2, '.', ''));
                     
-                    indexDetalle++;                    
-                });
+                        indexDetalle++;                    
+                    });
                 
-                $("#pUnitarioInput").on("input", function() {
-                    var importe = parseFloat($("#cantidadInput").val()) * parseFloat($("#pUnitarioInput").val());
-                    $("#importeInput").val($.number(importe, 2, '.', ''));
-                });
+                    $("#pUnitarioInput").on("input", function() {
+                        var importe = parseFloat($("#cantidadInput").val()) * parseFloat($("#pUnitarioInput").val());
+                        $("#importeInput").val($.number(importe, 2, '.', ''));
+                    });
                 
-                // casilla para registrar nuevo comprador
-                $("#registrarNuevoComprador").on("click", function() {
-                    if ($(this).is(":checked")) { 
-                        $("#rs1").addClass("hide");
-                        $("#rs2").removeClass("hide");
-                        $("#rsComprador").prop("name", "");
-                        $("#rsCompradorNuevo").prop("name", "detalleLRV.comprobanteVenta.comprador.razonSocialONombres");
-                        // limpiamos los campos                        
-                        $("#compradorNroDoc").val("").prop("readonly", false);
-                        $("#compradorTipoDoc").val("-1");
-                        $("#compradorTipoDoc option:not(:selected)").prop('disabled', false);
-                    } else {
-                        $("#rs1").removeClass("hide"); 
-                        $("#rs2").addClass("hide");
-                        $("#rsComprador").prop("name", "detalleLRV.comprobanteVenta.comprador.razonSocialONombres");   
-                        $("#rsCompradorNuevo").prop("name", "").val(""); 
-                        // limpiamos los campos
-                        $("#compradorNroDoc").val("").prop("readonly", false);
-                        $("#compradorTipoDoc").val("-1");
-                        $("#compradorTipoDoc option:not(:selected)").prop('disabled', false);
-                        $("#rsComprador").tokenInput("clear");
-                    }
-                });
+                    // casilla para registrar nuevo comprador
+                    $("#registrarNuevoComprador").on("click", function() {
+                        if ($(this).is(":checked")) { 
+                            $("#rs1").addClass("hide");
+                            $("#rs2").removeClass("hide");
+                            $("#rsComprador").prop("name", "");
+                            $("#rsCompradorNuevo").prop("name", "detalleLRV.comprobanteVenta.comprador.razonSocialONombres");
+                            // limpiamos los campos                        
+                            $("#compradorNroDoc").val("").prop("readonly", false);
+                            $("#compradorTipoDoc").val("-1");
+                            $("#compradorTipoDoc option:not(:selected)").prop('disabled', false);
+                        } else {
+                            $("#rs1").removeClass("hide"); 
+                            $("#rs2").addClass("hide");
+                            $("#rsComprador").prop("name", "detalleLRV.comprobanteVenta.comprador.razonSocialONombres");   
+                            $("#rsCompradorNuevo").prop("name", "").val(""); 
+                            // limpiamos los campos
+                            $("#compradorNroDoc").val("").prop("readonly", false);
+                            $("#compradorTipoDoc").val("-1");
+                            $("#compradorTipoDoc option:not(:selected)").prop('disabled', false);
+                            $("#rsComprador").tokenInput("clear");
+                        }
+                    });
                 
-                // casilla para registrar nuevo producto
-                $("#registrarNuevoProducto").on("click", function() {
-                    if ($(this).is(":checked")) { 
-                        $("#descripcionProducto1").addClass("hide");
-                        $("#descripcionProducto2").removeClass("hide");                                            
-                    } else {
-                        $("#descripcionProducto1").removeClass("hide"); 
-                        $("#descripcionProducto2").addClass("hide");                                                          
-                    }
-                });
-            });     
+                    // casilla para registrar nuevo producto
+                    $("#registrarNuevoProducto").on("click", function() {
+                        if ($(this).is(":checked")) { 
+                            $("#descripcionProducto1").addClass("hide");
+                            $("#descripcionProducto2").removeClass("hide");                                            
+                        } else {
+                            $("#descripcionProducto1").removeClass("hide"); 
+                            $("#descripcionProducto2").addClass("hide");                                                          
+                        }
+                    });
+                });     
         </script>
 
     </head>
@@ -285,19 +292,21 @@
                             <fieldset id="rVentaForm_comprobantePago">
                                 <legend class="little2">Información del comprobante de pago</legend>
                                 <dl>
-                                    <dt>Fecha de emisión del comprobante de pago o documento</dt>
+                                    <dt>Fecha de emisión del comprobante de pago o documento <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd><s:textfield name="detalleLRV.comprobanteVenta.fechaEmision" id="fechaEmisionComprobante" placeholder="" /></dd>
                                     <dt>Fecha de vencimiento y/o pago</dt>
-                                    <dd><s:textfield name="detalleLRV.comprobanteVenta.fechaVencimiento" id="fechaVencimiento" placeholder="" /></dd>
-                                    <dt>Tipo de comprobante (Tabla 10)</dt>
+                                    <dd><s:textfield name="detalleLRV.comprobanteVenta.fechaVencimiento" id="fechaVencimiento" placeholder="" />
+                                        <span class="verInfo" title="Obligatorio cuando el tipo de comprobante es 14 y cuando el documento ha sido inutilizado durante el periodo previamente a ser entregado, emitido o durante su emisión. Debe ser menor o igual que el periodo señalado." /></dd>
+                                    <dt>Tipo de comprobante (Tabla 10) <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd>
                                         <s:select name="detalleLRV.comprobanteVenta.tipoComprobantePagoODocumento.numero" list="tiposComprobantes" 
                                                   headerKey="-1" headerValue="Seleccione el tipo de comprobante"
                                                   listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
                                     </dd>
-                                    <dt>Número de serie o número de serie de la máquina registradora</dt>                                                                    
-                                    <dd><s:textfield name="detalleLRV.comprobanteVenta.serie" id="" placeholder="" /></dd>
-                                    <dt>Número del comprobante de pago</dt>                                                                    
+                                    <dt>Número de serie o número de serie de la máquina registradora <span class="importante" title="campo obligatorio">*</span></dt>                                                                    
+                                    <dd><s:textfield name="detalleLRV.comprobanteVenta.serie" id="" placeholder="" />
+                                        <span class="verInfo" title="Si el tipo de comprobante es '00' registrar '-'." /></dd>
+                                    <dt>Número del comprobante de pago <span class="importante" title="campo obligatorio">*</span></dt>                                                                    
                                     <dd><s:textfield name="detalleLRV.comprobanteVenta.numero" id="" placeholder="" /></dd>
                                 </dl>
                             </fieldset>
@@ -330,7 +339,7 @@
                                     <dt>Valor facturado de la exportación</dt>
                                     <dd><s:textfield name="" id="" placeholder="" /></dd>
                                     <dt>Base imponible de la operación gravada</dt>
-                                    <dd><s:textfield name="detalleLRV.baseImponibleOpGravada" id="baseImponible" placeholder="(autocalculado)" /></dd>
+                                    <dd><s:textfield name="" id="baseImponible" placeholder="(autocalculado)" /></dd>
                                     <dt>Importe total de la operación exonerada</dt>
                                     <dd><s:textfield name="" id="" placeholder="" /></dd>
                                     <dt>Importe total de la operación inafecta</dt>
@@ -338,11 +347,11 @@
                                     <dt>ISC</dt>
                                     <dd><s:textfield name="" id="" placeholder="" /></dd>
                                     <dt>IGV y/o IPM</dt>
-                                    <dd><s:textfield name="detalleLRV.igv_ipm" id="igvResumen" placeholder="(autocalculado)" /></dd>
+                                    <dd><s:textfield name="" id="igvResumen" placeholder="(autocalculado)" /></dd>
                                     <dt>Otros tributos y cargos que no forman parte de la base imponible</dt>
                                     <dd><s:textfield name="" id="" placeholder="" /></dd>
                                     <dt>Importe total del comprobante de pago</dt>
-                                    <dd><s:textfield name="detalleLRV.importeTotal" id="importeTotal" placeholder="(autocalculado)" /></dd>
+                                    <dd><s:textfield name="" id="importeTotal" placeholder="(autocalculado)" /></dd>
                                 </dl>
                             </fieldset> 
                             <fieldset id="rVentaForm_otros">

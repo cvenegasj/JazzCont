@@ -12,5 +12,5 @@ import com.jazzcontadores.model.entities.Proveedor;
  */
 public interface ProveedorDAO extends GenericDAO<Proveedor, Integer> {
 
-    Proveedor findByTipoDocumentoYNumeroDocumento(String numeroTipoDoc, String numeroDocumento);
+    Proveedor findByTipoDocumentoYNumeroDocumento(long rucCliente, String numeroTipoDoc, String numeroDocumento);
 }

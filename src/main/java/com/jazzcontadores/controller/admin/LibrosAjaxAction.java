@@ -44,7 +44,7 @@ public class LibrosAjaxAction extends ActionSupport {
             detalleSrl.setIdDetalleLibroRegistroVentas(detalle.getIdDetalleLibroRegistroVentas());
             detalleSrl.setNumeroCorrelativo(detalle.getNumeroCorrelativo());
             detalleSrl.setValorFacturadoExportacion(detalle.getValorFacturadoExportacion());
-            detalleSrl.setBaseImponibleOpGravada(detalle.getBaseImponibleOpGravada());
+            detalleSrl.setBaseImponibleOpGravada(detalle.getComprobanteVenta().getBase()); // ************* revisar
             detalleSrl.setTotalOperacionExonerada(detalle.getTotalOperacionExonerada());
             detalleSrl.setTotalOperacionInafecta(detalle.getTotalOperacionInafecta());
             detalleSrl.setIsc(detalle.getIsc());
@@ -55,7 +55,7 @@ public class LibrosAjaxAction extends ActionSupport {
             detalleSrl.setTipoCambio(detalle.getTipoCambio());
             detalleSrl.setBaseImponibleArrozPilado(detalle.getBaseImponibleArrozPilado());
             detalleSrl.setImpuestoVentasArrozPilado(detalle.getImpuestoVentasArrozPilado());
-            detalleSrl.setEstadoOportunidadDeAnotación(detalle.getEstadoOportunidadDeAnotación());
+            detalleSrl.setEstadoOportunidadDeAnotación(detalle.getEstadoOportunidadDeAnotacion());
             detalleSrl.setFechaHoraRegistro(detalle.getFechaHoraRegistro());
             // comprobante
             detalleSrl.setIdComprobanteVenta(detalle.getComprobanteVenta().getIdComprobanteVenta());

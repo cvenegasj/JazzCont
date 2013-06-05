@@ -39,7 +39,7 @@ import java.util.List;
  * @author Venegas
  */
 public class DetalleLibroRegistroComprasAction extends ActionSupport {
-
+    
     private long ruc;
     private boolean nuevoProveedor;
     private EmpresaCliente empresaCliente;
@@ -47,19 +47,19 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
     private List<TipoComprobantePagoODocumento> tiposComprobantes = new ArrayList<TipoComprobantePagoODocumento>();
     private List<TipoDocumentoIdentidad> tiposDocumentos = new ArrayList<TipoDocumentoIdentidad>();
     private List<CodigoAduana> codigosAduana = new ArrayList<CodigoAduana>();
-
+    
     public String add() {
-
+        
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
+        
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         EmpresaClienteDAO empresaDAO = factory.getEmpresaClienteDAO();
         TipoComprobantePagoODocumentoDAO tDAO = factory.getTipoComprobantePagoODocumentoDAO();
         TipoDocumentoIdentidadDAO docDAO = factory.getTipoDocumentoIdentidadDAO();
         CodigoAduanaDAO aduanaDAO = factory.getCodigoAduanaDAO();
-
+        
         EmpresaCliente e = empresaDAO.findByRuc(ruc);
-
+        
         if (e != null) {
             this.setEmpresaCliente(e);
         } else {
@@ -72,15 +72,15 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         this.setTiposDocumentos(docDAO.findAll());
         // llenar los códigos aduaneros
         this.setCodigosAduana(aduanaDAO.findAll());
-
+        
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return "add";
     }
-
+    
     public String save() throws Exception {
-
+        
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
+        
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         LibroRegistroComprasDAO libroComprasDAO = factory.getLibroRegistroComprasDAO();
         ProveedorDAO proveedorDAO = factory.getProveedorDAO();
@@ -91,45 +91,45 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         cPeriodo.setTime(this.getDetalleLRC().getComprobanteCompra().getFechaEmision());
         // para los periodos de los libros, el día es 1 siempre
         cPeriodo.set(Calendar.DAY_OF_MONTH, 1);
-
+        
         LibroRegistroCompras libroExistente = libroComprasDAO.findByPeriodo(this.getEmpresaCliente().getRuc(), cPeriodo.getTime());
-
+        
         try {
             if (libroExistente == null) {
                 Calendar cFechaFin = (Calendar) cPeriodo.clone();
                 cFechaFin.set(Calendar.DAY_OF_MONTH, cFechaFin.getActualMaximum(Calendar.DAY_OF_MONTH));
-
+                
                 LibroRegistroCompras libroRCNuevo = new LibroRegistroCompras();
                 libroRCNuevo.setPeriodo(cPeriodo.getTime());
                 libroRCNuevo.setFechaInicio(cPeriodo.getTime());
                 libroRCNuevo.setFechaFin(cFechaFin.getTime());
                 libroRCNuevo.setEstaCerrado(false);
                 libroRCNuevo.setEmpresaCliente(this.getEmpresaCliente());
-
+                
                 libroComprasDAO.makePersistent(libroRCNuevo);
-
+                
                 if (this.isNuevoProveedor()) {
                     // viene validado, solo es necesario registrar
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
                 }
-
+                
                 if (this.getDetalleLRC().getComprobanteCompra().getCodigoAduana().getNumero() != -1) {
                     // buscar el codigo aduana mediante DAO
                 } else {
                     this.getDetalleLRC().getComprobanteCompra().setCodigoAduana(null);
                 }
-
+                
                 this.getDetalleLRC().setLibroRegistroCompras(libroRCNuevo); // no se puede obviar
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
                 this.getDetalleLRC().setNumeroCorrelativo(1); // libro nuevo, primer detalle
 
-                //para calcular el total
+                // para calcular el total
                 BigDecimal total = new BigDecimal("0.00");
                 total.setScale(2, RoundingMode.HALF_EVEN);
-
+                
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
-
+                    
                     if (d.getProductoCompras().getIdProductoCompras() == 0) {
                         // crear nueva referencia para registrar nuevo producto
                         ProductoCompras pc = new ProductoCompras();
@@ -143,12 +143,12 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
                     total = total.add(d.getSubtotal());
                 }
-
+                
                 this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
                 this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
                 this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
                 libroRCNuevo.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
-
+                
             } else {
                 if (libroExistente.isEstaCerrado()) {
                     return "libroCerrado";
@@ -158,23 +158,23 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 if (this.isNuevoProveedor()) {
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
                 }
-
+                
                 if (this.getDetalleLRC().getComprobanteCompra().getCodigoAduana().getNumero() != -1) {
                     // buscar el codigo aduana mediante DAO
                 } else {
                     this.getDetalleLRC().getComprobanteCompra().setCodigoAduana(null);
                 }
-
+                
                 this.getDetalleLRC().setLibroRegistroCompras(libroExistente);
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
 
                 //para calcular el total
                 BigDecimal total = new BigDecimal("0.00");
                 total.setScale(2, RoundingMode.HALF_EVEN);
-
+                
                 for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
                     DetalleComprobanteCompra d = it.next();
-
+                    
                     if (d.getProductoCompras().getIdProductoCompras() == 0) {
                         // crear nueva referencia para registrar nuevo producto
                         ProductoCompras pc = new ProductoCompras();
@@ -188,7 +188,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
                     total = total.add(d.getSubtotal());
                 }
-
+                
                 this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
                 this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
                 this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
@@ -222,30 +222,30 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     } else {
                         this.getDetalleLRC().setNumeroCorrelativo(1);
                     }
-
+                    
                     libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                 }
-
-
+                
+                
             }
-
+            
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-
+            
         } catch (Exception e) {
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             System.err.println(e + ": " + e.getMessage());
             throw e;
             //return ERROR;
         }
-
+        
         return "save";
     }
-
+    
     public void validateSave() {
 
         // se inyecta el cliente antes de hacer las validaciones
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
+        
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         EmpresaCliente e = factory.getEmpresaClienteDAO().findByRuc(ruc);
         this.setEmpresaCliente(e);
@@ -258,21 +258,23 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         this.setCodigosAduana(factory.getCodigoAduanaDAO().findAll());
 
         // validaciones
+        if (getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().isEmpty()) {
+            addActionError("Debe especificar las líneas del comprobante.");
+        }
         if (getDetalleLRC().getComprobanteCompra().getFechaEmision() == null) {
             addActionError("Debe especificar la fecha de emisión del comprobante.");
         }
-        if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() <= 0) {
+        if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() < 0) {
             addActionError("Debe especificar el tipo de comprobante (Tabla 10).");
         }
         if (!getDetalleLRC().getComprobanteCompra().getSerie().trim().matches("-|\\w{1,20}")) {
             addActionError("El formato de la serie del comprobante es incorrecto.");
         }
-        if (!getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi().trim().equals("")
+        if (!getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi().trim().equals("") // campo no olbigatorio
                 && !getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi().trim().matches("^\\d{4}")) {
             addActionError("El formato del año de emisión de DUA o DSI es incorrecto.");
         }
-        if (!getDetalleLRC().getComprobanteCompra().getNumero().trim().equals("")
-                && !getDetalleLRC().getComprobanteCompra().getNumero().trim().matches("^\\d{1,20}")) {
+        if (!getDetalleLRC().getComprobanteCompra().getNumero().trim().matches("^\\d{1,20}")) {
             addActionError("El formato del número de comprobante es incorrecto.");
         }
         // tipo documento identidad de proveedor
@@ -296,10 +298,35 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 && !getDetalleLRC().getComprobanteCompra().getProveedor().getRazonSocial().trim().matches("^.{1,60}")) {
             addActionError("El formato de la razón social del proveedor es incorrecto.");
         }
+        // valor adquisiciones no gravadas        
+        if (getDetalleLRC().getValorAdquisicionesNoGravadas() != null) {
+            if (getDetalleLRC().getValorAdquisicionesNoGravadas().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getValorAdquisicionesNoGravadas().precision() > 14
+                    || getDetalleLRC().getValorAdquisicionesNoGravadas().scale() > 2) {
+                addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
+            }
+        }
+        // isc
+        if (getDetalleLRC().getIsc() != null) {
+            if (getDetalleLRC().getIsc().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getIsc().precision() > 14
+                    || getDetalleLRC().getIsc().scale() > 2) {
+                addActionError("El formato del ISC es incorrecto.");
+            }
+        }
+        // otros tributos y cargos
+        if (getDetalleLRC().getOtrosTributosYcargos() != null) {
+            if (getDetalleLRC().getOtrosTributosYcargos().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getOtrosTributosYcargos().precision() > 14
+                    || getDetalleLRC().getOtrosTributosYcargos().scale() > 2) {
+                addActionError("El formato del valor de los otros tributos y cargos es incorrecto.");
+            }
+        }        
         // verificar existencia de proveedor
         if (getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero() != null
                 && getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad() != null) {
             Proveedor proveedor = factory.getProveedorDAO().findByTipoDocumentoYNumeroDocumento(
+                    this.getEmpresaCliente().getRuc(),
                     this.getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero(),
                     this.getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
             if (this.isNuevoProveedor()) {
@@ -310,7 +337,21 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 getDetalleLRC().getComprobanteCompra().setProveedor(proveedor); // se inyecta el proveedor
             }
         }
-        // reglas del formato de libros electronicos
+        
+        // =========================================================
+        // reglas del formato de libros electronicos *********************
+        // fecha de emisión
+        if (getDetalleLRC().getComprobanteCompra().getFechaEmision() != null) {
+            if (getDetalleLRC().getComprobanteCompra().getFechaEmision().after(new Date())) {
+                addActionError("No se puede registrar fechas futuras en el sistema.");
+            } else {
+                // 4. Si fecha de emisión corresponde al periodo señalado en el campo 1, entonces campo 32 = '1'
+                // 5. Si fecha de emisión está dentro de los doce meses anteriores al periodo señalado en el campo 1, entonces campo 32 = '6'
+                // 6. Si fecha de emisión está fuera de los doce meses anteriores al periodo señalado en el campo 1, entonces campo 32 = '7'
+                getDetalleLRC().setEstadoOportunidadDeAnotacion("1");
+            }
+        }
+        // número de serie
         if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() != null
                 && getDetalleLRC().getComprobanteCompra().getNumero() != null) {
             if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 1
@@ -329,68 +370,104 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 }
             }
         }
-        // importe total del comprobante
-        /*if (getDetalleLRC().getComprobanteCompra().getImporteTotal() == null
-         || getDetalleLRC().getComprobanteCompra().getImporteTotal().compareTo(BigDecimal.ZERO) <= 0
-         || getDetalleLRC().getComprobanteCompra().getImporteTotal().precision() > 14
-         || getDetalleLRC().getComprobanteCompra().getImporteTotal().scale() > 2) {
-         addActionError("El formato del importe total del comprobante es incorrecto");
-         }*/
+        // anio emisión de DUA o DSI
+        if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 50
+                || getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 52) {
+            if (!getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi().matches("^\\d{4}$")) {
+                addActionError("El formato del año de emisión de la DUA o DSI es incorrecto.");
+            } else {
+                if (getDetalleLRC().getComprobanteCompra().getFechaEmision() != null) {
+                    int añoDUA = Integer.parseInt(getDetalleLRC().getComprobanteCompra().getAnioEmisionDuaOdsi());
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(getDetalleLRC().getComprobanteCompra().getFechaEmision());
+                    if (añoDUA > cal.get(Calendar.YEAR)) {
+                        addActionError("El año de emisión de la DUA o DSI debe ser menor o igual al año de la fecha de emisión.");
+                    }
+                }
+            }
+        } else {
+            getDetalleLRC().getComprobanteCompra().setAnioEmisionDuaOdsi("0");
+        }
+        // fecha de vencimiento o pago
+        if (getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 14) {
+            if (getDetalleLRC().getComprobanteCompra().getFechaVencimientoOpago() == null) {
+                addActionError("Debe especificar la fecha de vencimiento o pago para el tipo de comprobante seleccionado.");
+            }
+        }
+        if (getDetalleLRC().getComprobanteCompra().getFechaVencimientoOpago() != null) {
+            // verifica que la fecha de vencimiento o pago sea menor que el periodo especificado
+            // Corregir cuando la fecha de inicio del periodo no sea 1 *********************
+            // en ese caso se debe considerar el periodo anterior
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getDetalleLRC().getComprobanteCompra().getFechaEmision()); // el periodo se saca de la fecha de emisión
+            int mes = cal.get(Calendar.MONTH);
+            int año = cal.get(Calendar.YEAR);
+            
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(getDetalleLRC().getComprobanteCompra().getFechaVencimientoOpago());
+            int mes2 = cal2.get(Calendar.MONTH);
+            int año2 = cal2.get(Calendar.YEAR);
+            
+            if (mes2 > mes || año2 > año) {
+                addActionError("La fecha de vencimiento o pago debe ser menor al periodo esecificado.");
+            }
+        }
+        
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
-
+    
     public long getRuc() {
         return ruc;
     }
-
+    
     public void setRuc(long ruc) {
         this.ruc = ruc;
     }
-
+    
     public EmpresaCliente getEmpresaCliente() {
         return empresaCliente;
     }
-
+    
     public void setEmpresaCliente(EmpresaCliente empresaCliente) {
         this.empresaCliente = empresaCliente;
     }
-
+    
     public DetalleLibroRegistroCompras getDetalleLRC() {
         return detalleLRC;
     }
-
+    
     public void setDetalleLRC(DetalleLibroRegistroCompras detalleLRC) {
         this.detalleLRC = detalleLRC;
     }
-
+    
     public List<TipoComprobantePagoODocumento> getTiposComprobantes() {
         return tiposComprobantes;
     }
-
+    
     public void setTiposComprobantes(List<TipoComprobantePagoODocumento> tiposComprobantes) {
         this.tiposComprobantes = tiposComprobantes;
     }
-
+    
     public List<TipoDocumentoIdentidad> getTiposDocumentos() {
         return tiposDocumentos;
     }
-
+    
     public void setTiposDocumentos(List<TipoDocumentoIdentidad> tiposDocumentos) {
         this.tiposDocumentos = tiposDocumentos;
     }
-
+    
     public List<CodigoAduana> getCodigosAduana() {
         return codigosAduana;
     }
-
+    
     public void setCodigosAduana(List<CodigoAduana> codigosAduana) {
         this.codigosAduana = codigosAduana;
     }
-
+    
     public boolean isNuevoProveedor() {
         return nuevoProveedor;
     }
-
+    
     public void setNuevoProveedor(boolean nuevoProveedor) {
         this.nuevoProveedor = nuevoProveedor;
     }

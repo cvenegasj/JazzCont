@@ -1,6 +1,6 @@
 <%-- 
-    Document   : intro-cliente-rer
-    Created on : 24/11/2012, 08:19:49 PM
+    Document   : intro-cliente
+    Created on : 05/06/2013, 02:25:10 PM
     Author     : Venegas
 --%>
 
@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello Cliente RER!</h1>
+        <h1>Hello World!</h1>
     </body>
 </html>

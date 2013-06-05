@@ -92,7 +92,7 @@ public class ComprobanteVenta implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idComprador", nullable = false)
+    @JoinColumn(name = "idComprador")
     public Comprador getComprador() {
         return this.comprador;
     }

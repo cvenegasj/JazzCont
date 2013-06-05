@@ -15,12 +15,19 @@ public class CompradorDAOImpl extends GenericDAOImpl<Comprador, Integer>
         implements CompradorDAO {
 
     @Override
-    public Comprador findByTipoDocumentoYNumeroDocumento(String numeroTipoDoc, String numeroDocumento) {
+    public Comprador findByTipoDocumentoYNumeroDocumento(long rucCliente, String numeroTipoDoc, String numeroDocumento) {
         Comprador comprador;
         
-        comprador = (Comprador) getSession().createQuery("from Comprador c "
-                + "where c.tipoDocumentoIdentidad.numero = :numeroTipoDoc "
+        comprador = (Comprador) getSession().createQuery("select c "
+                + "from Comprador c "
+                + "join c.comprobantesVenta cv "
+                + "join cv.detalleLibroRegistroVentas d "
+                + "join d.libroRegistroVentas l "
+                + "join l.empresaCliente e "
+                + "where e.ruc = :ruc "
+                + "and c.tipoDocumentoIdentidad.numero = :numeroTipoDoc "
                 + "and c.numeroDocumentoIdentidad = :numeroDocumento")
+                .setLong("ruc", rucCliente)
                 .setString("numeroTipoDoc", numeroTipoDoc)
                 .setString("numeroDocumento", numeroDocumento)
                 .uniqueResult();
