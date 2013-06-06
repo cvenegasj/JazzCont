@@ -40,20 +40,20 @@ public class EmpresaClienteAction extends ActionSupport {
         EmpresaClienteDAO empresaDAO = factory.getEmpresaClienteDAO();
 
         getEmpresaCliente().getContacto().setEmpresaCliente(empresaCliente);
-        
+
         long tiempoInicio = System.currentTimeMillis();
-        
+
         // Hashing password with Shiro
         ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
         String hashedPassword = new Sha512Hash(getEmpresaCliente().getContacto().getPassword(), salt, 500000).toHex();
-                
+
         /*
          * hashedPassword.length = 128
          * salt.hex.length = 32
          */
         long tiempoFin = System.currentTimeMillis();
         System.out.println("Tiempo de hashing: " + (tiempoFin - tiempoInicio) + " ms");
-        
+
         getEmpresaCliente().getContacto().setPassword(hashedPassword);
         getEmpresaCliente().getContacto().setSalt(salt.toHex());
         empresaDAO.makePersistent(empresaCliente);
@@ -64,7 +64,7 @@ public class EmpresaClienteAction extends ActionSupport {
     }
 
     public void validateSave() {
-        
+
         if (getEmpresaCliente().getNombreEmpresa() == null
                 || getEmpresaCliente().getNombreEmpresa().trim().equals("")) {
             addActionError("Debe especificar el nombre de la empresa.");
@@ -85,9 +85,12 @@ public class EmpresaClienteAction extends ActionSupport {
                 || !Long.toString(getEmpresaCliente().getRuc()).matches("^(1|2)\\d{10}$")) {
             addActionError("El RUC debe tener el formato correcto.");
         }
-        if (getEmpresaCliente().getContacto().getEmailPrincipal() == null
-                || getEmpresaCliente().getContacto().getEmailPrincipal().trim().equals("")) {
+        if (getEmpresaCliente().getContacto().getEmailPrincipal() == null) {
             addActionError("Debe especificar el email principal del contacto.");
+        } else {
+            if (!getEmpresaCliente().getContacto().getEmailPrincipal().trim().matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")) {
+                addActionError("El email principal debe tener el formato correcto.");
+            }
         }
         if (getEmpresaCliente().getContacto().getPassword() == null
                 || getEmpresaCliente().getContacto().getPassword().trim().equals("")) {
@@ -100,6 +103,16 @@ public class EmpresaClienteAction extends ActionSupport {
         if (getEmpresaCliente().getContacto().getApellidos() == null
                 || getEmpresaCliente().getContacto().getApellidos().trim().equals("")) {
             addActionError("Debe especificar los apellidos del contacto.");
+        }
+        // email secundario opcional
+        if (getEmpresaCliente().getContacto().getEmailSecundario() != null
+                && !getEmpresaCliente().getContacto().getEmailSecundario().trim().matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")) {
+            addActionError("El email secundario debe tener el formato correcto.");
+        }
+        // email facebook opcional
+        if (getEmpresaCliente().getContacto().getEmailFacebook() != null
+                && !getEmpresaCliente().getContacto().getEmailFacebook().trim().matches("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")) {
+            addActionError("El email facebok debe tener el formato correcto.");
         }
     }
 

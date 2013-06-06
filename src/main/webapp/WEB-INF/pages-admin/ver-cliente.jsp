@@ -198,7 +198,7 @@
                         <h1 class="medium">Datos de empresa</h1>
                     </div>                    
 
-                    <div id="datosWrapper">
+                    <div id="divR_wrapper">
                         <!-- detalle -->
                         <div class="detalleDatosCliente">
                             <div class="lfloat">
@@ -443,12 +443,13 @@
                             <div class="spacer"></div>
                         </div>
                     </div>
-
+                    <br />
+                    
                     <div id="headerContentArea">
                         <h1 class="medium">Datos de contacto</h1>
                     </div>
 
-                    <div id="datosWrapper">
+                    <div id="divR_wrapper">
                         <!-- detalle -->
                         <div class="detalleDatosCliente">
                             <div class="lfloat">

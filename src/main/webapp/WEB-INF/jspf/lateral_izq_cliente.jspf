@@ -3,9 +3,9 @@
 <div id="lateralLeft">
     <nav id="firstpane" class="menu_list">
 
-        <p class="menu_head_link"><s:a href="main.action" >Inicio</s:a></p>
+        <p class="menu_head_link"><s:a href="main" >Inicio</s:a></p>
 
-        <p class="menu_head_link"><s:a href="">Mi info</s:a></p>
+        <p class="menu_head_link"><s:a href="miInfo">Mi info</s:a></p>
 
         <p class="menu_head_link"><s:a href="">Registrar compra</s:a></p>
 

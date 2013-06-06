@@ -132,18 +132,15 @@
         </action>
         
         <action name="LibroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroComprasAction">
-            <result name="show">/WEB-INF/pages-admin/ver-libro-compras.jsp</result>
-            
+            <result name="show">/WEB-INF/pages-admin/ver-libro-compras.jsp</result>            
         </action>
         
         <action name="LibroVentasAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroVentasAction">
-            <result name="show">/WEB-INF/pages-admin/ver-libro-ventas.jsp</result>
-            
+            <result name="show">/WEB-INF/pages-admin/ver-libro-ventas.jsp</result>            
         </action> 
         
         <action name="LibroDiarioSimplificadoAction_*" method="{1}" class="com.jazzcontadores.controller.admin.LibroDiarioSimplificadoAction">
-            <result name="show">/WEB-INF/pages-admin/ver-libro-diario-simplificado.jsp</result>
-            
+            <result name="show">/WEB-INF/pages-admin/ver-libro-diario-simplificado.jsp</result>            
         </action>
         
         <action name="ContenedorComprobantesCompraAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ContenedorComprobantesCompraAction">
@@ -160,10 +157,7 @@
             <result name="showTributos">/WEB-INF/pages-admin/ver-tributos-por-cliente.jsp</result>
         </action>
             
-        
-        
-        
-        
+                
         
         <!-- Acciones Ajax -->
         <action name="ClienteAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.admin.ClienteAjaxAction">
@@ -255,6 +249,45 @@
         </action>
         <action name="main" class="com.jazzcontadores.controller.cliente.LibrosAction">
             <result>/WEB-INF/pages-cliente/ver-libros.jsp</result>
+        </action>
+        
+        <action name="miInfo">
+            <result>/WEB-INF/pages-cliente/ver-mi-info.jsp</result>                
+        </action>
+        
+        <action name="LibroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.LibroComprasAction">
+            <result name="show">/WEB-INF/pages-cliente/ver-libro-compras.jsp</result>            
+        </action>
+        
+        <action name="LibroVentasAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.LibroVentasAction">
+            <result name="show">/WEB-INF/pages-cliente/ver-libro-ventas.jsp</result>            
+        </action> 
+        
+        <action name="LibroDiarioSimplificadoAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.LibroDiarioSimplificadoAction">
+            <result name="show">/WEB-INF/pages-cliente/ver-libro-diario-simplificado.jsp</result>            
+        </action>
+        
+        
+        <!-- Acciones AJAX -->
+        <action name="ClienteAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.ClienteAjaxAction">
+            <result name="edit" type="json">                 
+                <param name="includeProperties">
+                    mensaje, paramRetorno 
+                </param>             
+            </result>
+        </action>
+                
+        <action name="LibrosAjaxAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.LibrosAjaxAction">
+            <result name="listDetallesRV" type="json"> 
+                <param name="excludeProperties">
+                    user, success, idLibro, page, start, limit, listaDetallesRCSrl               
+                </param>
+            </result>
+            <result name="listDetallesRC" type="json"> 
+                <param name="excludeProperties">
+                    user, success, idLibro, page, start, limit, listaDetallesRVSrl
+                </param>                                   
+            </result>
         </action>
     </package>
     

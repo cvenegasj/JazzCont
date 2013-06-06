@@ -27,7 +27,41 @@
 
         <script type="text/javascript"> 
             $(function() {
+                $("#selectLibroCompras").change(function() {
+                    var selectedVal = $("#selectLibroCompras option:selected").val();
+                    var selectedText = $("#selectLibroCompras option:selected").text();
+                    
+                    if(selectedVal == -1) {
+                        return;
+                    }
+
+                    var urlDestino = "LibroComprasAction_show?idLibro=" + selectedVal + "&prd=" + selectedText;
+                    window.location = urlDestino;
+                });
                 
+                $("#selectLibroVentas").change(function() {
+                    var selectedVal = $("#selectLibroVentas option:selected").val();
+                    var selectedText = $("#selectLibroVentas option:selected").text();
+                    
+                    if(selectedVal == -1) {
+                        return;
+                    }
+
+                    var urlDestino = "LibroVentasAction_show?idLibro=" + selectedVal + "&prd=" + selectedText;
+                    window.location = urlDestino;
+                });
+                
+                $("#selectLibroDiarioS").change(function() {
+                    var selectedVal = $("#selectLibroDiarioS option:selected").val();
+                    var selectedText = $("#selectLibroDiarioS option:selected").text();
+                    
+                    if(selectedVal == -1) {
+                        return;
+                    }
+
+                    var urlDestino = "LibroDiarioSimplificadoAction_show?idLibro=" + selectedVal + "&prd=" + selectedText;
+                    window.location = urlDestino;
+                });                
             });     
         </script>
 
