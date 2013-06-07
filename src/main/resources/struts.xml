@@ -50,9 +50,10 @@
                 <param name="actionName">main</param>
                 <param name="namespace">/app/admin</param>
             </result>
-            <result name="sesionClienteRG">/WEB-INF/pages-cliente-rg/intro-cliente-rg.jsp</result>
-            <result name="sesionClienteNRUS">/WEB-INF/pages-cliente-nrus/intro-cliente-nrus.jsp</result>
-            <result name="sesionClienteRER">/WEB-INF/pages-cliente-rer/intro-cliente-rer.jsp</result>
+            <result name="sesionCliente" type="redirectAction">
+                <param name="actionName">main</param>
+                <param name="namespace">/app/cliente</param>
+            </result>            
         </action>            
          
     </package>
@@ -247,12 +248,17 @@
         <action name="test">
             <result>/success.jsp</result>
         </action>
+        
         <action name="main" class="com.jazzcontadores.controller.cliente.LibrosAction">
             <result>/WEB-INF/pages-cliente/ver-libros.jsp</result>
         </action>
         
         <action name="miInfo">
             <result>/WEB-INF/pages-cliente/ver-mi-info.jsp</result>                
+        </action>
+        
+        <action name="libros" class="com.jazzcontadores.controller.cliente.LibrosAction">
+            <result>/WEB-INF/pages-cliente/ver-libros.jsp</result>
         </action>
         
         <action name="LibroComprasAction_*" method="{1}" class="com.jazzcontadores.controller.cliente.LibroComprasAction">

@@ -29,18 +29,19 @@ public class ClienteAjaxAction extends ActionSupport implements UserAware {
             return ERROR;
         }
 
-        // buscar cliente mediante ruc y actualizar el campo
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);        
         Contacto c = factory.getContactoDAO().findById(((Contacto) user).getIdContacto());
-        c.setEmailSecundario(nuevoParam);
+        c.setEmailSecundario(nuevoParam);        
 
         // devolver el nuevo valor escrito en la BD
         this.setParamRetorno(c.getEmailSecundario());
         this.setMensaje("ok");
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        // se actualiza el objeto de la sesión
+        ((Contacto) user).setEmailSecundario(c.getEmailSecundario());
         return "edit";
     }
     
@@ -52,7 +53,6 @@ public class ClienteAjaxAction extends ActionSupport implements UserAware {
             return ERROR;
         }
 
-        // buscar cliente mediante ruc y actualizar el campo
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);        
@@ -64,6 +64,8 @@ public class ClienteAjaxAction extends ActionSupport implements UserAware {
         this.setMensaje("ok");
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        // se actualiza el objeto de la sesión
+        ((Contacto) user).setEmailFacebook(c.getEmailFacebook());
         return "edit";
     }
 

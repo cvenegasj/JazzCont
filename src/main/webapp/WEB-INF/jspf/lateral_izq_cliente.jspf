@@ -7,6 +7,8 @@
 
         <p class="menu_head_link"><s:a href="miInfo">Mi info</s:a></p>
 
+        <p class="menu_head_link"><s:a href="libros">Mis libros contables</s:a></p>
+
         <p class="menu_head_link"><s:a href="">Registrar compra</s:a></p>
 
         <p class="menu_head_link"><s:a href="">Registrar venta o ingreso</s:a></p>

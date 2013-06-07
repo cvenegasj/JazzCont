@@ -20,6 +20,9 @@ import com.jazzcontadores.util.ProveedorSerializable;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.util.ByteSource;
 
 /**
  *
@@ -446,22 +449,31 @@ public class ClienteAjaxAction extends ActionSupport {
         return "edit";
     }
 
-    public String editContraseñaContacto() {
-        String nuevoParam = this.getParam();
+    public String editPasswordContacto() {
+        String nuevoParam = this.getParam().trim();
+        
+        if (!nuevoParam.matches("^\\w{6,}$")) {
+            this.setMensaje("La contraseña no tiene el formato correcto");
+            return "edit";
+        }
+        
         // buscar cliente mediante ruc y actualizar el campo
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
         DAOFactory factory = DAOFactory.instance(DAOFactory.HIBERNATE);
         EmpresaClienteDAO empresaDAO = factory.getEmpresaClienteDAO();
-
+        
         EmpresaCliente empresaCliente = empresaDAO.findByRuc(getRuc());
-        empresaCliente.getContacto().setPassword(nuevoParam);
-
+        // encriptación con Shiro
+        ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
+        String hashedPassword = new Sha512Hash(nuevoParam, salt, 200000).toHex();
+        empresaCliente.getContacto().setPassword(hashedPassword);
+        empresaCliente.getContacto().setSalt(salt.toHex());
+       
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         // devolver el nuevo valor escrito en la BD
         this.setParamRetorno(empresaCliente.getContacto().getPassword());
         this.setMensaje("ok");
-
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return "edit";
     }
 

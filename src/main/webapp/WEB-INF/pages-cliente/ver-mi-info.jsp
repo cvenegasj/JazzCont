@@ -18,6 +18,9 @@
         <link rel="shortcut icon" href="<s:url value="/favicon1.ico"/>">
         <link rel="icon" type="image/ico" href="<s:url value="/favicon1.ico"/>">
 
+        <!-- Botones estilo Google+ -->
+        <link type="text/css" href="<s:url value="/css/css3-buttons.css"/>" rel="stylesheet" />
+
         <link type="text/css" href="<s:url value="/css/custom-theme/jquery-ui-1.9.1.custom.min.css"/>" rel="stylesheet" />	
         <script type="text/javascript" src="<s:url value="/js/jquery-1.7.2.min.js"/>"></script>        
         <script type="text/javascript" src="<s:url value="/js/jquery-ui-1.9.1.custom.min.js"/>"></script> 
@@ -28,25 +31,25 @@
         <script type="text/javascript"> 
             $(function() {
                 
-                $("button.btnEditar").on("click", function(event) {                     
-                    var actual = $(event.target).prev("span").text();
-                    alert(event.target);                    
-                    //$(event.target).parent().parent().next().children(":first-child").val(actual);
-                    $(event.target).parent().parent.addClass("hide").next("div").removeClass("hide");
+                $("button.btnEditar").on("click", function() {                     
+                    var actual = $(this).prev("span").text();                    
+                    //alert(actual);
+                    $(this).parent().next().children(":first-child").val(actual);
+                    $(this).parent().addClass("hide").next("div").removeClass("hide");
                 });
                 
                 // evento del botón guardar
-                $("button.btnGuardar").on("click", function(event) {
+                $("button.btnGuardar").on("click", function() {
                     // val() funciona para input, select y textarea
-                    var nuevoValor = $(event.target).prev().val();
-                    alert("nuevo valor: " + nuevoValor);                    
-                    $(event.target).parent().addClass("hide");
+                    var nuevoValor = $(this).prev().val();
+                    //alert("nuevo valor: " + nuevoValor);                    
+                    $(this).parent().addClass("hide");
                     // ajax-load.gif
-                    $(event.target).parent().parent().append("<span class=\"loadingGif\"></span>");
+                    $(this).parent().parent().append("<span class=\"loadingGif\"></span>");
                     
                     // url de la peticion ajax
-                    var url = $(event.target).parent().parent().prev().children("input[type='hidden']").prop("value");
-                                    
+                    var url = $(this).parent().parent().prev().children("input[type='hidden']").prop("value");
+                    //alert(url);                
                     // ajax
                     $.ajax({
                         url: url,
@@ -62,18 +65,18 @@
                         },
                         success: function(data) { 
                             if (data.mensaje == "ok") {
-                                $(event.target).parent().prev().children("span:first-child").text(data.paramRetorno);
-                                $(event.target).parent().addClass("hide").prev().removeClass("hide");
-                                $(event.target).parent().parent().children("span.loadingGif").remove();                                                               
-                                
+                                location.reload();  
                             } else {
                                 alert("No se actualizó correctamente el campo.");
-                                $(event.target).parent().addClass("hide").prev().removeClass("hide");
-                                $(event.target).parent().parent().children("span.loadingGif").remove();
+                                location.reload();                                  
                             }                           
                         }                    
                     }); 
                 }); 
+                
+                $("button.btnCancelar").on("click", function() {
+                    $(this).parent().addClass("hide").prev("div").removeClass("hide");
+                });
                 
             });
         </script>

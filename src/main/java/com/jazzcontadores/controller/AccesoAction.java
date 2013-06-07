@@ -24,12 +24,8 @@ public class AccesoAction extends ActionSupport {
             //retorna a la página principal de cada rol
             if (currentUser.hasRole(JCConstants.ROLE_ADMIN)) {
                 return JCConstants.SESION_ADMIN;
-            } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_RG)) {
-                return JCConstants.SESION_CLIENTE_RG;
-            } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_NRUS)) {
-                return JCConstants.SESION_CLIENTE_NRUS;
-            } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE_RER)) {
-                return JCConstants.SESION_CLIENTE_RER;
+            } else if (currentUser.hasRole(JCConstants.ROLE_CLIENTE)) {
+                return JCConstants.SESION_CLIENTE;
             } else {
                 // supuestamente esto nunca se ejecutará :3
                 return ERROR;

@@ -46,27 +46,27 @@
                 }); // END document.bind
                 //**************   
                 
-                $("button.btnEditar").on("click", function(event) {                    
-                    var actual = $(event.target).prev("span").text();
-                    alert(actual);
-                    $(event.target).parent().next().children(":first-child").val(actual);
-                    $(event.target).parent().addClass("hide").next("div").removeClass("hide");
+                $("button.btnEditar").on("click", function() {                    
+                    var actual = $(this).prev("span").text();
+                    //alert(actual);
+                    $(this).parent().next().children(":first-child").val(actual);
+                    $(this).parent().addClass("hide").next("div").removeClass("hide");
                 });
                 
                 // evento del botón guardar
-                $(".detalleDatosCliente div.lfloat:nth-child(2) div:nth-child(2)").on("click", "button.btnGuardar", function(event) {
+                $("button.btnGuardar").on("click", function() {
                     // val() funciona para input, select y textarea
-                    var nuevoValor = $(event.target).prev().val();
+                    var nuevoValor = $(this).prev().val();
                     // ruc del cliente a modificar
                     var ruc = "<s:property value="empresaCliente.ruc" />";                                       
                                        
                     
-                    $(event.target).parent().addClass("hide");
+                    $(this).parent().addClass("hide");
                     // ajax-load.gif
-                    $(event.target).parent().parent().append("<span class=\"loadingGif\"></span>");
+                    $(this).parent().parent().append("<span class=\"loadingGif\"></span>");
                     
                     // url de la peticion ajax
-                    var url = $(event.target).parent().parent().prev().children("input[type='hidden']").prop("value");
+                    var url = $(this).parent().parent().prev().children("input[type='hidden']").prop("value");
                                     
                     // ajax
                     $.ajax({
@@ -84,29 +84,32 @@
                         },
                         success: function(data) { 
                             if (data.mensaje == "ok") {
-                                $(event.target).parent().prev().children("span:first-child").text(data.paramRetorno);
-                                $(event.target).parent().addClass("hide").prev().removeClass("hide");
-                                $(event.target).parent().parent().children("span.loadingGif").remove();
+                                //******** el this apunta a otro objeto en este contexto!!
+                                //$(this).parent().prev().children("span:first-child").text(data.paramRetorno);
+                                //$(this).parent().addClass("hide").prev().removeClass("hide");
+                                //$(this).parent().parent().children("span.loadingGif").remove();
                                 
                                 if (url == "ClienteAjaxAction_editRuc") {
                                     // actualizar la página para que se actualice la cabecera también
                                     var urlDestino = "EmpresaClienteAction_show.action?ruc=" + nuevoValor;
                                     window.location = urlDestino;
-                                } else if (url == "ClienteAjaxAction_editRazonSocial") {
+                                } else {
                                     location.reload();
                                 } 
                                 
                             } else {
-                                alert("No se actualizó correctamente el campo.");
-                                $(event.target).parent().addClass("hide").prev().removeClass("hide");
-                                $(event.target).parent().parent().children("span.loadingGif").remove();
+                                //alert("No se actualizó correctamente el campo.");
+                                //$(this).parent().addClass("hide").prev().removeClass("hide");
+                                //$(this).parent().parent().children("span.loadingGif").remove();
+                                alert(data.mensaje);
+                                location.reload();
                             }                           
                         }                    
                     });    
                     
                 });
                 
-                $("#btnGuardarLibros").on("click", function(event) {
+                $("#btnGuardarLibros").on("click", function() {
                 
                     var ruc = "<s:property value="empresaCliente.ruc" />"; 
                     
@@ -114,12 +117,12 @@
                     var booleanRV = $("#checkboxRV").is(":checked");
                     var booleanDS = $("#checkboxDS").is(":checked");
                     
-                    $(event.target).parent().addClass("hide");
+                    $(this).parent().addClass("hide");
                     // ajax-load.gif
-                    $(event.target).parent().parent().append("<span class=\"loadingGif\"></span>");
+                    $(this).parent().parent().append("<span class=\"loadingGif\"></span>");
                     
                     // url de la peticion ajax
-                    var url = $(event.target).parent().parent().prev().children("input[type='hidden']").prop("value");
+                    var url = $(this).parent().parent().prev().children("input[type='hidden']").prop("value");
                                     
                     // ajax
                     $.ajax({
@@ -145,16 +148,17 @@
                                 
                             } else {
                                 alert("No se actualizaron correctamente los campos.");
-                                $(event.target).parent().addClass("hide").prev().removeClass("hide");
-                                $(event.target).parent().parent().children("span.loadingGif").remove();
+                                //$(this).parent().addClass("hide").prev().removeClass("hide");
+                                //$(this).parent().parent().children("span.loadingGif").remove();
+                                location.reload();
                             }                           
                         }                    
                     });                          
                     
                 });
                 
-                $(".detalleDatosCliente div").on("click", "button.btnCancelar", function(event) {
-                    $(event.target).parent().addClass("hide").prev("div").removeClass("hide");
+                $("button.btnCancelar").on("click", function() {
+                    $(this).parent().addClass("hide").prev("div").removeClass("hide");
                 });
                 
             });   
@@ -549,7 +553,7 @@
                         <div class="detalleDatosCliente">
                             <div class="lfloat">
                                 <span>Contraseña</span>
-                                <input type="hidden" value="ClienteAjaxAction_editContraseñaContacto" />
+                                <input type="hidden" value="ClienteAjaxAction_editPasswordContacto" />
                             </div>
                             <div class="lfloat">
                                 <div>
