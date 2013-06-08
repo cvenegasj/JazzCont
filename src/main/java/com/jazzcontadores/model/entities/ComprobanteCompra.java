@@ -39,6 +39,9 @@ public class ComprobanteCompra implements java.io.Serializable {
     private Date fechaVencimientoOpago;
     private BigDecimal base;
     private BigDecimal igv;
+    private BigDecimal valorAdquisicionesNoGravadas;
+    private BigDecimal isc;
+    private BigDecimal otrosTributosYCargos;
     private BigDecimal importeTotal;
     private CodigoAduana codigoAduana;
     private DetalleLibroRegistroCompras detalleLibroRegistroCompras;
@@ -150,7 +153,7 @@ public class ComprobanteCompra implements java.io.Serializable {
         this.fechaVencimientoOpago = fechaVencimientoOpago;
     }
 
-    @Column(name = "base", nullable = false, precision = 14, scale = 2)
+    @Column(name = "base", precision = 14, scale = 2)
     public BigDecimal getBase() {
         return this.base;
     }
@@ -159,7 +162,7 @@ public class ComprobanteCompra implements java.io.Serializable {
         this.base = base;
     }
 
-    @Column(name = "igv", nullable = false, precision = 14, scale = 2)
+    @Column(name = "igv", precision = 14, scale = 2)
     public BigDecimal getIgv() {
         return this.igv;
     }
@@ -212,5 +215,32 @@ public class ComprobanteCompra implements java.io.Serializable {
 
     public void setDetalleLibroRegistroComprasReferenciador(DetalleLibroRegistroCompras detalleLibroRegistroComprasReferenciador) {
         this.detalleLibroRegistroComprasReferenciador = detalleLibroRegistroComprasReferenciador;
+    }
+
+    @Column(name = "valorAdquisicionesNoGravadas", precision = 14, scale = 2)
+    public BigDecimal getValorAdquisicionesNoGravadas() {
+        return this.valorAdquisicionesNoGravadas;
+    }
+
+    public void setValorAdquisicionesNoGravadas(BigDecimal valorAdquisicionesNoGravadas) {
+        this.valorAdquisicionesNoGravadas = valorAdquisicionesNoGravadas;
+    }
+
+    @Column(name = "isc", precision = 14, scale = 2)
+    public BigDecimal getIsc() {
+        return this.isc;
+    }
+
+    public void setIsc(BigDecimal isc) {
+        this.isc = isc;
+    }
+
+    @Column(name = "otrosTributosYCargos", precision = 14, scale = 2)
+    public BigDecimal getOtrosTributosYCargos() {
+        return this.otrosTributosYCargos;
+    }
+
+    public void setOtrosTributosYCargos(BigDecimal otrosTributosYcargos) {
+        this.otrosTributosYCargos = otrosTributosYcargos;
     }
 }

@@ -33,9 +33,6 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     private ComprobanteCompra comprobanteCompra;
     private Integer numeroCorrelativo;
     private String tipoAdquisicionGravada;
-    private BigDecimal valorAdquisicionesNoGravadas;
-    private BigDecimal isc;
-    private BigDecimal otrosTributosYcargos;
     private BigDecimal importeTotal;
     private BigDecimal tipoCambio;
     private Long numeroCompPagoSujNoDom;
@@ -56,15 +53,11 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
         this.importeTotal = importeTotal;
     }
 
-    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompraReferenciado, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo, BigDecimal valorAdquisicionesNoGravadas, BigDecimal isc, BigDecimal otrosTributosYcargos, BigDecimal importeTotal, BigDecimal tipoCambio, Long numeroCompPagoSujNoDom, Long numeroConstDepDetraccion, Date fechaEmisionConstDepDetraccion, Long numeroFinalOperDiariasSinCredFiscal, Boolean marcaComprobanteSujetoAretencion) {
+    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompraReferenciado, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo, BigDecimal importeTotal, BigDecimal tipoCambio, Long numeroCompPagoSujNoDom, Long numeroConstDepDetraccion, Date fechaEmisionConstDepDetraccion, Long numeroFinalOperDiariasSinCredFiscal, Boolean marcaComprobanteSujetoAretencion) {
         this.libroRegistroCompras = libroregistrocompras;
         this.comprobanteCompraReferenciado = comprobantecompraByIdComprobanteCompraReferenciado;
         this.comprobanteCompra = comprobantecompraByIdComprobanteCompra;
         this.numeroCorrelativo = numeroCorrelativo;
-
-        this.valorAdquisicionesNoGravadas = valorAdquisicionesNoGravadas;
-        this.isc = isc;
-        this.otrosTributosYcargos = otrosTributosYcargos;
         this.importeTotal = importeTotal;
         this.tipoCambio = tipoCambio;
         this.numeroCompPagoSujNoDom = numeroCompPagoSujNoDom;
@@ -124,40 +117,13 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
         this.numeroCorrelativo = numeroCorrelativo;
     }
 
-    @Column(name = "tipoAdquisicionGravada", nullable = false)
+    @Column(name = "tipoAdquisicionGravada")
     public String getTipoAdquisicionGravada() {
         return tipoAdquisicionGravada;
     }
 
     public void setTipoAdquisicionGravada(String tipoAdquisicionGravada) {
         this.tipoAdquisicionGravada = tipoAdquisicionGravada;
-    }
-
-    @Column(name = "valorAdquisicionesNoGravadas", precision = 14, scale = 2)
-    public BigDecimal getValorAdquisicionesNoGravadas() {
-        return this.valorAdquisicionesNoGravadas;
-    }
-
-    public void setValorAdquisicionesNoGravadas(BigDecimal valorAdquisicionesNoGravadas) {
-        this.valorAdquisicionesNoGravadas = valorAdquisicionesNoGravadas;
-    }
-
-    @Column(name = "isc", precision = 14, scale = 2)
-    public BigDecimal getIsc() {
-        return this.isc;
-    }
-
-    public void setIsc(BigDecimal isc) {
-        this.isc = isc;
-    }
-
-    @Column(name = "otrosTributosYCargos", precision = 14, scale = 2)
-    public BigDecimal getOtrosTributosYcargos() {
-        return this.otrosTributosYcargos;
-    }
-
-    public void setOtrosTributosYcargos(BigDecimal otrosTributosYcargos) {
-        this.otrosTributosYcargos = otrosTributosYcargos;
     }
 
     @Column(name = "importeTotal", nullable = false, precision = 14, scale = 2)

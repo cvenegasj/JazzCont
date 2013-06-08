@@ -279,26 +279,26 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         }
 
         // valor adquisiciones no gravadas        
-        if (getDetalleLRC().getValorAdquisicionesNoGravadas() != null) {
-            if (getDetalleLRC().getValorAdquisicionesNoGravadas().compareTo(BigDecimal.ZERO) <= 0
-                    || getDetalleLRC().getValorAdquisicionesNoGravadas().precision() > 14
-                    || getDetalleLRC().getValorAdquisicionesNoGravadas().scale() > 2) {
+        if (getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas() != null) {
+            if (getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().precision() > 14
+                    || getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().scale() > 2) {
                 addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
             }
         }
         // isc
-        if (getDetalleLRC().getIsc() != null) {
-            if (getDetalleLRC().getIsc().compareTo(BigDecimal.ZERO) <= 0
-                    || getDetalleLRC().getIsc().precision() > 14
-                    || getDetalleLRC().getIsc().scale() > 2) {
+        if (getDetalleLRC().getComprobanteCompra().getIsc() != null) {
+            if (getDetalleLRC().getComprobanteCompra().getIsc().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getComprobanteCompra().getIsc().precision() > 14
+                    || getDetalleLRC().getComprobanteCompra().getIsc().scale() > 2) {
                 addActionError("El formato del ISC es incorrecto.");
             }
         }
         // otros tributos y cargos
-        if (getDetalleLRC().getOtrosTributosYcargos() != null) {
-            if (getDetalleLRC().getOtrosTributosYcargos().compareTo(BigDecimal.ZERO) <= 0
-                    || getDetalleLRC().getOtrosTributosYcargos().precision() > 14
-                    || getDetalleLRC().getOtrosTributosYcargos().scale() > 2) {
+        if (getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+            if (getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().compareTo(BigDecimal.ZERO) <= 0
+                    || getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().precision() > 14
+                    || getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().scale() > 2) {
                 addActionError("El formato del valor de los otros tributos y cargos es incorrecto.");
             }
         }
@@ -456,6 +456,9 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 addActionError("El formato de la razón social del proveedor es incorrecto.");
             }
         }
+        
+        // base imponible e igv
+        
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
     }

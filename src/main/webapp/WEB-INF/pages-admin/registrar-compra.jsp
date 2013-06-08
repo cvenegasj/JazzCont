@@ -61,6 +61,17 @@
                 $("span.verInfo").qtip({
                     style: { classes: 'qtip-green' }
                 });
+                $("#vang1, #vang2").hide();
+                $("#tipoAdquisicion").change(function() {
+                    var selectedVal = $("#tipoAdquisicion option:selected").val();
+                    if (selectedVal == 'gravada') {
+                        $("#dag1, #dag2, #bi1, #bi2, #cigv1, #cigv2, #isc1, #isc2").show(200);
+                        $("#vang1, #vang2").hide();
+                    } else if (selectedVal == 'no-gravada') {
+                        $("#vang1, #vang2").show(200);
+                        $("#dag1, #dag2, #bi1, #bi2, #cigv1, #cigv2, #isc1, #isc2").hide();
+                    }
+                });
                 
                 $("#rsProveedor").tokenInput("ClienteAjaxAction_listProveedoresByCliente?ruc=<s:property value="empresaCliente.ruc" />", {
                     queryParam: "term",
@@ -355,36 +366,43 @@
                                     </dd>                                    
                                 </dl>
                             </fieldset>    
-                            <fieldset id="rCompraForm_adquisicionesGravadas1">
-                                <legend class="little2">
-                                    Adquisiciones gravadas
-                                </legend>
+
+                            <fieldset id="rCompraForm_resumen">
+                                <legend class="little2">Montos y Resumen</legend>
                                 <dl>
-                                    <dt>Tipo de adquisición <span class="importante" title="campo obligatorio">*</span></dt>
+                                    <dt>Tipo de adquisición</dt>
                                     <dd>
+                                        <select id="tipoAdquisicion">
+                                            <option value="gravada" selected>Gravada</option>
+                                            <option value="no-gravada">No gravada</option>
+                                        </select>
+                                    </dd>
+                                    <dt id="dag1">Destino de adquisición gravada <span class="importante" title="campo obligatorio">*</span></dt>
+                                    <dd id="dag2">
                                         <select name="detalleLRC.tipoAdquisicionGravada">
                                             <option value="gravada/exportacion">Gravadas/exportación</option>
                                             <option value="gravada/exportacion - no gravada">Gravadas/exportación y no gravadas</option>
                                             <option value="no gravada">No gravadas</option>                                            
                                         </select>
                                     </dd>                                    
-                                    <dt>Base imponible</dt>
-                                    <dd><s:textfield name="" id="baseImponibleAG" placeholder="(autocalculado)" /></dd>
-                                    <dt>IGV</dt>
-                                    <dd><s:textfield name="" id="igvAG" placeholder="(autocalculado)" /></dd>
-                                </dl>
-                            </fieldset>                             
-                            <fieldset id="rCompraForm_resumen">
-                                <legend class="little2">Resumen</legend>
-                                <dl>
-                                    <dt>Valor de las adquisiciones no gravadas</dt>
-                                    <dd><s:textfield name="detalleLRC.valorAdquisicionesNoGravadas" id="" placeholder="" /></dd>
-                                    <dt>ISC</dt>
-                                    <dd><s:textfield name="detalleLRC.isc" id="" placeholder="" /></dd>
-                                    <dt>Otros tributos y cargos</dt>
-                                    <dd><s:textfield name="detalleLRC.otrosTributosYCargos" id="" placeholder="" /></dd>
+                                    <dt id="bi1">Base imponible</dt>
+                                    <dd id="bi2">
+                                        <s:textfield name="detalleLRC.comprobanteCompra.base" id="baseImponibleAG" placeholder="" />
+                                        <span class="verInfo" title="Autocalculado si se ingresan los detalles." />
+                                    </dd>
+                                    <dt id="cigv1">IGV</dt>
+                                    <dd id="cigv2">
+                                        <s:textfield name="detalleLRC.comprobanteCompra.igv" id="igvAG" placeholder="" />
+                                        <span class="verInfo" title="Autocalculado si se ingresan los detalles." />
+                                    </dd>
+                                    <dt id="vang1">Valor de las adquisiciones no gravadas</dt>
+                                    <dd id="vang2"><s:textfield name="detalleLRC.comprobanteCompra.valorAdquisicionesNoGravadas" id="" placeholder="" /></dd>
+                                    <dt id="isc1">ISC</dt>
+                                    <dd id="isc2"><s:textfield name="detalleLRC.comprobanteCompra.isc" id="" placeholder="" /></dd>
+                                    <dt id="otc1">Otros tributos y cargos</dt>
+                                    <dd id="otc2"><s:textfield name="detalleLRC.comprobanteCompra.otrosTributosYCargos" id="" placeholder="" /></dd>
                                     <dt>Importe total</dt>
-                                    <dd><s:textfield name="" id="importeTotal" placeholder="(autocalculado)" /></dd>
+                                    <dd><s:textfield name="" id="importeTotal" placeholder="(autocalculado)" readonly="true"/></dd>
                                 </dl>
                             </fieldset>
 
@@ -406,17 +424,17 @@
                                 <legend class="little2">Referencia del comprobante de pago o documento original que se modifica</legend>
                                 <dl>
                                     <dt>Fecha de emisión</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.fechaEmision" id="fechaEmisionCompMod" placeholder="" /></dd>
+                                    <dd><s:textfield name="" id="fechaEmisionCompMod" placeholder="" /></dd>
                                     <dt>Tipo de comprobante que se modifica</dt>
                                     <dd>
-                                        <s:select name="detalleLRC.comprobanteCompraReferenciado.tipoComprobantePagoODocumento.numero" list="tiposComprobantes" 
+                                        <s:select name="" list="tiposComprobantes" 
                                                   headerKey="-1" headerValue="Seleccione el tipo de comprobante"
                                                   listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
                                     </dd>
                                     <dt>Número de serie</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.serie" id="" placeholder="" /></dd>
+                                    <dd><s:textfield name="" id="" placeholder="" /></dd>
                                     <dt>Número de comprobante</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.numero" id="" placeholder="" /></dd>                                    
+                                    <dd><s:textfield name="" id="" placeholder="" /></dd>                                    
                                 </dl>
                             </fieldset>  
                             <fieldset>
