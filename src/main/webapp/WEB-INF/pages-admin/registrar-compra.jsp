@@ -340,6 +340,7 @@
                                     <dd>
                                         <div id="rs1"><s:textfield name="detalleLRC.comprobanteCompra.proveedor.razonSocial" id="rsProveedor" placeholder="" /></div>
                                         <div id="rs2" class="hide"><s:textfield name="" id="rsProveedorNuevo" /></div>
+                                        <span class="verInfo" title="En caso de no existir, registrar '-'." />
                                     </dd>
                                     <dt>Tipo de documento de identidad (Tabla 2)</dt>
                                     <dd>
@@ -348,7 +349,10 @@
                                                   listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
                                     </dd>
                                     <dt>Número de documento de identidad</dt>
-                                    <dd><s:textfield name="detalleLRC.comprobanteCompra.proveedor.numeroDocumentoIdentidad" id="proveedorNroDoc" placeholder="" /></dd>                                    
+                                    <dd>
+                                        <s:textfield name="detalleLRC.comprobanteCompra.proveedor.numeroDocumentoIdentidad" id="proveedorNroDoc" placeholder="" />
+                                        <span class="verInfo" title="En caso de no existir, registrar '-'." />
+                                    </dd>                                    
                                 </dl>
                             </fieldset>    
                             <fieldset id="rCompraForm_adquisicionesGravadas1">
@@ -365,9 +369,9 @@
                                         </select>
                                     </dd>                                    
                                     <dt>Base imponible</dt>
-                                    <dd><s:textfield name="" id="baseImponibleAG" placeholder="(autocalculado)" readonly="true" /></dd>
+                                    <dd><s:textfield name="" id="baseImponibleAG" placeholder="(autocalculado)" /></dd>
                                     <dt>IGV</dt>
-                                    <dd><s:textfield name="" id="igvAG" placeholder="(autocalculado)" readonly="true" /></dd>
+                                    <dd><s:textfield name="" id="igvAG" placeholder="(autocalculado)" /></dd>
                                 </dl>
                             </fieldset>                             
                             <fieldset id="rCompraForm_resumen">
@@ -402,21 +406,17 @@
                                 <legend class="little2">Referencia del comprobante de pago o documento original que se modifica</legend>
                                 <dl>
                                     <dt>Fecha de emisión</dt>
-                                    <dd><s:textfield name="" id="fechaEmisionCompMod" placeholder="" /></dd>
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.fechaEmision" id="fechaEmisionCompMod" placeholder="" /></dd>
                                     <dt>Tipo de comprobante que se modifica</dt>
                                     <dd>
-                                        <select>
-                                            <option>Tipo 1</option> 
-                                            <option>Tipo 2</option> 
-                                            <option>Tipo 3</option> 
-                                            <option>Tipo 4</option> 
-                                            <option>Tipo 5</option> 
-                                        </select>
+                                        <s:select name="detalleLRC.comprobanteCompraReferenciado.tipoComprobantePagoODocumento.numero" list="tiposComprobantes" 
+                                                  headerKey="-1" headerValue="Seleccione el tipo de comprobante"
+                                                  listKey="numero" listValue="%{descripcion.length() <= 40 ? numero + \" - \" + descripcion.substring(0, descripcion.length()) : numero + \" \" + descripcion.substring(0, 40) + \"...\"}" />  
                                     </dd>
                                     <dt>Número de serie</dt>
-                                    <dd><s:textfield name="" id="" placeholder="" /></dd>
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.serie" id="" placeholder="" /></dd>
                                     <dt>Número de comprobante</dt>
-                                    <dd><s:textfield name="" id="" placeholder="" /></dd>                                    
+                                    <dd><s:textfield name="detalleLRC.comprobanteCompraReferenciado.numero" id="" placeholder="" /></dd>                                    
                                 </dl>
                             </fieldset>  
                             <fieldset>
