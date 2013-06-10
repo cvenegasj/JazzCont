@@ -42,6 +42,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
     private long ruc;
     private boolean nuevoProveedor;
+    private String tipoAdquisicion;
     private EmpresaCliente empresaCliente;
     private DetalleLibroRegistroCompras detalleLRC;
     private List<TipoComprobantePagoODocumento> tiposComprobantes = new ArrayList<TipoComprobantePagoODocumento>();
@@ -123,30 +124,6 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
                 this.getDetalleLRC().setNumeroCorrelativo(1); // libro nuevo, primer detalle
 
-                // para calcular el total
-                BigDecimal total = new BigDecimal("0.00");
-                total.setScale(2, RoundingMode.HALF_EVEN);
-
-                for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
-                    DetalleComprobanteCompra d = it.next();
-
-                    if (d.getProductoCompras().getIdProductoCompras() == 0) {
-                        // crear nueva referencia para registrar nuevo producto
-                        ProductoCompras pc = new ProductoCompras();
-                        pc.setNombre(d.getProductoCompras().getNombre());
-                        pc.setPrecio(d.getProductoCompras().getPrecio());
-                        d.setProductoCompras(pc);
-                    }
-                    BigDecimal subtotal = d.getProductoCompras().getPrecio().multiply(new BigDecimal(d.getCantidad()));
-                    d.setSubtotal(subtotal);
-                    d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
-                    d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
-                    total = total.add(d.getSubtotal());
-                }
-
-                this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
-                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
-                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
                 libroRCNuevo.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
 
             } else {
@@ -257,10 +234,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
         // llenar los códigos aduaneros
         this.setCodigosAduana(factory.getCodigoAduanaDAO().findAll());
 
-        // validaciones
-        if (getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().isEmpty()) {
-            addActionError("Debe especificar las líneas del comprobante.");
-        }
+        // validaciones        
         if (getDetalleLRC().getComprobanteCompra().getFechaEmision() == null) {
             addActionError("Debe especificar la fecha de emisión del comprobante.");
         }
@@ -456,9 +430,184 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 addActionError("El formato de la razón social del proveedor es incorrecto.");
             }
         }
-        
-        // base imponible e igv
-        
+
+
+        if (this.getTipoAdquisicion().equals("gravada")) {
+
+            this.getDetalleLRC().setEsAdquisicionGravada(true);
+
+            BigDecimal total = new BigDecimal("0.00");
+            total.setScale(2, RoundingMode.HALF_EVEN);
+            if (!this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().isEmpty()) {
+
+                for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
+                    DetalleComprobanteCompra d = it.next();
+
+                    if (d.getProductoCompras().getIdProductoCompras() == 0) {
+                        // crear nueva referencia para registrar nuevo producto
+                        ProductoCompras pc = new ProductoCompras();
+                        pc.setNombre(d.getProductoCompras().getNombre());
+                        pc.setPrecio(d.getProductoCompras().getPrecio());
+                        d.setProductoCompras(pc);
+                    }
+                    BigDecimal subtotal = d.getProductoCompras().getPrecio().multiply(new BigDecimal(d.getCantidad()));
+                    d.setSubtotal(subtotal);
+                    d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
+                    d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
+                    total = total.add(d.getSubtotal());
+                }
+
+                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
+                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
+
+            }
+
+            // cálculo del total
+            if (this.getDetalleLRC().getComprobanteCompra().getBase() != null) {
+                total = total.add(this.getDetalleLRC().getComprobanteCompra().getBase());
+            }
+            if (this.getDetalleLRC().getComprobanteCompra().getIgv() != null) {
+                total = total.add(this.getDetalleLRC().getComprobanteCompra().getIgv());
+            }
+            if (this.getDetalleLRC().getComprobanteCompra().getIsc() != null) {
+                total = total.add(this.getDetalleLRC().getComprobanteCompra().getIsc());
+            }
+            if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+                total = total.add(this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos());
+            }
+
+            this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
+
+            // campos que pueden ser negativos
+            if (this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                // acepta negativos
+                // base
+                if (this.getDetalleLRC().getComprobanteCompra().getBase() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getBase().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getBase().scale() > 2) {
+                        addActionError("El formato de la Base Imponible es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor la Base Imponible.");
+                }
+                // igv
+                if (this.getDetalleLRC().getComprobanteCompra().getIgv() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getIgv().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getIgv().scale() > 2) {
+                        addActionError("El formato del IGV es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor del IGV.");
+                }
+                // isc
+                if (this.getDetalleLRC().getComprobanteCompra().getIsc() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getIsc().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getIsc().scale() > 2) {
+                        addActionError("El formato del ISC es incorrecto.");
+                    }
+                } else {
+                    //addActionError("Debe especificar el valor del ISC.");
+                }
+                // otros tributos y cargos
+                if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().scale() > 2) {
+                        addActionError("El formato de Otros tributos y cargos es incorrecto.");
+                    }
+                } else {
+                    //addActionError("Debe especificar el valor de Otros tributos y cargos.");
+                }
+
+            } else {
+                // no acepta negativos
+                // base
+                if (this.getDetalleLRC().getComprobanteCompra().getBase() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getBase().compareTo(BigDecimal.ZERO) < 0
+                            || this.getDetalleLRC().getComprobanteCompra().getBase().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getBase().scale() > 2) {
+                        addActionError("El formato de la Base Imponible es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor la Base Imponible.");
+                }
+                // igv
+                if (this.getDetalleLRC().getComprobanteCompra().getIgv() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getIgv().compareTo(BigDecimal.ZERO) < 0
+                            || this.getDetalleLRC().getComprobanteCompra().getIgv().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getIgv().scale() > 2) {
+                        addActionError("El formato del IGV es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor del IGV.");
+                }
+                // isc
+                if (this.getDetalleLRC().getComprobanteCompra().getIsc() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getIsc().compareTo(BigDecimal.ZERO) < 0
+                            || this.getDetalleLRC().getComprobanteCompra().getIsc().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getIsc().scale() > 2) {
+                        addActionError("El formato del ISC es incorrecto.");
+                    }
+                } else {
+                    //addActionError("Debe especificar el valor del ISC.");
+                }
+                // otros tributos y cargos
+                if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().scale() > 2) {
+                        addActionError("El formato de Otros tributos y cargos es incorrecto.");
+                    }
+                } else {
+                    //addActionError("Debe especificar el valor de Otros tributos y cargos.");
+                }
+            }
+
+        } else if (this.getTipoAdquisicion().equals("no-gravada")) {
+
+            this.getDetalleLRC().setEsAdquisicionGravada(false);
+            this.getDetalleLRC().getComprobanteCompra().setBase(null);
+            this.getDetalleLRC().getComprobanteCompra().setIgv(null);
+            this.getDetalleLRC().getComprobanteCompra().setIsc(null);
+
+
+            if (this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 7
+                    || this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 87
+                    || this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 97) {
+                // acepta negativos
+                // valor de adquisiciones no gravadas
+                if (this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().scale() > 2) {
+                        addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor las adquisiciones no gravadas.");
+                }
+            } else {
+                // no acepta negativos
+                if (this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas() != null) {
+                    if (this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().compareTo(BigDecimal.ZERO) < 0
+                            || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().precision() > 14
+                            || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().scale() > 2) {
+                        addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
+                    }
+                } else {
+                    addActionError("Debe especificar el valor las adquisiciones no gravadas.");
+                }
+            }
+
+            // otros tributos y cargos
+            if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+                if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().precision() > 14
+                        || this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos().scale() > 2) {
+                    addActionError("El formato de Otros tributos y cargos es incorrecto.");
+                }
+            } else {
+                //addActionError("Debe especificar el valor de Otros tributos y cargos.");
+            }
+        }
+
 
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
@@ -517,5 +666,13 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
     public void setNuevoProveedor(boolean nuevoProveedor) {
         this.nuevoProveedor = nuevoProveedor;
+    }
+
+    public String getTipoAdquisicion() {
+        return tipoAdquisicion;
+    }
+
+    public void setTipoAdquisicion(String tipoAdquisicion) {
+        this.tipoAdquisicion = tipoAdquisicion;
     }
 }

@@ -372,7 +372,7 @@
                                 <dl>
                                     <dt>Tipo de adquisición</dt>
                                     <dd>
-                                        <select id="tipoAdquisicion">
+                                        <select name="tipoAdquisicion" id="tipoAdquisicion">
                                             <option value="gravada" selected>Gravada</option>
                                             <option value="no-gravada">No gravada</option>
                                         </select>
@@ -396,9 +396,14 @@
                                         <span class="verInfo" title="Autocalculado si se ingresan los detalles." />
                                     </dd>
                                     <dt id="vang1">Valor de las adquisiciones no gravadas</dt>
-                                    <dd id="vang2"><s:textfield name="detalleLRC.comprobanteCompra.valorAdquisicionesNoGravadas" id="" placeholder="" /></dd>
+                                    <dd id="vang2">
+                                        <s:textfield name="detalleLRC.comprobanteCompra.valorAdquisicionesNoGravadas" id="" placeholder="" />                                        
+                                    </dd>
                                     <dt id="isc1">ISC</dt>
-                                    <dd id="isc2"><s:textfield name="detalleLRC.comprobanteCompra.isc" id="" placeholder="" /></dd>
+                                    <dd id="isc2">
+                                        <s:textfield name="detalleLRC.comprobanteCompra.isc" id="" placeholder="" />
+                                        <span class="verInfo" title="Opcional. Impuesto Selectivo al Consumo." />
+                                    </dd>
                                     <dt id="otc1">Otros tributos y cargos</dt>
                                     <dd id="otc2"><s:textfield name="detalleLRC.comprobanteCompra.otrosTributosYCargos" id="" placeholder="" /></dd>
                                     <dt>Importe total</dt>
@@ -438,7 +443,9 @@
                                 </dl>
                             </fieldset>  
                             <fieldset>
-                                <legend class="little2">Detalles</legend>
+                                <legend class="little2">Detalles 
+                                    <span class="verInfo" title="Opcional. Si el tipo de adquisición es no gravada, los detalles no se considerarán." />
+                                </legend>
                                 <table id="inputDetallesCompra" class="detallesComprobanteTable">
                                     <thead>
                                         <tr>

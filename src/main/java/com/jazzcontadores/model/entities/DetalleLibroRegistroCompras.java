@@ -27,12 +27,10 @@ import javax.persistence.UniqueConstraint;
     @UniqueConstraint(columnNames = "idComprobanteCompra")})
 public class DetalleLibroRegistroCompras implements java.io.Serializable {
 
-    private Integer idDetalleLibroRegistroCompras;
-    private LibroRegistroCompras libroRegistroCompras;
-    private ComprobanteCompra comprobanteCompraReferenciado;
-    private ComprobanteCompra comprobanteCompra;
+    private Integer idDetalleLibroRegistroCompras;    
     private Integer numeroCorrelativo;
-    private String tipoAdquisicionGravada;
+    private Boolean esAdquisicionGravada;
+    private String destinoAdquisicionGravada;
     private BigDecimal importeTotal;
     private BigDecimal tipoCambio;
     private Long numeroCompPagoSujNoDom;
@@ -42,6 +40,9 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     private Boolean marcaComprobanteSujetoAretencion;
     private String estadoOportunidadDeAnotacion;
     private Date fechaHoraRegistro;
+    private LibroRegistroCompras libroRegistroCompras;
+    private ComprobanteCompra comprobanteCompraReferenciado;
+    private ComprobanteCompra comprobanteCompra;
 
     public DetalleLibroRegistroCompras() {
     }
@@ -117,13 +118,13 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
         this.numeroCorrelativo = numeroCorrelativo;
     }
 
-    @Column(name = "tipoAdquisicionGravada")
-    public String getTipoAdquisicionGravada() {
-        return tipoAdquisicionGravada;
+    @Column(name = "destinoAdquisicionGravada")
+    public String getDestinoAdquisicionGravada() {
+        return destinoAdquisicionGravada;
     }
 
-    public void setTipoAdquisicionGravada(String tipoAdquisicionGravada) {
-        this.tipoAdquisicionGravada = tipoAdquisicionGravada;
+    public void setDestinoAdquisicionGravada(String destinoAdquisicionGravada) {
+        this.destinoAdquisicionGravada = destinoAdquisicionGravada;
     }
 
     @Column(name = "importeTotal", nullable = false, precision = 14, scale = 2)
@@ -208,4 +209,14 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     public void setFechaHoraRegistro(Date fechaHoraRegistro) {
         this.fechaHoraRegistro = fechaHoraRegistro;
     }
+
+    @Column(name = "esAdquisicionGravada")
+    public Boolean getEsAdquisicionGravada() {
+        return esAdquisicionGravada;
+    }
+    
+    public void setEsAdquisicionGravada(Boolean esAdquisicionGravada) {
+        this.esAdquisicionGravada = esAdquisicionGravada;
+    }
+
 }

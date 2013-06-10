@@ -106,7 +106,7 @@ public class LibrosAjaxAction extends ActionSupport implements UserAware {
             DetalleLibroRegistroComprasSerializable detalleSrl = new DetalleLibroRegistroComprasSerializable();
             detalleSrl.setIdDetalleLibroRegistroCompras(detalle.getIdDetalleLibroRegistroCompras());
             detalleSrl.setNumeroCorrelativo(detalle.getNumeroCorrelativo());
-            detalleSrl.setTipoAdquisicionGravada(detalle.getTipoAdquisicionGravada());
+            detalleSrl.setTipoAdquisicionGravada(detalle.getDestinoAdquisicionGravada());
             detalleSrl.setValorAdquisicionesNoGravadas(detalle.getComprobanteCompra().getValorAdquisicionesNoGravadas());
             detalleSrl.setIsc(detalle.getComprobanteCompra().getIsc());
             detalleSrl.setOtrosTributosYcargos(detalle.getComprobanteCompra().getOtrosTributosYCargos());
