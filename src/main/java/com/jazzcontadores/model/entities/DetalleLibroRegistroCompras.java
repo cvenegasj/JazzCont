@@ -30,8 +30,7 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     private Integer idDetalleLibroRegistroCompras;    
     private Integer numeroCorrelativo;
     private Boolean esAdquisicionGravada;
-    private String destinoAdquisicionGravada;
-    private BigDecimal importeTotal;
+    private String destinoAdquisicionGravada;    
     private BigDecimal tipoCambio;
     private Long numeroCompPagoSujNoDom;
     private Long numeroConstDepDetraccion;
@@ -47,19 +46,17 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
     public DetalleLibroRegistroCompras() {
     }
 
-    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo, BigDecimal importeTotal) {
+    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo) {
         this.libroRegistroCompras = libroregistrocompras;
         this.comprobanteCompra = comprobantecompraByIdComprobanteCompra;
-        this.numeroCorrelativo = numeroCorrelativo;
-        this.importeTotal = importeTotal;
+        this.numeroCorrelativo = numeroCorrelativo;        
     }
 
-    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompraReferenciado, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo, BigDecimal importeTotal, BigDecimal tipoCambio, Long numeroCompPagoSujNoDom, Long numeroConstDepDetraccion, Date fechaEmisionConstDepDetraccion, Long numeroFinalOperDiariasSinCredFiscal, Boolean marcaComprobanteSujetoAretencion) {
+    public DetalleLibroRegistroCompras(LibroRegistroCompras libroregistrocompras, ComprobanteCompra comprobantecompraByIdComprobanteCompraReferenciado, ComprobanteCompra comprobantecompraByIdComprobanteCompra, int numeroCorrelativo, BigDecimal tipoCambio, Long numeroCompPagoSujNoDom, Long numeroConstDepDetraccion, Date fechaEmisionConstDepDetraccion, Long numeroFinalOperDiariasSinCredFiscal, Boolean marcaComprobanteSujetoAretencion) {
         this.libroRegistroCompras = libroregistrocompras;
         this.comprobanteCompraReferenciado = comprobantecompraByIdComprobanteCompraReferenciado;
         this.comprobanteCompra = comprobantecompraByIdComprobanteCompra;
-        this.numeroCorrelativo = numeroCorrelativo;
-        this.importeTotal = importeTotal;
+        this.numeroCorrelativo = numeroCorrelativo;        
         this.tipoCambio = tipoCambio;
         this.numeroCompPagoSujNoDom = numeroCompPagoSujNoDom;
         this.numeroConstDepDetraccion = numeroConstDepDetraccion;
@@ -125,15 +122,6 @@ public class DetalleLibroRegistroCompras implements java.io.Serializable {
 
     public void setDestinoAdquisicionGravada(String destinoAdquisicionGravada) {
         this.destinoAdquisicionGravada = destinoAdquisicionGravada;
-    }
-
-    @Column(name = "importeTotal", nullable = false, precision = 14, scale = 2)
-    public BigDecimal getImporteTotal() {
-        return this.importeTotal;
-    }
-
-    public void setImporteTotal(BigDecimal importeTotal) {
-        this.importeTotal = importeTotal;
     }
 
     @Column(name = "tipoCambio", precision = 4, scale = 3)

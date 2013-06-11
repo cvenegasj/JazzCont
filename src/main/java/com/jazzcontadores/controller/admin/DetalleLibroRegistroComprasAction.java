@@ -109,8 +109,8 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 libroComprasDAO.makePersistent(libroRCNuevo);
 
-                if (this.isNuevoProveedor()) {
-                    // viene validado, solo es necesario registrar
+                if (this.getDetalleLRC().getComprobanteCompra().getProveedor() != null
+                        && this.isNuevoProveedor()) {
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
                 }
 
@@ -132,7 +132,8 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 }
 
                 // establecemos el proveedor
-                if (this.isNuevoProveedor()) {
+                if (this.getDetalleLRC().getComprobanteCompra().getProveedor() != null
+                        && this.isNuevoProveedor()) {
                     proveedorDAO.makePersistent(this.getDetalleLRC().getComprobanteCompra().getProveedor());
                 }
 
@@ -144,31 +145,6 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                 this.getDetalleLRC().setLibroRegistroCompras(libroExistente);
                 this.getDetalleLRC().setFechaHoraRegistro(new Date());
-
-                //para calcular el total
-                BigDecimal total = new BigDecimal("0.00");
-                total.setScale(2, RoundingMode.HALF_EVEN);
-
-                for (Iterator<DetalleComprobanteCompra> it = this.getDetalleLRC().getComprobanteCompra().getDetallesComprobanteCompra().iterator(); it.hasNext();) {
-                    DetalleComprobanteCompra d = it.next();
-
-                    if (d.getProductoCompras().getIdProductoCompras() == 0) {
-                        // crear nueva referencia para registrar nuevo producto
-                        ProductoCompras pc = new ProductoCompras();
-                        pc.setNombre(d.getProductoCompras().getNombre());
-                        pc.setPrecio(d.getProductoCompras().getPrecio());
-                        d.setProductoCompras(pc);
-                    }
-                    BigDecimal subtotal = d.getProductoCompras().getPrecio().multiply(new BigDecimal(d.getCantidad()));
-                    d.setSubtotal(subtotal);
-                    d.setComprobanteCompra(this.getDetalleLRC().getComprobanteCompra());
-                    d.setPrecioUnitario(d.getProductoCompras().getPrecio()); // se copia el precio
-                    total = total.add(d.getSubtotal());
-                }
-
-                this.getDetalleLRC().getComprobanteCompra().setImporteTotal(total);
-                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
-                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
 
                 // reordenamos la lista de detalles
                 Date ultimaFechaRegistrada = libroExistente.getDetallesLibroRegistroCompras()
@@ -202,7 +178,6 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
 
                     libroExistente.getDetallesLibroRegistroCompras().add(this.getDetalleLRC());
                 }
-
 
             }
 
@@ -277,18 +252,18 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
             }
         }
         // verificar existencia de proveedor
-        if (getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero() != null
-                && getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad() != null) {
+        if (!getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero().equals("-1")
+                && !getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad().trim().equals("")) {
             Proveedor proveedor = factory.getProveedorDAO().findByTipoDocumentoYNumeroDocumento(
                     this.getEmpresaCliente().getRuc(),
                     this.getDetalleLRC().getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero(),
                     this.getDetalleLRC().getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
-            if (this.isNuevoProveedor()) {
-                if (proveedor != null) {
+            if (proveedor != null) {
+                if (this.isNuevoProveedor()) {
                     addActionError("El proveedor a registrar ya existe en la base de datos.");
+                } else {
+                    this.getDetalleLRC().getComprobanteCompra().setProveedor(proveedor);
                 }
-            } else {
-                getDetalleLRC().getComprobanteCompra().setProveedor(proveedor); // se inyecta el proveedor
             }
         }
 
@@ -417,6 +392,9 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                 if (!getDetalleLRC().getComprobanteCompra().getProveedor().getRazonSocial().trim().matches("-|.{1,60}")) {
                     addActionError("El formato de la razón social del proveedor es incorrecto.");
                 }
+            } else {
+                // si todos los campos tienen su valor vacío
+                this.getDetalleLRC().getComprobanteCompra().setProveedor(null);
             }
         } else {
             // es obligatorio
@@ -457,9 +435,14 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     total = total.add(d.getSubtotal());
                 }
 
-                this.getDetalleLRC().getComprobanteCompra().setBase(total.multiply(JCConstants.BASE));
-                this.getDetalleLRC().getComprobanteCompra().setIgv(total.multiply(JCConstants.IGV));
-
+                BigDecimal base = total.multiply(JCConstants.BASE);
+                BigDecimal igv = total.multiply(JCConstants.IGV);
+                
+                base = base.setScale(2, RoundingMode.HALF_EVEN);
+                igv = igv.setScale(2, RoundingMode.HALF_EVEN);
+                
+                this.getDetalleLRC().getComprobanteCompra().setBase(base);
+                this.getDetalleLRC().getComprobanteCompra().setIgv(igv);
             }
 
             // cálculo del total
@@ -569,6 +552,7 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
             this.getDetalleLRC().getComprobanteCompra().setBase(null);
             this.getDetalleLRC().getComprobanteCompra().setIgv(null);
             this.getDetalleLRC().getComprobanteCompra().setIsc(null);
+            this.getDetalleLRC().setDestinoAdquisicionGravada(null);
 
 
             if (this.getDetalleLRC().getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero() == 7
@@ -580,6 +564,8 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                     if (this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().precision() > 14
                             || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().scale() > 2) {
                         addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
+                    } else {
+                        // qué se debe registrar en el importe total ????????????? **********************
                     }
                 } else {
                     addActionError("Debe especificar el valor las adquisiciones no gravadas.");
@@ -591,6 +577,12 @@ public class DetalleLibroRegistroComprasAction extends ActionSupport {
                             || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().precision() > 14
                             || this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas().scale() > 2) {
                         addActionError("El formato del valor de las adquisiciones no gravadas es incorrecto.");
+                    } else {
+                        BigDecimal importeTotal = this.getDetalleLRC().getComprobanteCompra().getValorAdquisicionesNoGravadas();
+                        if (this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos() != null) {
+                            importeTotal = importeTotal.add(this.getDetalleLRC().getComprobanteCompra().getOtrosTributosYCargos());
+                        }
+                        this.getDetalleLRC().getComprobanteCompra().setImporteTotal(importeTotal);                        
                     }
                 } else {
                     addActionError("Debe especificar el valor las adquisiciones no gravadas.");

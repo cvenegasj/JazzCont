@@ -379,7 +379,7 @@
                                     </dd>
                                     <dt id="dag1">Destino de adquisición gravada <span class="importante" title="campo obligatorio">*</span></dt>
                                     <dd id="dag2">
-                                        <select name="detalleLRC.tipoAdquisicionGravada">
+                                        <select name="detalleLRC.destinoAdquisicionGravada">
                                             <option value="gravada/exportacion">Gravadas/exportación</option>
                                             <option value="gravada/exportacion - no gravada">Gravadas/exportación y no gravadas</option>
                                             <option value="no gravada">No gravadas</option>                                            

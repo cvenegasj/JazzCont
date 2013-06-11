@@ -100,11 +100,7 @@ public class LibrosAjaxAction extends ActionSupport {
             DetalleLibroRegistroComprasSerializable detalleSrl = new DetalleLibroRegistroComprasSerializable();
             detalleSrl.setIdDetalleLibroRegistroCompras(detalle.getIdDetalleLibroRegistroCompras());
             detalleSrl.setNumeroCorrelativo(detalle.getNumeroCorrelativo());
-            detalleSrl.setTipoAdquisicionGravada(detalle.getDestinoAdquisicionGravada());
-            detalleSrl.setValorAdquisicionesNoGravadas(detalle.getComprobanteCompra().getValorAdquisicionesNoGravadas());
-            detalleSrl.setIsc(detalle.getComprobanteCompra().getIsc());
-            detalleSrl.setOtrosTributosYcargos(detalle.getComprobanteCompra().getOtrosTributosYCargos());
-            detalleSrl.setImporteTotal(detalle.getImporteTotal());
+            detalleSrl.setDestinoAdquisicionGravada(detalle.getDestinoAdquisicionGravada());
             detalleSrl.setTipoCambio(detalle.getTipoCambio());
             detalleSrl.setNumeroCompPagoSujNoDom(detalle.getNumeroCompPagoSujNoDom());
             detalleSrl.setNumeroConstDepDetraccion(detalle.getNumeroConstDepDetraccion());
@@ -112,15 +108,17 @@ public class LibrosAjaxAction extends ActionSupport {
             detalleSrl.setNumeroFinalOperDiariasSinCredFiscal(detalle.getNumeroFinalOperDiariasSinCredFiscal());
             detalleSrl.setMarcaComprobanteSujetoAretencion(detalle.getMarcaComprobanteSujetoAretencion());
             detalleSrl.setFechaHoraRegistro(detalle.getFechaHoraRegistro());
-            if (detalleSrl.getTipoAdquisicionGravada().equals("gravada/exportacion")) {
-                detalleSrl.setBaseImponible1(detalle.getComprobanteCompra().getBase());
-                detalleSrl.setIgv1(detalle.getComprobanteCompra().getIgv());
-            } else if (detalleSrl.getTipoAdquisicionGravada().equals("gravada/exportacion - no gravada")) {
-                detalleSrl.setBaseImponible2(detalle.getComprobanteCompra().getBase());
-                detalleSrl.setIgv2(detalle.getComprobanteCompra().getIgv());
-            } else if (detalleSrl.getTipoAdquisicionGravada().equals("no-gravada")) {
-                detalleSrl.setBaseImponible3(detalle.getComprobanteCompra().getBase());
-                detalleSrl.setIgv3(detalle.getComprobanteCompra().getIgv());
+            if (detalle.getEsAdquisicionGravada()) {
+                if (detalle.getDestinoAdquisicionGravada().equals("gravada/exportacion")) {
+                    detalleSrl.setBaseImponible1(detalle.getComprobanteCompra().getBase());
+                    detalleSrl.setIgv1(detalle.getComprobanteCompra().getIgv());
+                } else if (detalle.getDestinoAdquisicionGravada().equals("gravada/exportacion - no gravada")) {
+                    detalleSrl.setBaseImponible2(detalle.getComprobanteCompra().getBase());
+                    detalleSrl.setIgv2(detalle.getComprobanteCompra().getIgv());
+                } else if (detalle.getDestinoAdquisicionGravada().equals("no-gravada")) {
+                    detalleSrl.setBaseImponible3(detalle.getComprobanteCompra().getBase());
+                    detalleSrl.setIgv3(detalle.getComprobanteCompra().getIgv());
+                }
             }
 
             // comprobante
@@ -130,14 +128,19 @@ public class LibrosAjaxAction extends ActionSupport {
             detalleSrl.setAnioEmisionDuaOdsiComprobante(detalle.getComprobanteCompra().getAnioEmisionDuaOdsi());
             detalleSrl.setFechaEmisionComprobante(detalle.getComprobanteCompra().getFechaEmision());
             detalleSrl.setFechaVencimientoOpagoComprobante(detalle.getComprobanteCompra().getFechaVencimientoOpago());
+            detalleSrl.setValorAdquisicionesNoGravadas(detalle.getComprobanteCompra().getValorAdquisicionesNoGravadas());
+            detalleSrl.setIsc(detalle.getComprobanteCompra().getIsc());
+            detalleSrl.setOtrosTributosYcargos(detalle.getComprobanteCompra().getOtrosTributosYCargos());
+            detalleSrl.setImporteTotal(detalle.getComprobanteCompra().getImporteTotal());
             detalleSrl.setBaseComprobante(detalle.getComprobanteCompra().getBase());
             detalleSrl.setIgvComprobante(detalle.getComprobanteCompra().getIgv());
             detalleSrl.setImporteTotalComprobante(detalle.getComprobanteCompra().getImporteTotal());
             detalleSrl.setNumeroTipoComprobante(detalle.getComprobanteCompra().getTipoComprobantePagoODocumento().getNumero());
-            detalleSrl.setNumeroTipoDocIdentidadProveedor(detalle.getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero());
-            detalleSrl.setNumeroDocIdentidadProveedor(detalle.getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
-            detalleSrl.setRazonSocialProveedor(detalle.getComprobanteCompra().getProveedor().getRazonSocial());
-
+            if (detalle.getComprobanteCompra().getProveedor() != null) {
+                detalleSrl.setNumeroTipoDocIdentidadProveedor(detalle.getComprobanteCompra().getProveedor().getTipoDocumentoIdentidad().getNumero());
+                detalleSrl.setNumeroDocIdentidadProveedor(detalle.getComprobanteCompra().getProveedor().getNumeroDocumentoIdentidad());
+                detalleSrl.setRazonSocialProveedor(detalle.getComprobanteCompra().getProveedor().getRazonSocial());
+            }
             if (detalle.getComprobanteCompraReferenciado() != null) {
                 detalleSrl.setIdComprobanteCompraReferenciado(detalle.getComprobanteCompraReferenciado().getIdComprobanteCompra());
                 detalleSrl.setFechaComprobanteCompraReferenciado(detalle.getComprobanteCompraReferenciado().getFechaEmision());

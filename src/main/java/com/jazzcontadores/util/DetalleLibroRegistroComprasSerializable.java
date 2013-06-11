@@ -16,17 +16,13 @@ public class DetalleLibroRegistroComprasSerializable {
 
     private Integer idDetalleLibroRegistroCompras;
     private Integer numeroCorrelativo;
-    private String tipoAdquisicionGravada;
+    private String destinoAdquisicionGravada;
     private BigDecimal baseImponible1;
     private BigDecimal igv1;
     private BigDecimal baseImponible2;
     private BigDecimal igv2;
     private BigDecimal baseImponible3;
-    private BigDecimal igv3;
-    private BigDecimal valorAdquisicionesNoGravadas;
-    private BigDecimal isc;
-    private BigDecimal otrosTributosYcargos;
-    private BigDecimal importeTotal;
+    private BigDecimal igv3;    
     private BigDecimal tipoCambio;
     private Long numeroCompPagoSujNoDom;
     private Long numeroConstDepDetraccion;
@@ -41,6 +37,10 @@ public class DetalleLibroRegistroComprasSerializable {
     private String anioEmisionDuaOdsiComprobante;
     private Date fechaEmisionComprobante;
     private Date fechaVencimientoOpagoComprobante;
+    private BigDecimal valorAdquisicionesNoGravadas;
+    private BigDecimal isc;
+    private BigDecimal otrosTributosYcargos;
+    private BigDecimal importeTotal;
     private BigDecimal baseComprobante;
     private BigDecimal igvComprobante;
     private BigDecimal importeTotalComprobante;
@@ -74,12 +74,12 @@ public class DetalleLibroRegistroComprasSerializable {
         this.numeroCorrelativo = numeroCorrelativo;
     }
 
-    public String getTipoAdquisicionGravada() {
-        return tipoAdquisicionGravada;
+    public String getDestinoAdquisicionGravada() {
+        return destinoAdquisicionGravada;
     }
 
-    public void setTipoAdquisicionGravada(String tipoAdquisicionGravada) {
-        this.tipoAdquisicionGravada = tipoAdquisicionGravada;
+    public void setDestinoAdquisicionGravada(String destinoAdquisicionGravada) {
+        this.destinoAdquisicionGravada = destinoAdquisicionGravada;
     }
 
     public BigDecimal getValorAdquisicionesNoGravadas() {

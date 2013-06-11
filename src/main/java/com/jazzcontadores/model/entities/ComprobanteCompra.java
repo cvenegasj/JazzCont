@@ -87,7 +87,7 @@ public class ComprobanteCompra implements java.io.Serializable {
     }
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "idProveedor", nullable = false)
+    @JoinColumn(name = "idProveedor")
     public Proveedor getProveedor() {
         return this.proveedor;
     }

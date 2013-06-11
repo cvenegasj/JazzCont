@@ -21,7 +21,7 @@ Ext.onReady(function() {
             type: 'auto'
         },
         {
-            name: 'tipoAdquisicionGravada', 
+            name: 'destinoAdquisicionGravada', 
             type: 'auto'
         },
         {
